@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
-import org.usfirst.frc.team4183.robot.subsystems.DriveSubsytem;
+import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -20,7 +20,7 @@ import org.usfirst.frc.team4183.robot.subsystems.DriveSubsytem;
  */
 public class Robot extends IterativeRobot {
 
-	public static final DriveSubsytem driveSubsytem = new DriveSubsytem();
+	public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
 	public static OI oi;
 
 	Command autonomousCommand;

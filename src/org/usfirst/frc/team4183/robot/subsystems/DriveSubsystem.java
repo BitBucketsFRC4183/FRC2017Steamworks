@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Encoder;
 /**
  *
  */
-public class DriveSubsytem extends Subsystem {
+public class DriveSubsystem extends Subsystem {
 
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
