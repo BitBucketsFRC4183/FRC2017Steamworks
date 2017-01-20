@@ -7,6 +7,12 @@ package org.usfirst.frc.team4183.robot;
  * floating around.
  */
 public class RobotMap {
+	// No basis in reality, just random numbers I put
+	public static int leftMotor0 = 0;
+	public static int leftMotor1 = 1;
+	public static int rightMotor0 = 3;
+	public static int rightMotor1 = 4; 
+	
 	// For example to map the left and right motors, you could define the
 	// following variables to use with your drivetrain subsystem.
 	// public static int leftMotor = 1;
