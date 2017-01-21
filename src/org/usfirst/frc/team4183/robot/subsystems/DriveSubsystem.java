@@ -17,10 +17,10 @@ public class DriveSubsystem extends Subsystem {
 	// Put methods for controlling this subsystem
     // here. Call these from Commands.
 public DriveSubsystem() {
-	leftMotor0 = new CANTalon(RobotMap.leftMotor0);
-	leftMotor1 = new CANTalon(RobotMap.leftMotor1);
-	rightMotor0 = new CANTalon(RobotMap.rightMotor0);
-	rightMotor1 = new CANTalon(RobotMap.rightMotor1);
+	leftMotor0 = new CANTalon(RobotMap.LEFT_MOTOR0_ID);
+	leftMotor1 = new CANTalon(RobotMap.LEFT_MOTOR1_ID);
+	rightMotor0 = new CANTalon(RobotMap.RIGHT_MOTOR0_ID);
+	rightMotor1 = new CANTalon(RobotMap.RIGHT_MOTOR1_ID);
 	RobotDrive drive = new RobotDrive(leftMotor0, leftMotor1, rightMotor0, rightMotor1);
 	leftMotor0.setFeedbackDevice(RobotMap.DRIVE_ENCODER1);
 	leftMotor0.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV); 
