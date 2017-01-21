@@ -18,6 +18,7 @@ public class RobotMap {
 	public static final int DRIVE_PULSES_PER_REV = 256; 
 	public static final CANTalon.FeedbackDevice DRIVE_ENCODER2 = CANTalon.FeedbackDevice.QuadEncoder;
 	public static final int DRIVE_PULSES_PER_REV2 = 256; 
+	public static int climbMotor = 5;
 	// For example to map the left and right motors, you could define the
 	// following variables to use with your drivetrain subsystem.
 	// public static int leftMotor = 1;
