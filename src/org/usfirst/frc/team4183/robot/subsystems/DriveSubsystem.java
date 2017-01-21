@@ -4,30 +4,35 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.RobotDrive;
 import org.usfirst.frc.team4183.robot.RobotMap;
+import edu.wpi.first.wpilibj.GyroBase;
 /**
  *
  */
 public class DriveSubsystem extends Subsystem {
-		private CANTalon leftMotor0;
-		private CANTalon leftMotor1; 
-		private CANTalon rightMotor0;
-		private CANTalon rightMotor1;
+		private final CANTalon LEFT_MOTOR0_0;
+		private final CANTalon LEFT_MOTOR0_1; 
+		private final CANTalon RIGHT_MOTOR0_0;
+		private final CANTalon RIGHT_MOTOR0_1;
 	    
 		
 	// Put methods for controlling this subsystem
     // here. Call these from Commands.
 public DriveSubsystem() {
-	leftMotor0 = new CANTalon(RobotMap.leftMotor0);
-	leftMotor1 = new CANTalon(RobotMap.leftMotor1);
-	rightMotor0 = new CANTalon(RobotMap.rightMotor0);
-	rightMotor1 = new CANTalon(RobotMap.rightMotor1);
-	RobotDrive drive = new RobotDrive(leftMotor0, leftMotor1, rightMotor0, rightMotor1);
-	leftMotor0.setFeedbackDevice(RobotMap.DRIVE_ENCODER1);
-	leftMotor0.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV); 
-	rightMotor0.setFeedbackDevice(RobotMap.DRIVE_ENCODER2);
-	rightMotor0.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV2);
+	LEFT_MOTOR0_0 = new CANTalon(RobotMap.LEFT_MOTOR0_0);
+	LEFT_MOTOR0_1 = new CANTalon(RobotMap.LEFT_MOTOR0_1);
+	RIGHT_MOTOR0_0 = new CANTalon(RobotMap.RIGHT_MOTOR_0);
+	RIGHT_MOTOR0_1 = new CANTalon(RobotMap.RIGHT_MOTOR_1);
+	RobotDrive Drive = new RobotDrive(LEFT_MOTOR0_0, LEFT_MOTOR0_1, RIGHT_MOTOR0_0, RIGHT_MOTOR0_1);
+	LEFT_MOTOR0_0.setFeedbackDevice(RobotMap.DRIVE_ENCODER1);
+	LEFT_MOTOR0_0.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV); 
+	RIGHT_MOTOR0_0.setFeedbackDevice(RobotMap.DRIVE_ENCODER2);
+	RIGHT_MOTOR0_0.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV2);
 	
 }	
+public void GyroBase(){
+	
+}
+
 	
 public void initDefaultCommand() {
         // Set the default command for a subsystem here.
