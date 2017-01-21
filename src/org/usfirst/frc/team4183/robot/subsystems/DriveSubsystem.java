@@ -21,7 +21,7 @@ public DriveSubsystem() {
 	LEFT_MOTOR0_0 = new CANTalon(RobotMap.LEFT_MOTOR0_0_ID);
 	LEFT_MOTOR0_1 = new CANTalon(RobotMap.LEFT_MOTOR0_1_ID);
 	RIGHT_MOTOR0_0 = new CANTalon(RobotMap.RIGHT_MOTOR_0_ID);
-	RIGHT_MOTOR0_1 = new CANTalon(RobotMap.RIGHT_MOTOR_1);
+	RIGHT_MOTOR0_1 = new CANTalon(RobotMap.RIGHT_MOTOR_1_ID);
 	RobotDrive Drive = new RobotDrive(LEFT_MOTOR0_0, LEFT_MOTOR0_1, RIGHT_MOTOR0_0, RIGHT_MOTOR0_1);
 	LEFT_MOTOR0_0.setFeedbackDevice(RobotMap.DRIVE_ENCODER1);
 	LEFT_MOTOR0_0.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV); 
