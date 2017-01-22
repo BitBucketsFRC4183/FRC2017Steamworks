@@ -10,11 +10,12 @@ import com.ctre.CANTalon;
  */
 public class RobotMap {
 	// No basis in reality, just random numbers I put
-	public static int leftMotor0 = 0;
-	public static int leftMotor1 = 1;
-	public static int rightMotor0 = 3;
-	public static int rightMotor1 = 4; 
+	public static int LEFT_MOTOR0_ID = 0;
+	public static int LEFT_MOTOR1_ID = 1;
+	public static int RIGHT_MOTOR0_ID = 3;
+	public static int RIGHT_MOTOR1_ID = 4; 
 	
+	public static int testMotor1 = 0;
 	public static final CANTalon.FeedbackDevice DRIVE_ENCODER1 = CANTalon.FeedbackDevice.QuadEncoder;
 	public static final int DRIVE_PULSES_PER_REV = 256; 
 	public static final CANTalon.FeedbackDevice DRIVE_ENCODER2 = CANTalon.FeedbackDevice.QuadEncoder;

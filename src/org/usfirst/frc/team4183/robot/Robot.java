@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import org.usfirst.frc.team4183.robot.subsystems.PrototypeSubsystem;
 
 import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
 
@@ -20,6 +21,7 @@ import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
  */
 public class Robot extends IterativeRobot {
 
+	public static PrototypeSubsystem prototypeSubsystem;
 	public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
 	public static OI oi;
 
@@ -36,6 +38,8 @@ public class Robot extends IterativeRobot {
 //		chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
+		SmartDashboard.putNumber("ClimbMotorCurrent", 0);
+		SmartDashboard.putNumber("Motor Velocity", 0);
 	}
 
 	/**
@@ -109,8 +113,14 @@ public class Robot extends IterativeRobot {
 	/**
 	 * This function is called periodically during test mode
 	 */
+	
+	@Override
+	public void testInit() {
+		prototypeSubsystem = new PrototypeSubsystem();
+	}
 	@Override
 	public void testPeriodic() {
+		Scheduler.getInstance().run();
 		LiveWindow.run();
 	}
 }
