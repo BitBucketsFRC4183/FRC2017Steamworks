@@ -10,16 +10,39 @@ import com.ctre.CANTalon;
  */
 public class RobotMap {
 	// No basis in reality, just random numbers I put
+	public static int LEFT_MOTOR0_ID = 0;
+	public static int LEFT_MOTOR1_ID = 1;
+	public static int RIGHT_MOTOR0_ID = 3;
+	public static int RIGHT_MOTOR1_ID = 4; 
+	
 	public static int testMotor1 = 0;
-	public static final int RIGHT_MOTOR1_ID = 4; 
 	public static final CANTalon.FeedbackDevice DRIVE_ENCODER1 = CANTalon.FeedbackDevice.QuadEncoder;
 	public static final int DRIVE_PULSES_PER_REV = 256; 
 	public static final CANTalon.FeedbackDevice DRIVE_ENCODER2 = CANTalon.FeedbackDevice.QuadEncoder;
 	public static final int DRIVE_PULSES_PER_REV2 = 256; 
-
-  public static int climbMotor = 5;
-
-  // For example to map the left and right motors, you could define the
+	
+	public static int climbMotor = 5;
+	
+	
+	
+	
+//stuff for the BALL MANIPULATOR is below here
+	public static int shooterMotor = 9; 
+	public static int vertiMotor = 10;
+	public static int horizMotor = 11;
+	
+	public static final CANTalon.FeedbackDevice SHOOTER_ROLLER_ENCODER = CANTalon.FeedbackDevice.QuadEncoder;
+	public static final CANTalon.FeedbackDevice VERTICAL_CONVEYER_ENCODER = CANTalon.FeedbackDevice.QuadEncoder;
+	public static final CANTalon.FeedbackDevice HORIZONTAL_CONVEYER_ENCODER = CANTalon.FeedbackDevice.QuadEncoder;
+	
+	public static final int SHOOTER_ROLLER_PULSES_PER_REV = 256;
+	public static final int VERTI_CONV_PULSES_PER_REV = 256;
+	public static final int HORIZ_CONV_PULSES_PER_REV = 256;
+	
+	
+	
+	
+	// For example to map the left and right motors, you could define the
 	// following variables to use with your drivetrain subsystem.
 	// public static int leftMotor = 1;
 	// public static int rightMotor = 2;
