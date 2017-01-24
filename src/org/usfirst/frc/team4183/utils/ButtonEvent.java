@@ -27,7 +27,7 @@ public class ButtonEvent {
 
 	/**
 	 * Constructor
-	 * @param button The HID, i.e a Joystick
+	 * @param joystick The HID, i.e a Joystick
 	 * @param buttonNum The raw button number on the joystick
 	 */
 	ButtonEvent( GenericHID joystick, int buttonNum) {
