@@ -1,6 +1,8 @@
-package org.usfirst.frc.team4183.robot.commands;
+package org.usfirst.frc.team4183.utils;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 /**
  * Wrap a joystick button in this class,
@@ -11,19 +13,25 @@ import edu.wpi.first.wpilibj.GenericHID;
  */
 public class ButtonEvent {
 	
-	  private final GenericHID m_joystick;
-	  private final int m_buttonNum;
-	  
-	  boolean m_wasPressed;
+	private final Button m_button;
+	boolean m_wasPressed;
 	
 	/**
 	 * Constructor
-	 * @param joystick The HID, i.e. from new Joystick(0)
+	 * @param button The Button to wrap
+	 */
+	ButtonEvent( Button button) {
+		m_button = button;
+		m_wasPressed = isPressed();
+	}
+
+	/**
+	 * Constructor
+	 * @param button The HID, i.e a Joystick
 	 * @param buttonNum The raw button number on the joystick
 	 */
 	ButtonEvent( GenericHID joystick, int buttonNum) {
-		m_joystick = joystick;
-		m_buttonNum = buttonNum;		
+		m_button = new JoystickButton( joystick, buttonNum);
 		m_wasPressed = isPressed();
 	}
 		
@@ -31,7 +39,7 @@ public class ButtonEvent {
 	 * Returns true if the button is currently pressed
 	 */
 	public boolean isPressed() {
-	    return m_joystick.getRawButton(m_buttonNum);
+		return m_button.get();
 	}
 	
 	/**
