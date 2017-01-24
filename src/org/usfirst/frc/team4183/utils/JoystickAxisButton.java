@@ -6,18 +6,18 @@ import edu.wpi.first.wpilibj.buttons.Button;
 
 public class JoystickAxisButton extends Button {
 	private Joystick joystick;
-	private AxisType axis;
+	private int axisNum;
 	private double sign;
 	
-	public JoystickAxisButton(Joystick joystick, AxisType axis, boolean positive) {
+	public JoystickAxisButton(Joystick joystick, int axisNum, boolean positive) {
 		this.joystick = joystick;
-		this.axis = axis;
+		this.axisNum = axisNum;
 		sign = positive ? 1.0 : -1.0;
 	}
 	
 	@Override
 	public boolean get() {
-		return joystick.getAxis(axis)*sign > 0.75;
+		return joystick.getRawAxis(axisNum)*sign > 0.75;
 	}
 
 }
