@@ -1,7 +1,6 @@
 package org.usfirst.frc.team4183.utils;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.buttons.Button;
 
 public class JoystickAxisButton extends Button {
