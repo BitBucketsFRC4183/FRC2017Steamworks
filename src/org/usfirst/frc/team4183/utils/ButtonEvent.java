@@ -20,7 +20,7 @@ public class ButtonEvent {
 	 * Constructor
 	 * @param button The Button to wrap
 	 */
-	ButtonEvent( Button button) {
+	public ButtonEvent( Button button) {
 		m_button = button;
 		m_wasPressed = isPressed();
 	}
@@ -30,7 +30,7 @@ public class ButtonEvent {
 	 * @param joystick The HID, i.e a Joystick
 	 * @param buttonNum The raw button number on the joystick
 	 */
-	ButtonEvent( GenericHID joystick, int buttonNum) {
+	public ButtonEvent( GenericHID joystick, int buttonNum) {
 		m_button = new JoystickButton( joystick, buttonNum);
 		m_wasPressed = isPressed();
 	}
