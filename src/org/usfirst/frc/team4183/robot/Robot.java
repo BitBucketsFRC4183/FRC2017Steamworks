@@ -28,12 +28,16 @@ public class Robot extends IterativeRobot {
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
+	private static Robot robotInstance;
+	public static Robot instance() { return robotInstance; }
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
+		robotInstance = this;
 		oi = OI.oiFactory( OI.WhoIsDriving.DRIVER_A);
 		
 //		chooser.addDefault("Default Auto", new ExampleCommand());
@@ -123,5 +127,11 @@ public class Robot extends IterativeRobot {
 	public void testPeriodic() {
 		Scheduler.getInstance().run();
 		LiveWindow.run();
+	}
+	
+
+	// TODO implement command testing mode
+	public boolean isCommandTestingMode() {
+		return false;		
 	}
 }
