@@ -33,20 +33,28 @@ public class OI {
 		return null;
 	}
 
+	
+	// Access to Buttons for Commands:
 
-	// These are what Commands should use, ie: OI.btnLogicalName.onPressed().
-	// The physical buttons are mapped to these logical buttons
-	// in the constructor for the driver-specific OI subclass, e.g. OI_driverA.
+	// If your Command needs rising or falling edge detect on a button,
+	// use this method to get a ButtonEvent for that purpose.
+	// In initialize(), get your ButtonEvent: OI.ButtonEvent btnShoot = OI.getBtnEvt( OI.btnShoot).
+	// In isFinished(), test the ButtonEven: btnShoot.onPressed() or btnShoot.onReleased().
+	public static ButtonEvent getBtnEvt( Button btn) { return new ButtonEvent(btn); }
+
+	// If your Command doesn't require edge detect on the button,
+	// then you can look at one of these directly,
+	// in isFinished(): OI.btnShoot.get().
 	// FIXME complete this list, using actual meaningful logical names;
 	// the ones here are just examples.
-	public static ButtonEvent btnShoot; 
-	public static ButtonEvent btnGrab;
-	public static ButtonEvent burstIntoFlame;
+	public static Button btnShoot; 
+	public static Button btnGrab;
+	public static Button burstIntoFlame;
 	// etc for up to 14 buttons on each controller (might be fewer)
 
-	// These are what Commands should use, ie: OI.axisFunctionName.get(). 
-	// The physical axis are mapped to these logical axis
-	// in the constructor for the driver-specific OK subclass, e.g. OI_driverA. 
+	
+	// Access to Axis for Commands:
+	// In execute(), OI.axisForward.get(). 
 	// FIXME complete this list, using actual meaningful logical names;
 	// the ones here are just examples.
 	public static Axis axisForward;
@@ -67,40 +75,40 @@ public class OI {
 	protected static final Joystick controller1 = new Joystick(1);
 
 
-	// Create ButtonEvent for each physical button on each controller (14 for each controller)
+	// Create Button for each physical button on each controller (14 for each controller)
 	// This list is ugly but need never be touched again.
 	// These are protected because NOT meant to be used externally;
 	// only used by Driver-specific subclass to map physical buttons to logical buttons.
 	// 14 on controller 0
-	protected static final ButtonEvent b0Square = new ButtonEvent( controller0, PS4Constants.SQUARE.getValue());
-	protected static final ButtonEvent  b0Cross = new ButtonEvent( controller0, PS4Constants.CROSS.getValue());
-	protected static final ButtonEvent b0Circle = new ButtonEvent( controller0, PS4Constants.CIRCLE.getValue());
-	protected static final ButtonEvent b0Triangle = new ButtonEvent(controller0, PS4Constants.TRIANGLE.getValue());
-	protected static final ButtonEvent b0L1 = new ButtonEvent(controller0, PS4Constants.L1.getValue());
-	protected static final ButtonEvent b0R1 = new ButtonEvent(controller0, PS4Constants.R1.getValue());
-	protected static final ButtonEvent b0L2 = new ButtonEvent(controller0, PS4Constants.L2.getValue());
-	protected static final ButtonEvent b0R2 = new ButtonEvent(controller0, PS4Constants.R2.getValue());
-	protected static final ButtonEvent b0Share = new ButtonEvent(controller0, PS4Constants.SHARE.getValue());
-	protected static final ButtonEvent b0Options = new ButtonEvent(controller0, PS4Constants.OPTIONS.getValue());
-	protected static final ButtonEvent b0Lstick = new ButtonEvent(controller0, PS4Constants.L_STICK.getValue());
-	protected static final ButtonEvent b0Rstick = new ButtonEvent(controller0, PS4Constants.R_STICK.getValue());
-	protected static final ButtonEvent b0PS4 = new ButtonEvent(controller0, PS4Constants.PS4.getValue());
-	protected static final ButtonEvent b0Trackpad = new ButtonEvent(controller0, PS4Constants.TRACKPAD.getValue());
+	protected static final Button b0Square = new JoystickButton( controller0, PS4Constants.SQUARE.getValue());
+	protected static final Button  b0Cross = new JoystickButton( controller0, PS4Constants.CROSS.getValue());
+	protected static final Button b0Circle = new JoystickButton( controller0, PS4Constants.CIRCLE.getValue());
+	protected static final Button b0Triangle = new JoystickButton(controller0, PS4Constants.TRIANGLE.getValue());
+	protected static final Button b0L1 = new JoystickButton(controller0, PS4Constants.L1.getValue());
+	protected static final Button b0R1 = new JoystickButton(controller0, PS4Constants.R1.getValue());
+	protected static final Button b0L2 = new JoystickButton(controller0, PS4Constants.L2.getValue());
+	protected static final Button b0R2 = new JoystickButton(controller0, PS4Constants.R2.getValue());
+	protected static final Button b0Share = new JoystickButton(controller0, PS4Constants.SHARE.getValue());
+	protected static final Button b0Options = new JoystickButton(controller0, PS4Constants.OPTIONS.getValue());
+	protected static final Button b0Lstick = new JoystickButton(controller0, PS4Constants.L_STICK.getValue());
+	protected static final Button b0Rstick = new JoystickButton(controller0, PS4Constants.R_STICK.getValue());
+	protected static final Button b0PS4 = new JoystickButton(controller0, PS4Constants.PS4.getValue());
+	protected static final Button b0Trackpad = new JoystickButton(controller0, PS4Constants.TRACKPAD.getValue());
 	// 14 more for controller 1
-	protected static final ButtonEvent b1Square = new ButtonEvent(controller1, PS4Constants.SQUARE.getValue());
-	protected static final ButtonEvent b1Cross = new ButtonEvent(controller1, PS4Constants.CROSS.getValue());
-	protected static final ButtonEvent b1Circle = new ButtonEvent(controller1, PS4Constants.CIRCLE.getValue());
-	protected static final ButtonEvent b1Triangle = new ButtonEvent(controller1, PS4Constants.TRIANGLE.getValue());
-	protected static final ButtonEvent b1L1 = new ButtonEvent(controller1, PS4Constants.L1.getValue());
-	protected static final ButtonEvent b1R1 = new ButtonEvent(controller1, PS4Constants.R1.getValue());
-	protected static final ButtonEvent b1L2 = new ButtonEvent(controller1, PS4Constants.L2.getValue());
-	protected static final ButtonEvent b1R2 = new ButtonEvent(controller1, PS4Constants.R2.getValue());
-	protected static final ButtonEvent b1Share = new ButtonEvent(controller1, PS4Constants.SHARE.getValue());
-	protected static final ButtonEvent b1Options = new ButtonEvent(controller1, PS4Constants.OPTIONS.getValue());
-	protected static final ButtonEvent b1Lstick = new ButtonEvent(controller1, PS4Constants.L_STICK.getValue());
-	protected static final ButtonEvent b1Rstick = new ButtonEvent(controller1, PS4Constants.R_STICK.getValue());
-	protected static final ButtonEvent b1PS4 = new ButtonEvent(controller1, PS4Constants.PS4.getValue());
-	protected static final ButtonEvent b1Trackpad = new ButtonEvent(controller1, PS4Constants.TRACKPAD.getValue());
+	protected static final Button b1Square = new JoystickButton(controller1, PS4Constants.SQUARE.getValue());
+	protected static final Button b1Cross = new JoystickButton(controller1, PS4Constants.CROSS.getValue());
+	protected static final Button b1Circle = new JoystickButton(controller1, PS4Constants.CIRCLE.getValue());
+	protected static final Button b1Triangle = new JoystickButton(controller1, PS4Constants.TRIANGLE.getValue());
+	protected static final Button b1L1 = new JoystickButton(controller1, PS4Constants.L1.getValue());
+	protected static final Button b1R1 = new JoystickButton(controller1, PS4Constants.R1.getValue());
+	protected static final Button b1L2 = new JoystickButton(controller1, PS4Constants.L2.getValue());
+	protected static final Button b1R2 = new JoystickButton(controller1, PS4Constants.R2.getValue());
+	protected static final Button b1Share = new JoystickButton(controller1, PS4Constants.SHARE.getValue());
+	protected static final Button b1Options = new JoystickButton(controller1, PS4Constants.OPTIONS.getValue());
+	protected static final Button b1Lstick = new JoystickButton(controller1, PS4Constants.L_STICK.getValue());
+	protected static final Button b1Rstick = new JoystickButton(controller1, PS4Constants.R_STICK.getValue());
+	protected static final Button b1PS4 = new JoystickButton(controller1, PS4Constants.PS4.getValue());
+	protected static final Button b1Trackpad = new JoystickButton(controller1, PS4Constants.TRACKPAD.getValue());
 
 
 	// Create Axis for each physical axis on each controller.
@@ -272,8 +280,7 @@ class OI_DriverBase extends OI {
 		axisSomeOtherThing =  a0RightY;
 		// etc for all logical axis that are used...
 		// every one that's used must get set or there's going to be null ref exceptions!
-	}
-	
+	}	
 }
 
 // Need to define one of these OI subclasses for each driver
