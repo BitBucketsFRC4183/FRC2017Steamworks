@@ -62,9 +62,9 @@ public class OI {
 
 	private PhysicalController driverController, operatorController;
 
-	// Protected so nobody can instantiate class OI directly - 
+	// Private so nobody can instantiate class OI directly - 
 	// forced to use public factory method.
-	protected OI() {
+	private OI() {
 		driverController = new PhysicalController( new Joystick(0));
 		operatorController = new PhysicalController( new Joystick(1));
 		
@@ -72,7 +72,7 @@ public class OI {
 		doDefaultMapping();		
 	}
 	
-	protected OI( Driver driver, Operator operator) {
+	private OI( Driver driver, Operator operator) {
 		// Create, setup default mapping
 		this();
 		
@@ -80,7 +80,7 @@ public class OI {
 		// Make sure to pass driverController!
 		switch(driver) {
 		case JOE:
-			map_driver_Joe( driverController);
+			mapDriver_Joe( driverController);
 			break;
 		case SAM:
 			// Currently no remapping for Sam
@@ -91,7 +91,7 @@ public class OI {
 		// Make sure to pass operatorController!
 		switch(operator) {
 		case BILL:
-			map_operator_Bill( operatorController);
+			mapOperator_Bill( operatorController);
 			break;
 		case MIKE:
 			// Currently no remapping for Mike
@@ -104,7 +104,7 @@ public class OI {
 	// Example: remap driver controller for Joe as driver
 	// TODO: change name of method for real driver name,
 	// and of course put in actual desired mapping
-	private void map_driver_Joe( PhysicalController controller) {
+	private void mapDriver_Joe( PhysicalController controller) {
 		// Change from default: btnShoot <- Cross, btnGrab <- Square
 		btnShoot = controller.bCross;
 		btnGrab = controller.bSquare;
@@ -113,7 +113,7 @@ public class OI {
 	// Example: remap operator controller for Mike as operator
 	// TODO: change name of method for real operator name,
 	// and of course put in actual desired mapping
-	private void map_operator_Bill( PhysicalController controller) {
+	private void mapOperator_Bill( PhysicalController controller) {
 		// Change from default: btnBurstIntoFlames <- Circle
 		btnBurstIntoFlame = controller.bCircle;
 	}
@@ -136,23 +136,24 @@ public class OI {
 	}
 
 
+	
 	// Inner classes - defined & used only in here
 
 	// Represents the physical buttons & axis on one controller
 	private static class PhysicalController {
 
 		@SuppressWarnings("unused")
-		protected final Button 
+		private final Button 
 			bSquare, bCross, bCircle,  bTriangle, 
 			bL1, bR1, bL2, bR2,
 			bShare, bOptions, bLstick, bRstick,
 			bPS4, bTrackpad;
 
 		@SuppressWarnings("unused")
-		protected final Axis 
+		private final Axis 
 			aLeftX, aLeftY, aRightX, aRightY, aL2, aR2;
 
-		PhysicalController( Joystick controller) {
+		private PhysicalController( Joystick controller) {
 			bSquare = new JoystickButton(controller, PS4Constants.SQUARE.getValue());
 			bCross = new JoystickButton(controller, PS4Constants.CROSS.getValue());
 			bCircle = new JoystickButton(controller, PS4Constants.CIRCLE.getValue());
@@ -179,7 +180,7 @@ public class OI {
 
 
 	// Represents logical axis; get() returns the axis value (-1..+1).
-	protected static class Axis {
+	public static class Axis {
 		Joystick controller;
 		int axisNum;
 		boolean invert;

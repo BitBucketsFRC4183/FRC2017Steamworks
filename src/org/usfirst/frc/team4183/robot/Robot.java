@@ -34,7 +34,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		oi = OI.oiFactory( OI.WhoIsDriving.DRIVER_A);
+		oi = OI.oiFactory();
 		
 //		chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
@@ -101,6 +101,11 @@ public class Robot extends IterativeRobot {
 		// this line or comment it out.
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
+		
+		// Re-create OI with specific driver & operator
+		// TODO use real names
+		oi = OI.oiFactory( OI.Driver.JOE, OI.Operator.BILL);
+
 	}
 
 	/**
