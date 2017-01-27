@@ -28,6 +28,8 @@ public class Robot extends IterativeRobot {
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
+	// Anybody needing the Robot instance can get by doing
+	// Robot.instance()
 	private static Robot robotInstance;
 	public static Robot instance() { return robotInstance; }
 	
