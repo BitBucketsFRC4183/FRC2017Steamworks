@@ -11,6 +11,15 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
  */
 public class OI {
 
+	// Singleton method; use OI.instance() to get the OI instance.
+	// Should do this in Robot.robotInit().
+	private static OI inst;
+	public static OI instance() {
+		if(inst == null)
+			inst = new OI();
+		return inst;		
+	}
+	
 	public enum Driver {
 		JOE, SAM;  // TODO Put in actual names, add more as needed
 	}
@@ -18,17 +27,33 @@ public class OI {
 	public enum Operator {
 		BILL, MIKE;  // TODO Put in actual names, add more as needed
 	}
-
-	// Factory methods...
-	// In Robot, use this to get the OI instance.
-	public static OI oiFactory( Driver driver, Operator operator) {
-		return new OI( driver, operator);
-	}
 	
-	public static OI oiFactory() {
-		return new OI();
+	public void mapDriverOperator( Driver driver, Operator operator) {
+		
+		// Override default mappings for particular driver.
+		// Make sure to pass driverController!
+		switch(driver) {
+		case JOE:
+			mapDriver_Joe( driverController);
+			break;
+		case SAM:
+			// Currently no remapping for Sam
+			break;
+		}
+		
+		// Override default mappings for particular operator
+		// Make sure to pass operatorController!
+		switch(operator) {
+		case BILL:
+			mapOperator_Bill( operatorController);
+			break;
+		case MIKE:
+			// Currently no remapping for Mike
+			break;
+		}		
 	}
 
+	
 	// Access to Buttons for Commands:
 
 	// If your Command needs rising or falling edge detect on a button,
@@ -63,7 +88,7 @@ public class OI {
 	private PhysicalController driverController, operatorController;
 
 	// Private so nobody can instantiate class OI directly - 
-	// forced to use public factory method.
+	// forced to use instance().
 	private OI() {
 		driverController = new PhysicalController( new Joystick(0));
 		operatorController = new PhysicalController( new Joystick(1));
@@ -72,32 +97,6 @@ public class OI {
 		doDefaultMapping();		
 	}
 	
-	private OI( Driver driver, Operator operator) {
-		// Create, setup default mapping
-		this();
-		
-		// Override default mappings for particular driver.
-		// Make sure to pass driverController!
-		switch(driver) {
-		case JOE:
-			mapDriver_Joe( driverController);
-			break;
-		case SAM:
-			// Currently no remapping for Sam
-			break;
-		}
-		
-		// Override default mappings for particular operator
-		// Make sure to pass operatorController!
-		switch(operator) {
-		case BILL:
-			mapOperator_Bill( operatorController);
-			break;
-		case MIKE:
-			// Currently no remapping for Mike
-			break;
-		}		
-	}
 
 	// Person-specific mapping functions.
 	
