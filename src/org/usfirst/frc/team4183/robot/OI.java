@@ -11,26 +11,46 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
  */
 public class OI {
 
-	public enum WhoIsDriving {
-		DRIVER_A, DRIVER_B;  // Add more as needed
+	// Singleton method; use OI.instance() to get the OI instance.
+	// Should do this in Robot.robotInit().
+	private static OI inst;
+	public static OI instance() {
+		if(inst == null)
+			inst = new OI();
+		return inst;		
 	}
-
-	// Factory method...
-	// In Robot, use this to create the correct OI subclass based on who's driving.
-	public static OI oiFactory( WhoIsDriving driver) {
-
-		switch( driver) {
-		case DRIVER_A:
-			return new OI_DriverA();
-
-		case DRIVER_B:
-			return new OI_DriverB();
-			
-		// Add more cases to handle each enum value
+	
+	public enum Driver {
+		JOE, SAM;  // TODO Put in actual names, add more as needed
+	}
+	
+	public enum Operator {
+		BILL, MIKE;  // TODO Put in actual names, add more as needed
+	}
+	
+	public void mapDriverOperator( Driver driver, Operator operator) {
+		
+		// Override default mappings for particular driver.
+		// Make sure to pass driverController!
+		switch(driver) {
+		case JOE:
+			mapDriver_Joe( driverController);
+			break;
+		case SAM:
+			// Currently no remapping for Sam
+			break;
 		}
-
-		//  Must not get here
-		return null;
+		
+		// Override default mappings for particular operator
+		// Make sure to pass operatorController!
+		switch(operator) {
+		case BILL:
+			mapOperator_Bill( operatorController);
+			break;
+		case MIKE:
+			// Currently no remapping for Mike
+			break;
+		}		
 	}
 
 	
@@ -45,17 +65,17 @@ public class OI {
 	// If your Command doesn't require edge detect on the button,
 	// then you can look at one of these directly,
 	// in isFinished(): OI.btnShoot.get().
-	// FIXME complete this list, using actual meaningful logical names;
+	// TODO complete this list, using actual meaningful logical names;
 	// the ones here are just examples.
 	public static Button btnShoot; 
 	public static Button btnGrab;
-	public static Button burstIntoFlame;
+	public static Button btnBurstIntoFlame;
 	// etc for up to 14 buttons on each controller (might be fewer)
 
-	
+
 	// Access to Axis for Commands:
 	// In execute(), OI.axisForward.get(). 
-	// FIXME complete this list, using actual meaningful logical names;
+	// TODO complete this list, using actual meaningful logical names;
 	// the ones here are just examples.
 	public static Axis axisForward;
 	public static Axis axisTurn;
@@ -65,78 +85,101 @@ public class OI {
 	// End of public interface
 
 
+	private PhysicalController driverController, operatorController;
+
+	// Private so nobody can instantiate class OI directly - 
+	// forced to use instance().
+	private OI() {
+		driverController = new PhysicalController( new Joystick(0));
+		operatorController = new PhysicalController( new Joystick(1));
+		
+		// Default mapping
+		doDefaultMapping();		
+	}
+	
+
+	// Person-specific mapping functions.
+	
+	// Example: remap driver controller for Joe as driver
+	// TODO: change name of method for real driver name,
+	// and of course put in actual desired mapping
+	private void mapDriver_Joe( PhysicalController controller) {
+		// Change from default: btnShoot <- Cross, btnGrab <- Square
+		btnShoot = controller.bCross;
+		btnGrab = controller.bSquare;
+	}
+	
+	// Example: remap operator controller for Mike as operator
+	// TODO: change name of method for real operator name,
+	// and of course put in actual desired mapping
+	private void mapOperator_Bill( PhysicalController controller) {
+		// Change from default: btnBurstIntoFlames <- Circle
+		btnBurstIntoFlame = controller.bCircle;
+	}
 	
 	
-	// Make it so nobody can instantiate class OI directly - forced to use factory method
-	protected OI() {}
-
-	// Joysticks for the 2 controllers
-	protected static final Joystick controller0 = new Joystick(0);
-	protected static final Joystick controller1 = new Joystick(1);
-
-
-	// Create Button for each physical button on each controller (14 for each controller)
-	// This list is ugly but need never be touched again.
-	// These are protected because NOT meant to be used externally;
-	// only used by Driver-specific subclass to map physical buttons to logical buttons.
-	// 14 on controller 0
-	protected static final Button b0Square = new JoystickButton( controller0, PS4Constants.SQUARE.getValue());
-	protected static final Button  b0Cross = new JoystickButton( controller0, PS4Constants.CROSS.getValue());
-	protected static final Button b0Circle = new JoystickButton( controller0, PS4Constants.CIRCLE.getValue());
-	protected static final Button b0Triangle = new JoystickButton(controller0, PS4Constants.TRIANGLE.getValue());
-	protected static final Button b0L1 = new JoystickButton(controller0, PS4Constants.L1.getValue());
-	protected static final Button b0R1 = new JoystickButton(controller0, PS4Constants.R1.getValue());
-	protected static final Button b0L2 = new JoystickButton(controller0, PS4Constants.L2.getValue());
-	protected static final Button b0R2 = new JoystickButton(controller0, PS4Constants.R2.getValue());
-	protected static final Button b0Share = new JoystickButton(controller0, PS4Constants.SHARE.getValue());
-	protected static final Button b0Options = new JoystickButton(controller0, PS4Constants.OPTIONS.getValue());
-	protected static final Button b0Lstick = new JoystickButton(controller0, PS4Constants.L_STICK.getValue());
-	protected static final Button b0Rstick = new JoystickButton(controller0, PS4Constants.R_STICK.getValue());
-	protected static final Button b0PS4 = new JoystickButton(controller0, PS4Constants.PS4.getValue());
-	protected static final Button b0Trackpad = new JoystickButton(controller0, PS4Constants.TRACKPAD.getValue());
-	// 14 more for controller 1
-	protected static final Button b1Square = new JoystickButton(controller1, PS4Constants.SQUARE.getValue());
-	protected static final Button b1Cross = new JoystickButton(controller1, PS4Constants.CROSS.getValue());
-	protected static final Button b1Circle = new JoystickButton(controller1, PS4Constants.CIRCLE.getValue());
-	protected static final Button b1Triangle = new JoystickButton(controller1, PS4Constants.TRIANGLE.getValue());
-	protected static final Button b1L1 = new JoystickButton(controller1, PS4Constants.L1.getValue());
-	protected static final Button b1R1 = new JoystickButton(controller1, PS4Constants.R1.getValue());
-	protected static final Button b1L2 = new JoystickButton(controller1, PS4Constants.L2.getValue());
-	protected static final Button b1R2 = new JoystickButton(controller1, PS4Constants.R2.getValue());
-	protected static final Button b1Share = new JoystickButton(controller1, PS4Constants.SHARE.getValue());
-	protected static final Button b1Options = new JoystickButton(controller1, PS4Constants.OPTIONS.getValue());
-	protected static final Button b1Lstick = new JoystickButton(controller1, PS4Constants.L_STICK.getValue());
-	protected static final Button b1Rstick = new JoystickButton(controller1, PS4Constants.R_STICK.getValue());
-	protected static final Button b1PS4 = new JoystickButton(controller1, PS4Constants.PS4.getValue());
-	protected static final Button b1Trackpad = new JoystickButton(controller1, PS4Constants.TRACKPAD.getValue());
+	
+	private void doDefaultMapping() {
+		
+		// Assign to EVERY logical button a physical button
+		// TODO finish this list w/real logical button names & real default mapping
+		btnShoot = driverController.bSquare;
+		btnGrab = driverController.bCross;
+		btnBurstIntoFlame = operatorController.bSquare;
+		
+		// Assign to EVERY logical axis a physical axis
+		// TODO finish this list w/real logical axis names & real mapping
+		axisForward = driverController.aLeftY;
+		axisTurn = driverController.aLeftX;
+		axisSomeOtherThing = operatorController.aL2;		
+	}
 
 
-	// Create Axis for each physical axis on each controller.
-	// This list is ugly but need never be touched again. 
-	// These are protected because NOT meant to be used externally;
-	// only used by Driver-specific subclass to map these physical axis to logical axis.
-	// 6 on controller 0
-	protected static final Axis a0LeftX = new Axis( controller0, PS4Constants.LEFT_STICK_X.getValue(), false);
-	protected static final Axis a0LeftY = new Axis( controller0, PS4Constants.LEFT_STICK_Y.getValue(), true);
-	protected static final Axis a0RightX = new Axis( controller0, PS4Constants.RIGHT_STICK_X.getValue(), false);
-	protected static final Axis a0RightY = new Axis( controller0, PS4Constants.RIGHT_STICK_Y.getValue(), true);
-	protected static final Axis a0L2 = new Axis( controller0, PS4Constants.L2_AXIS.getValue(), false);
-	protected static final Axis a0R2 = new Axis( controller0, PS4Constants.R2_AXIS.getValue(), false);
-	// 6 more for controller 1
-	protected static final Axis a1LeftX = new Axis( controller1, PS4Constants.LEFT_STICK_X.getValue(), false);
-	protected static final Axis a1LeftY = new Axis( controller1, PS4Constants.LEFT_STICK_Y.getValue(), true);
-	protected static final Axis a1RightX = new Axis( controller1, PS4Constants.RIGHT_STICK_X.getValue(), false);
-	protected static final Axis a1RightY = new Axis( controller1, PS4Constants.RIGHT_STICK_Y.getValue(), true);
-	protected static final Axis a1L2 = new Axis( controller1, PS4Constants.L2_AXIS.getValue(), false);
-	protected static final Axis a1R2 = new Axis( controller1, PS4Constants.R2_AXIS.getValue(), false);
-
-
-
+	
 	// Inner classes - defined & used only in here
+
+	// Represents the physical buttons & axis on one controller
+	private static class PhysicalController {
+
+		@SuppressWarnings("unused")
+		private final Button 
+			bSquare, bCross, bCircle,  bTriangle, 
+			bL1, bR1, bL2, bR2,
+			bShare, bOptions, bLstick, bRstick,
+			bPS4, bTrackpad;
+
+		@SuppressWarnings("unused")
+		private final Axis 
+			aLeftX, aLeftY, aRightX, aRightY, aL2, aR2;
+
+		private PhysicalController( Joystick controller) {
+			bSquare = new JoystickButton(controller, PS4Constants.SQUARE.getValue());
+			bCross = new JoystickButton(controller, PS4Constants.CROSS.getValue());
+			bCircle = new JoystickButton(controller, PS4Constants.CIRCLE.getValue());
+			bTriangle = new JoystickButton(controller, PS4Constants.TRIANGLE.getValue());
+			bL1 = new JoystickButton(controller, PS4Constants.L1.getValue());
+			bR1 = new JoystickButton(controller, PS4Constants.R1.getValue());
+			bL2 = new JoystickButton(controller, PS4Constants.L2.getValue());
+			bR2 = new JoystickButton(controller, PS4Constants.R2.getValue());
+			bShare = new JoystickButton(controller, PS4Constants.SHARE.getValue());
+			bOptions = new JoystickButton(controller, PS4Constants.OPTIONS.getValue());
+			bLstick = new JoystickButton(controller, PS4Constants.L_STICK.getValue());
+			bRstick = new JoystickButton(controller, PS4Constants.R_STICK.getValue());
+			bPS4 = new JoystickButton(controller, PS4Constants.PS4.getValue());
+			bTrackpad = new JoystickButton(controller, PS4Constants.TRACKPAD.getValue());
+
+			aLeftX = new Axis( controller, PS4Constants.LEFT_STICK_X.getValue(), false);
+			aLeftY = new Axis( controller, PS4Constants.LEFT_STICK_Y.getValue(), true);
+			aRightX = new Axis( controller, PS4Constants.RIGHT_STICK_X.getValue(), false);
+			aRightY = new Axis( controller, PS4Constants.RIGHT_STICK_Y.getValue(), true);
+			aL2 = new Axis( controller, PS4Constants.L2_AXIS.getValue(), false);
+			aR2 = new Axis( controller, PS4Constants.R2_AXIS.getValue(), false);		
+		}
+	}
 
 
 	// Represents logical axis; get() returns the axis value (-1..+1).
-	protected static class Axis {
+	public static class Axis {
 		Joystick controller;
 		int axisNum;
 		boolean invert;
@@ -145,7 +188,7 @@ public class OI {
 			this.axisNum = axisNum;
 			this.invert = invert;
 		}
-		
+
 		/**
 		 * 
 		 * @return Axis value, [-1..1] (except the L2 & R2, they run from 0 to 1). 
@@ -166,7 +209,7 @@ public class OI {
 			m_button = button;
 			m_wasPressed = isPressed();
 		}
-		
+
 		protected ButtonEvent( Joystick cntrl, int buttonNum) {
 			this( new JoystickButton( cntrl, buttonNum));		
 		}
@@ -212,11 +255,11 @@ public class OI {
 	// Can use this to wrap a RawAxis, then it can also be used as a Button
 	public static class JoystickAxisButton extends Button {
 		private final Axis axis;
-		
+
 		protected JoystickAxisButton(Axis axis) {
 			this.axis = axis;
 		}
-		
+
 		@Override 
 		public boolean get() {
 			return axis.get() > 0.75;
@@ -224,7 +267,7 @@ public class OI {
 	}
 
 
-	// Left these comments in for convenience...maybe delete them later??
+	// Left these Template comments in for convenience... TODO delete them later
 
 	//// CREATING BUTTONS
 	// One type of button is a joystick button which is any button on a
@@ -254,62 +297,6 @@ public class OI {
 	// until it is finished as determined by it's isFinished method.
 	// button.whenReleased(new ExampleCommand());
 }
-
-class OI_DriverBase extends OI {
-	
-	OI_DriverBase() {
-		
-		// Do the default mappings for all buttons & axis.
-		// This will save typing in the subclasses, 'cause hopefully all you'll have to do there
-		// is make a few changes for the specific Driver. 
-
-		// Default mapping for the buttons.
-		// Each line has form: btnLogical = buttonPhysical.
-		// FIXME These are just examples, actual logical names & correct mapping.
-		btnShoot = b0Square;  // e.g. SQUARE button on cntrl 0 performs "shoot" function
-		btnGrab = b0L2;       // and L2 button on cntrl 0 performs "grab" function
-		burstIntoFlame = b0Cross;  // Wouldn't hit this one if I were you.
-		// etc for all logical buttons that are used...
-		// every one that's used must get set or there's going to be null ref exceptions!
-
-		// Default mapping for the axis.
-		// Each line has form: axisLogical = axisPhysical.
-		// FIXME These are just examples, finish this with actual logical names & correct mapping.
-		axisForward = a0LeftY;
-		axisTurn = a0LeftX;	
-		axisSomeOtherThing =  a0RightY;
-		// etc for all logical axis that are used...
-		// every one that's used must get set or there's going to be null ref exceptions!
-	}	
-}
-
-// Need to define one of these OI subclasses for each driver
-class OI_DriverA extends OI_DriverBase {
-
-	OI_DriverA() {
-
-		// Remap any buttons that DIFFER from default mapping for Driver A.
-		// Each line has form: btnLogical = buttonPhysical
-		// These are just examples.
-		btnShoot = b0Cross;  // e.g. CROSS button on cntrl 0 performs "shoot" function
-		// etc for all logical buttons that are different from defaults
-
-		// Remap any axis that DIFFER from default mapping for Driver A.
-		// Each line has form: axisLogical = axisPhysical
-		// These are just examples.
-		axisForward = a0RightY;  // Forward & turn on Right stick for this driver
-		axisTurn = a0RightX;
-		// etc for all logical axis that are different from defaults
-	}	
-}
-
-class OI_DriverB extends OI_DriverBase {
-	
-	OI_DriverB() {
-		// FIXME empty for now, so defaults will apply
-	}
-}
-
 
 
 
