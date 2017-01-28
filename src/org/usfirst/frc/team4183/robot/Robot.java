@@ -139,8 +139,8 @@ public class Robot extends IterativeRobot {
 	}
 	
 
-	// TODO implement command testing mode
-	public boolean isCommandTestingMode() {
+	// TODO implement State testing mode
+	public boolean isStateTestMode() {
 		return false;		
 	}
 }
