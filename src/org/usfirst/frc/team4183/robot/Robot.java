@@ -28,13 +28,19 @@ public class Robot extends IterativeRobot {
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
+	// Anybody needing the Robot instance can get by doing
+	// Robot.instance()
+	private static Robot robotInstance;
+	public static Robot instance() { return robotInstance; }
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
-		oi = OI.oiFactory( OI.WhoIsDriving.DRIVER_A);
+		robotInstance = this;
+		oi = OI.instance();
 		
 //		chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
@@ -101,6 +107,13 @@ public class Robot extends IterativeRobot {
 		// this line or comment it out.
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
+		
+		// Re-create OI with specific driver & operator
+		// This is just a placeholder
+		// TODO use real names
+		// TODO get this info from SmartDashboard
+		oi.mapDriverOperator( OI.Driver.JOE, OI.Operator.BILL);
+
 	}
 
 	/**
@@ -123,5 +136,11 @@ public class Robot extends IterativeRobot {
 	public void testPeriodic() {
 		Scheduler.getInstance().run();
 		LiveWindow.run();
+	}
+	
+
+	// TODO implement State testing mode
+	public boolean isStateTestMode() {
+		return false;		
 	}
 }
