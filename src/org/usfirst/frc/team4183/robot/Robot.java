@@ -28,8 +28,9 @@ public class Robot extends IterativeRobot {
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
-	// Anybody needing the Robot instance can get by doing
-	// Robot.instance()
+	// Anybody needing the (singleton) Robot instance 
+	// can get it by doing Robot.instance().
+	// Bit of a hack but WPILib leaves me no other way.
 	private static Robot robotInstance;
 	public static Robot instance() { return robotInstance; }
 	
