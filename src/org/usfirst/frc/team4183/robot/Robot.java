@@ -33,13 +33,16 @@ public class Robot extends IterativeRobot {
 	private static Robot robotInstance;
 	public static Robot instance() { return robotInstance; }
 	
+	Robot() {
+		robotInstance = this;
+	}
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
-		robotInstance = this;
 		oi = OI.instance();
 		
 //		chooser.addDefault("Default Auto", new ExampleCommand());

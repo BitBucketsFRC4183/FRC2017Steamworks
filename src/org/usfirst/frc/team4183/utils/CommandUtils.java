@@ -28,17 +28,17 @@ public class CommandUtils {
 			// only the Subsystem's default commands (if any) should remain.
 			//
 			// The removeAll() might seem like overkill (why not just NOT do
-			// the next.start() call?) but its to handle the case where the 
+			// the next.start() call?) but it's to handle the case where the 
 			// Command under test is actually a CommandGroup, and the Command calling
 			// this function is a member of that Group.
 			// 
-			// If we didn't do the removeAll(), then the Group would fire up its
+			// If we didn't do the removeAll(), then the Group could proceed with its
 			// next sequential Command. Not what we want.
 			//
-			// If the calling Command is not a member of a CommandGroup, 
+			// Note: If the calling Command is not a member of a CommandGroup, 
 			// then end() will be called on it;
 			// but if the calling Command is a member of a CommandGroup,
-			// then it will see a call on interrupted() instead (not my fault).
+			// then it will get interrupted() instead.
 					
 			Scheduler.getInstance().removeAll();
 		}
