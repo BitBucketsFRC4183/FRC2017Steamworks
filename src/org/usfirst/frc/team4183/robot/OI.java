@@ -70,6 +70,8 @@ public class OI {
 	public static Button btnShoot; 
 	public static Button btnGrab;
 	public static Button btnBurstIntoFlame;
+	// Every button after this was written not default. Get rid of this comment when we get rid of the default 
+	public static Button btnClimbControl;
 	// etc for up to 14 buttons on each controller (might be fewer)
 
 
@@ -115,6 +117,7 @@ public class OI {
 	private void mapOperator_Bill( PhysicalController controller) {
 		// Change from default: btnBurstIntoFlames <- Circle
 		btnBurstIntoFlame = controller.bCircle;
+		btnClimbControl = controller.bShare;
 	}
 	
 	
