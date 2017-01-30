@@ -76,6 +76,7 @@ public class OI {
 	public static Button btnShoot; 
 	public static Button btnGrab;
 	public static Button btnBurstIntoFlame;
+	public static Button btnActivateDrive;
 	// etc for up to 14 buttons on each controller (might be fewer)
 
 
@@ -87,6 +88,7 @@ public class OI {
 	public static Axis axisTurn;
 	public static Axis axisSomeOtherThing;
 	// etc for up to 6 axis on each controller (might be fewer)
+
 
 	// End of public interface
 
@@ -131,8 +133,10 @@ public class OI {
 		// TODO finish this list w/real logical button names & real default mapping
 		btnShoot = driverController.bSquare;
 		btnGrab = driverController.bCross;
-		btnBurstIntoFlame = operatorController.bSquare;
+		btnActivateDrive = driverController.bCircle;
 		
+		btnBurstIntoFlame = operatorController.bSquare;
+
 		// Assign to EVERY logical axis a physical axis
 		// TODO finish this list w/real logical axis names & real mapping
 		axisForward = driverController.aLeftY;
