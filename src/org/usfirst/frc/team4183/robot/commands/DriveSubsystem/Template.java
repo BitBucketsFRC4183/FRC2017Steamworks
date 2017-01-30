@@ -1,30 +1,24 @@
-package org.usfirst.frc.team4183.robot.commands;
+package org.usfirst.frc.team4183.robot.commands.DriveSubsystem;
 
 import org.usfirst.frc.team4183.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
  */
-public class MotorRunCommand extends Command {
-	
-    public MotorRunCommand() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-    	requires(Robot.prototypeSubsystem);
+public class Template extends Command {
+
+    public Template() {
+        requires(Robot.driveSubsystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	System.out.println(getName() + " initializing");
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	double speed = SmartDashboard.getNumber("Motor Velocity");
-    	Robot.prototypeSubsystem.setSpeed(speed);
     }
 
     // Make this return true when this Command no longer needs to run execute()

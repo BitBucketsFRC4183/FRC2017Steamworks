@@ -8,9 +8,10 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import org.usfirst.frc.team4183.robot.subsystems.PrototypeSubsystem;
-
+import org.usfirst.frc.team4183.robot.subsystems.BallManipSubsystem;
+import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
+import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -21,8 +22,11 @@ import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
  */
 public class Robot extends IterativeRobot {
 
-	public static PrototypeSubsystem prototypeSubsystem;
+	public static final BallManipSubsystem ballManipSubsystem = new BallManipSubsystem();
+	public static final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 	public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
+	public static final GearHandlerSubsystem gearHandlerSubsystem = new GearHandlerSubsystem();
+
 	public static OI oi;
 
 	Command autonomousCommand;
@@ -134,11 +138,10 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void testInit() {
-		prototypeSubsystem = new PrototypeSubsystem();
 	}
+	
 	@Override
 	public void testPeriodic() {
-		Scheduler.getInstance().run();
 		LiveWindow.run();
 	}
 	
