@@ -43,9 +43,11 @@ public class DriveSubsystem extends Subsystem {
 		}
 		
 		public void initDefaultCommand() {
-			
-        // Set the default command for a subsystem here.
-			setDefaultCommand(new IdleState());
+		    // Set the default command for a subsystem here,
+			// then delete the "throw"
+		    //setDefaultCommand(new MySpecialCommand());
+
+			throw new RuntimeException("Define a Default Command!");        // Set the default command for a subsystem here.
 		}
 }
 

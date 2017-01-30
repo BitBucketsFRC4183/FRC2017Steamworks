@@ -27,8 +27,11 @@ public class BallManipSubsystem extends Subsystem {
 	
 	
     public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
+        // Set the default command for a subsystem here,
+    	// then delete the "throw"
         //setDefaultCommand(new MySpecialCommand());
+
+    	throw new RuntimeException("Define a Default Command!");
     }
 }
 
