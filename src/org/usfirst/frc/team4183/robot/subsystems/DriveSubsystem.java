@@ -33,6 +33,8 @@ public class DriveSubsystem extends Subsystem {
 			RIGHT_MOTOR_0.setFeedbackDevice(RobotMap.DRIVE_ENCODER2);
 			RIGHT_MOTOR_0.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV2);
 	
+			// TODO need to slave motors
+			// Might need to reverse
 		}	
 
 		public void enable() {}
