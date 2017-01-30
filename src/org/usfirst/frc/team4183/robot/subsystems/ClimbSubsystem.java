@@ -19,6 +19,10 @@ public ClimbSubsystem(){
 		
 }
 
+public void enable() {}
+
+public void disable() {}
+
 public void initDefaultCommand() {
 
     // Set the default command for a subsystem here,
@@ -30,9 +34,7 @@ public void initDefaultCommand() {
 
 public double getCurrent()
 {
-	double current = climbMotor.getOutputCurrent();
-	SmartDashboard.putNumber("ClimbMotorCurrent", current);
-	return current;
+	return climbMotor.getOutputCurrent();
 }
 
 }

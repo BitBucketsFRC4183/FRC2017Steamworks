@@ -34,10 +34,12 @@ public class DriveSubsystem extends Subsystem {
 			RIGHT_MOTOR_0.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV2);
 	
 		}	
-		public void GyroBase(){
-	
-		}
 
+		public void enable() {}
+		
+		public void disable() {}
+		
+		
 		public void arcadeDrive(double speed, double turnAngle) {
 			drive.arcadeDrive(speed, turnAngle);
 		}

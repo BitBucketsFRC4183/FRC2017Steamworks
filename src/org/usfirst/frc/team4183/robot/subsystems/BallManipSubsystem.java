@@ -25,6 +25,9 @@ public class BallManipSubsystem extends Subsystem {
 		
 	}
 	
+	public void enable() {}
+	
+	public void disable() {}
 	
     public void initDefaultCommand() {
         // Set the default command for a subsystem here,
