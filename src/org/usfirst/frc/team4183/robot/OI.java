@@ -56,10 +56,16 @@ public class OI {
 	
 	// Access to Buttons for Commands:
 
-	// If your Command needs rising or falling edge detect on a button,
-	// use this method to get a ButtonEvent for that purpose.
-	// In initialize(), get your ButtonEvent: OI.ButtonEvent btnShoot = OI.getBtnEvt( OI.btnShoot).
-	// In isFinished(), test the ButtonEven: btnShoot.onPressed() or btnShoot.onReleased().
+	/**
+	 * 
+	 * If your Command needs rising or falling edge detect on a button,
+	 * use this method to get a ButtonEvent for that purpose.
+	 * In initialize(), get your ButtonEvent: OI.ButtonEvent btnShoot = OI.getBtnEvt( OI.btnShoot).
+	 * In isFinished(), test the ButtonEven: btnShoot.onPressed() or btnShoot.onReleased().
+	 * 
+	 * @param btn The Logical button 
+	 * @return The ButtonEvent that wraps the button
+	 */
 	public static ButtonEvent getBtnEvt( Button btn) { return new ButtonEvent(btn); }
 
 	// If your Command doesn't require edge detect on the button,
@@ -178,7 +184,10 @@ public class OI {
 	}
 
 
-	// Represents logical axis; get() returns the axis value (-1..+1).
+	/**
+	 * Represents Logical Axis
+	 * @author twilson
+	 */
 	public static class Axis {
 		Joystick controller;
 		int axisNum;
@@ -199,7 +208,10 @@ public class OI {
 	}
 
 
-	// Represents logical button, in convenient event-ized form for Commands to use.
+	/**
+	 * Represents logical button, in convenient event-ized form for Commands to use.
+	 * @author twilson	 
+	 */
 	public static class ButtonEvent {
 
 		private final Button m_button;
