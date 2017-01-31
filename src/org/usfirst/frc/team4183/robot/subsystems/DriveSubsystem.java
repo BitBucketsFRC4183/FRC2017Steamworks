@@ -33,19 +33,25 @@ public class DriveSubsystem extends Subsystem {
 			RIGHT_MOTOR_0.setFeedbackDevice(RobotMap.DRIVE_ENCODER2);
 			RIGHT_MOTOR_0.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV2);
 	
+			// TODO need to slave motors
+			// Might need to reverse
 		}	
-		public void GyroBase(){
-	
-		}
 
+		public void enable() {}
+		
+		public void disable() {}
+		
+		
 		public void arcadeDrive(double speed, double turnAngle) {
 			drive.arcadeDrive(speed, turnAngle);
 		}
 		
 		public void initDefaultCommand() {
-			
-        // Set the default command for a subsystem here.
-			setDefaultCommand(new IdleState());
+		    // Set the default command for a subsystem here,
+			// then delete the "throw"
+		    //setDefaultCommand(new MySpecialCommand());
+
+			throw new RuntimeException("Define a Default Command!");        // Set the default command for a subsystem here.
 		}
 }
 
