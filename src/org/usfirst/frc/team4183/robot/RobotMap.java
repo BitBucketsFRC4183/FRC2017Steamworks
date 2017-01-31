@@ -21,7 +21,7 @@ public class RobotMap {
 	public static final CANTalon.FeedbackDevice DRIVE_ENCODER2 = CANTalon.FeedbackDevice.QuadEncoder;
 	public static final int DRIVE_PULSES_PER_REV2 = 256; 
 	
-	public static int climbMotor = 5;
+	public static int climbMotor = 10;
 	
 	
 	

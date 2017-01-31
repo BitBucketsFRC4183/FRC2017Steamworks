@@ -4,40 +4,44 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team4183.robot.RobotMap;
-import org.usfirst.frc.team4183.robot.commands.ClimbIdle;
 import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
-import org.usfirst.frc.team4183.robot.commands.Climbfwd;
+import org.usfirst.frc.team4183.robot.commands.ClimbSubsystem.Idle;
+import org.usfirst.frc.team4183.robot.commands.ClimbSubsystem.ClimbForward;
 /**
  *
  */
 public class ClimbSubsystem extends Subsystem {
 
 	private CANTalon climbMotor;
-	
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
-public ClimbSubsystem(){
+
+	// Put methods for controlling this subsystem
+	// here. Call these from Commands.
+	public ClimbSubsystem(){
 		climbMotor = new CANTalon(RobotMap.climbMotor);
-		
-}
 
-public void enable() {}
+	}
 
-public void disable() {}
+	public void enable() {}
 
-public void initDefaultCommand() {
+	public void disable() {}
+	
+	public void on(double drive){
+		climbMotor.set(drive);
+	}
+	
 
-    // Set the default command for a subsystem here,
-	// then delete the "throw"
-    //setDefaultCommand(new MySpecialCommand());
+	public void initDefaultCommand() {
 
-	throw new RuntimeException("Define a Default Command!");
-}
+		// Set the default command for a subsystem here,
+		// then delete the "throw"
+		setDefaultCommand(new Idle());
 
-public double getCurrent()
-{
-	return climbMotor.getOutputCurrent();
-}
+	}
+
+	public double getCurrent()
+	{
+		return climbMotor.getOutputCurrent();
+	}
 
 
 

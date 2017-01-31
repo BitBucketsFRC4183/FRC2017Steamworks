@@ -1,20 +1,20 @@
-package org.usfirst.frc.team4183.robot.commands;
+package org.usfirst.frc.team4183.robot.commands.ClimbSubsystem;
 
 
-import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
-
-
+import org.usfirst.frc.team4183.robot.Robot;
+import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class Climbfwd extends Command {
+public class ClimbForward extends Command {
 
-    public Climbfwd() {
+    public ClimbForward() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
+    	requires(Robot.climbSubsystem);
     }
 
     // Called just before this Command runs the first time
@@ -24,13 +24,22 @@ public class Climbfwd extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    double drive = 1.0;
+    	double drive = 1.0;
+    	Robot.climbSubsystem.on(drive);
    
     }
     
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
+    	
+    	if ( (timeSinceInitialized() < 1.0) && (Robot.climbSubsystem.getCurrent() >= 40) ) {
+    		return CommandUtils.stateChange( new ClimbReverse() );
+    		
+    	}
+    	if ((timeSinceInitialized() > 1.0) && (Robot.climbSubsystem.getCurrent() >=40) ) {
+    		return CommandUtils.stateChange(new ClimbFinish() );
+    	}
         return false;
     }
 

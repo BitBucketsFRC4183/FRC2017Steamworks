@@ -1,18 +1,16 @@
-package org.usfirst.frc.team4183.robot.commands;
+package org.usfirst.frc.team4183.robot.commands.ClimbSubsystem;
+
 import org.usfirst.frc.team4183.robot.Robot;
-import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
+
 import edu.wpi.first.wpilibj.command.Command;
-import org.usfirst.frc.team4183.robot.OI;
 
 /**
  *
  */
-public class ClimbIdle extends Command {
+public class ClimbFinish extends Command {
 
-    public ClimbIdle() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-    
+    public ClimbFinish() {
+        requires(Robot.climbSubsystem);
     }
 
     // Called just before this Command runs the first time
@@ -21,11 +19,12 @@ public class ClimbIdle extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	double drive = 0.0;
+    	Robot.climbSubsystem.on(drive);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	OI.btnClimbControl.whenPressed(new Climbfwd());
         return false;
     }
 
@@ -36,5 +35,6 @@ public class ClimbIdle extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+    	end();
     }
 }
