@@ -34621,7 +34621,7 @@
 															"height": 13,
 															"autoResize": false,
 															"underline": false,
-															"text": "IdleState",
+															"text": "Idle",
 															"horizontalAlignment": 2,
 															"verticalAlignment": 5,
 															"wordWrap": false
@@ -35341,7 +35341,7 @@
 															"height": 13,
 															"autoResize": false,
 															"underline": false,
-															"text": "DriverControlState",
+															"text": "DriverControl",
 															"horizontalAlignment": 2,
 															"verticalAlignment": 5,
 															"wordWrap": false
@@ -36552,7 +36552,7 @@
 															"height": 13,
 															"autoResize": false,
 															"underline": false,
-															"text": "AlignLockState",
+															"text": "AlignLock",
 															"horizontalAlignment": 2,
 															"verticalAlignment": 5,
 															"wordWrap": false
@@ -36840,7 +36840,7 @@
 															"height": 13,
 															"autoResize": false,
 															"underline": false,
-															"text": "DriveLockState",
+															"text": "DriveLock",
 															"horizontalAlignment": 2,
 															"verticalAlignment": 5,
 															"wordWrap": false
@@ -37128,7 +37128,7 @@
 															"height": 13,
 															"autoResize": false,
 															"underline": false,
-															"text": "AutonomousControlState",
+															"text": "AutonomousControl",
 															"horizontalAlignment": 2,
 															"verticalAlignment": 5,
 															"wordWrap": false
@@ -38363,7 +38363,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFZ76yb/c21M+E="
 									},
-									"name": "IdleState",
+									"name": "Idle",
 									"ownedElements": [
 										{
 											"_type": "UMLDependency",
@@ -38407,7 +38407,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFZ76yb/c21M+E="
 									},
-									"name": "DriverControlState",
+									"name": "DriverControl",
 									"ownedElements": [
 										{
 											"_type": "UMLDependency",
@@ -38451,7 +38451,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFZ76yb/c21M+E="
 									},
-									"name": "AlignLockState",
+									"name": "AlignLock",
 									"ownedElements": [
 										{
 											"_type": "UMLGeneralization",
@@ -38495,7 +38495,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFZ76yb/c21M+E="
 									},
-									"name": "DriveLockState",
+									"name": "DriveLock",
 									"ownedElements": [
 										{
 											"_type": "UMLGeneralization",
@@ -38539,7 +38539,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFZ76yb/c21M+E="
 									},
-									"name": "AutonomousControlState",
+									"name": "AutonomousControl",
 									"ownedElements": [
 										{
 											"_type": "UMLGeneralization",
@@ -42365,7 +42365,7 @@
 															"height": 13,
 															"autoResize": false,
 															"underline": false,
-															"text": "IdleState",
+															"text": "Idle",
 															"horizontalAlignment": 2,
 															"verticalAlignment": 5,
 															"wordWrap": false
@@ -43146,7 +43146,7 @@
 															"height": 13,
 															"autoResize": false,
 															"underline": false,
-															"text": "ClimbForwardState",
+															"text": "ClimbForward",
 															"horizontalAlignment": 2,
 															"verticalAlignment": 5,
 															"wordWrap": false
@@ -43434,7 +43434,7 @@
 															"height": 13,
 															"autoResize": false,
 															"underline": false,
-															"text": "ClimbReverseState",
+															"text": "ClimbReverse",
 															"horizontalAlignment": 2,
 															"verticalAlignment": 5,
 															"wordWrap": false
@@ -45532,7 +45532,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFZ761k2c4gkm0="
 									},
-									"name": "IdleState",
+									"name": "Idle",
 									"ownedElements": [
 										{
 											"_type": "UMLGeneralization",
@@ -45576,7 +45576,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFZ761k2c4gkm0="
 									},
-									"name": "ClimbForwardState",
+									"name": "ClimbForward",
 									"ownedElements": [
 										{
 											"_type": "UMLGeneralization",
@@ -45620,7 +45620,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFZ761k2c4gkm0="
 									},
-									"name": "ClimbReverseState",
+									"name": "ClimbReverse",
 									"ownedElements": [
 										{
 											"_type": "UMLGeneralization",
