@@ -73,9 +73,6 @@ public class OI {
 	// in isFinished(): OI.btnShoot.get().
 	// TODO complete this list, using actual meaningful logical names;
 	// the ones here are just examples.
-	public static Button btnShoot; 
-	public static Button btnGrab;
-	public static Button btnBurstIntoFlame;
 	public static Button btnActivateDrive;
 	// etc for up to 14 buttons on each controller (might be fewer)
 
@@ -86,7 +83,6 @@ public class OI {
 	// the ones here are just examples.
 	public static Axis axisForward;
 	public static Axis axisTurn;
-	public static Axis axisSomeOtherThing;
 	// etc for up to 6 axis on each controller (might be fewer)
 
 
@@ -112,17 +108,12 @@ public class OI {
 	// TODO: change name of method for real driver name,
 	// and of course put in actual desired mapping
 	private void mapDriver_Joe( PhysicalController controller) {
-		// Change from default: btnShoot <- Cross, btnGrab <- Square
-		btnShoot = controller.bCross;
-		btnGrab = controller.bSquare;
 	}
 	
 	// Example: remap operator controller for Mike as operator
 	// TODO: change name of method for real operator name,
 	// and of course put in actual desired mapping
 	private void mapOperator_Bill( PhysicalController controller) {
-		// Change from default: btnBurstIntoFlames <- Circle
-		btnBurstIntoFlame = controller.bCircle;
 	}
 	
 	
@@ -131,17 +122,13 @@ public class OI {
 		
 		// Assign to EVERY logical button a physical button
 		// TODO finish this list w/real logical button names & real default mapping
-		btnShoot = driverController.bSquare;
-		btnGrab = driverController.bCross;
 		btnActivateDrive = driverController.bCircle;
 		
-		btnBurstIntoFlame = operatorController.bSquare;
 
 		// Assign to EVERY logical axis a physical axis
 		// TODO finish this list w/real logical axis names & real mapping
 		axisForward = driverController.aLeftY;
 		axisTurn = driverController.aLeftX;
-		axisSomeOtherThing = operatorController.aL2;		
 	}
 
 
@@ -210,7 +197,6 @@ public class OI {
 			return (invert ? -1.0 : 1.0 ) * controller.getRawAxis(axisNum);
 		}
 	}
-
 
 	/**
 	 * Represents logical button, in convenient event-ized form for Commands to use.
