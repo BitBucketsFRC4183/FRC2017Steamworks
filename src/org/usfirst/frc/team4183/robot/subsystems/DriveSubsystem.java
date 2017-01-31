@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.RobotDrive;
 import org.usfirst.frc.team4183.robot.RobotMap;
-import org.usfirst.frc.team4183.robot.commands.DriveSubsystem.IdleState;
+import org.usfirst.frc.team4183.robot.commands.DriveSubsystem.Idle;
 
 import edu.wpi.first.wpilibj.GyroBase;
 /**
@@ -47,11 +47,7 @@ public class DriveSubsystem extends Subsystem {
 		}
 		
 		public void initDefaultCommand() {
-		    // Set the default command for a subsystem here,
-			// then delete the "throw"
-		    //setDefaultCommand(new MySpecialCommand());
-
-			throw new RuntimeException("Define a Default Command!");        // Set the default command for a subsystem here.
+			setDefaultCommand(new Idle());
 		}
 }
 

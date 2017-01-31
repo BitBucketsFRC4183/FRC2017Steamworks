@@ -38,7 +38,7 @@ public class Robot extends IterativeRobot {
 	private static Robot robotInstance;
 	public static Robot instance() { return robotInstance; }
 	
-	Robot() {
+	public Robot() {
 		robotInstance = this;
 	}
 	
