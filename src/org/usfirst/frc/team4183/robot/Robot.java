@@ -8,9 +8,10 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import org.usfirst.frc.team4183.robot.subsystems.PrototypeSubsystem;
-
+import org.usfirst.frc.team4183.robot.subsystems.BallManipSubsystem;
+import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
+import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -21,20 +22,34 @@ import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
  */
 public class Robot extends IterativeRobot {
 
-	public static PrototypeSubsystem prototypeSubsystem;
+	public static final BallManipSubsystem ballManipSubsystem = new BallManipSubsystem();
+	public static final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 	public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
+	public static final GearHandlerSubsystem gearHandlerSubsystem = new GearHandlerSubsystem();
+
 	public static OI oi;
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
+	// Anybody needing the (singleton) Robot instance 
+	// can get it by doing Robot.instance().
+	// Bit of a hack but WPILib leaves me no other way.
+	private static Robot robotInstance;
+	public static Robot instance() { return robotInstance; }
+	
+	Robot() {
+		robotInstance = this;
+	}
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
-		oi = new OI();
+		oi = OI.instance();
+		
 //		chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
@@ -100,6 +115,13 @@ public class Robot extends IterativeRobot {
 		// this line or comment it out.
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
+		
+		// Re-create OI with specific driver & operator
+		// This is just a placeholder
+		// TODO use real names
+		// TODO get this info from SmartDashboard
+		oi.mapDriverOperator( OI.Driver.JOE, OI.Operator.BILL);
+
 	}
 
 	/**
@@ -116,11 +138,16 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void testInit() {
-		prototypeSubsystem = new PrototypeSubsystem();
 	}
+	
 	@Override
 	public void testPeriodic() {
-		Scheduler.getInstance().run();
 		LiveWindow.run();
+	}
+	
+
+	// TODO implement State testing mode
+	public boolean isStateTestMode() {
+		return false;		
 	}
 }
