@@ -20,19 +20,24 @@ public ClimbSubsystem(){
 		climbMotor = new CANTalon(RobotMap.climbMotor);
 		
 }
-	public void idle(){
-			
-	}
-	public void climbfwd(double drive){
-		climbMotor.set(drive);
-	}
-	
-	
+
+public void enable() {}
+
+public void disable() {}
+
 public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
-        //setDefaultCommand(new MySpecialCommand());
-		setDefaultCommand(new ClimbIdle());
-    }
+
+    // Set the default command for a subsystem here,
+	// then delete the "throw"
+    //setDefaultCommand(new MySpecialCommand());
+
+	throw new RuntimeException("Define a Default Command!");
+}
+
+public double getCurrent()
+{
+	return climbMotor.getOutputCurrent();
+}
 
 
 

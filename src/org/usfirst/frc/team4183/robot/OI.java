@@ -56,10 +56,16 @@ public class OI {
 	
 	// Access to Buttons for Commands:
 
-	// If your Command needs rising or falling edge detect on a button,
-	// use this method to get a ButtonEvent for that purpose.
-	// In initialize(), get your ButtonEvent: OI.ButtonEvent btnShoot = OI.getBtnEvt( OI.btnShoot).
-	// In isFinished(), test the ButtonEven: btnShoot.onPressed() or btnShoot.onReleased().
+	/**
+	 * 
+	 * If your Command needs rising or falling edge detect on a button,
+	 * use this method to get a ButtonEvent for that purpose.
+	 * In initialize(), get your ButtonEvent: OI.ButtonEvent btnShoot = OI.getBtnEvt( OI.btnShoot).
+	 * In isFinished(), test the ButtonEven: btnShoot.onPressed() or btnShoot.onReleased().
+	 * 
+	 * @param btn The Logical button 
+	 * @return The ButtonEvent that wraps the button
+	 */
 	public static ButtonEvent getBtnEvt( Button btn) { return new ButtonEvent(btn); }
 
 	// If your Command doesn't require edge detect on the button,
@@ -72,6 +78,7 @@ public class OI {
 	public static Button btnBurstIntoFlame;
 	// Every button after this was written not default. Get rid of this comment when we get rid of the default 
 	public static Button btnClimbControl;
+	public static Button btnActivateDrive;
 	// etc for up to 14 buttons on each controller (might be fewer)
 
 
@@ -83,6 +90,7 @@ public class OI {
 	public static Axis axisTurn;
 	public static Axis axisSomeOtherThing;
 	// etc for up to 6 axis on each controller (might be fewer)
+
 
 	// End of public interface
 
@@ -128,8 +136,10 @@ public class OI {
 		// TODO finish this list w/real logical button names & real default mapping
 		btnShoot = driverController.bSquare;
 		btnGrab = driverController.bCross;
-		btnBurstIntoFlame = operatorController.bSquare;
+		btnActivateDrive = driverController.bCircle;
 		
+		btnBurstIntoFlame = operatorController.bSquare;
+
 		// Assign to EVERY logical axis a physical axis
 		// TODO finish this list w/real logical axis names & real mapping
 		axisForward = driverController.aLeftY;
@@ -181,7 +191,10 @@ public class OI {
 	}
 
 
-	// Represents logical axis; get() returns the axis value (-1..+1).
+	/**
+	 * Represents Logical Axis
+	 * @author twilson
+	 */
 	public static class Axis {
 		Joystick controller;
 		int axisNum;
@@ -202,7 +215,10 @@ public class OI {
 	}
 
 
-	// Represents logical button, in convenient event-ized form for Commands to use.
+	/**
+	 * Represents logical button, in convenient event-ized form for Commands to use.
+	 * @author twilson	 
+	 */
 	public static class ButtonEvent {
 
 		private final Button m_button;
