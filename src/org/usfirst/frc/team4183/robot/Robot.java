@@ -136,7 +136,7 @@ public class Robot extends IterativeRobot {
 		String cmdName = SmartDashboard.getString("CmdToTest", "");
 
 		// Attempt to instantiate & start that Command
-		cmdUnderTest = null;
+		stateUnderTest = null;
 		if (!cmdName.equals("")) {
 			Subsystem subsys = dbgChooser.getSelected();
 			if (subsys != null) {
@@ -152,7 +152,7 @@ public class Robot extends IterativeRobot {
 				try {
 					Command cmd = (Command) Class.forName(fullName).newInstance();
 					cmd.start();
-					cmdUnderTest = cmd;
+					stateUnderTest = cmd;
 					System.out.println("Success!");
 					
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -181,7 +181,7 @@ public class Robot extends IterativeRobot {
 	
 	private Set<Subsystem> subSystems = new HashSet<>();
 	private SendableChooser<Subsystem> dbgChooser;
-	Command cmdUnderTest;
+	Command stateUnderTest;
 
 	// Put debug info on SmartDashboard
 	private void showDebugInfo() {
@@ -210,20 +210,31 @@ public class Robot extends IterativeRobot {
 
 	public void stateChange( Command fromState, Command toState) {
 
-		// TODO this works OK for simple cases
-		// but needs more work for CommandGroups and probably Auto mode
+		// TODO this works fine for simple cases
+		// but needs more work for CommandGroups (maybe)
 		
 		if( !isTest()) {
+			// Not testing, normal operation, just do the transition as ordered
 			toState.start();
 			return;
 		}
 		
-		if( cmdUnderTest == null || fromState == cmdUnderTest) {
-			cmdUnderTest = null;
-			Scheduler.getInstance().removeAll();
+		// Modify fromState to be the top-level CommandGroup containing fromState
+		// (for simple stand-alone Command, fromState is unchanged)
+		// TODO test this with CommandGroup
+		while( fromState.getGroup() != null)
+			fromState = fromState.getGroup();
+		
+		if( stateUnderTest != null && fromState != stateUnderTest) {
+			// There is a state-under-test, BUT,
+			// the requested transition is NOT out of that state,
+			// so we'll allow it.
+			toState.start();		
 		}
-		else
-			toState.start();
-			
+		else {
+			// Block the transition & terminate testing
+			stateUnderTest = null;
+			Scheduler.getInstance().removeAll();
+		}			
 	}	
 }
