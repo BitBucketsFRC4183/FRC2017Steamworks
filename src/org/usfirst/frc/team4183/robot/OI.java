@@ -20,6 +20,11 @@ public class OI {
 		return inst;		
 	}
 	
+	// Call on entry to Autonomous Mode to set up the Soft Buttons
+	public void mapAutonomous() {
+		doAutonomousMapping();
+	}
+	
 	public enum Driver {
 		JOE, SAM;  // TODO Put in actual names, add more as needed
 	}
@@ -54,8 +59,6 @@ public class OI {
 	}
 
 	
-	// Access to Buttons for Commands:
-
 	/**
 	 * 
 	 * If your Command needs rising or falling edge detect on a button,
@@ -66,28 +69,27 @@ public class OI {
 	 * @param btn The Logical button 
 	 * @return The ButtonEvent that wraps the button
 	 */
-	public static ButtonEvent getBtnEvt( Button btn) { return new ButtonEvent(btn); }
+	public static ButtonEvent getBtnEvt( LogicalButton btn) { return new ButtonEvent(btn); }
 
 	// If your Command doesn't require edge detect on the button,
 	// then you can look at one of these directly,
 	// in isFinished(): OI.btnShoot.get().
-	// TODO complete this list, using actual meaningful logical names;
-	// the ones here are just examples.
-	public static Button btnActivateDrive;
+	// TODO complete this list, using the meaningful logical names.
+	public static LogicalButton btnActivateDrive;
 	// etc for up to 14 buttons on each controller (might be fewer)
 
 
 	// Access to Axis for Commands:
 	// In execute(), OI.axisForward.get(). 
-	// TODO complete this list, using actual meaningful logical names;
-	// the ones here are just examples.
-	public static Axis axisForward;
-	public static Axis axisTurn;
+	// TODO complete this list, using actual meaningful logical names.
+	public static LogicalAxis axisForward;
+	public static LogicalAxis axisTurn;
 	// etc for up to 6 axis on each controller (might be fewer)
 
 
 	// End of public interface
 
+	
 
 	private PhysicalController driverController, operatorController;
 
@@ -116,7 +118,15 @@ public class OI {
 	private void mapOperator_Bill( PhysicalController controller) {
 	}
 	
-	
+	// TODO complete this
+	private void doAutonomousMapping() {
+		
+		// Assign to EVERY logical button a soft button
+		btnActivateDrive = new SoftButton();
+		
+		// Assign to EVERY logical axis a soft axis
+		axisForward = new SoftAxis();
+	}
 	
 	private void doDefaultMapping() {
 		
@@ -124,7 +134,6 @@ public class OI {
 		// TODO finish this list w/real logical button names & real default mapping
 		btnActivateDrive = driverController.bCircle;
 		
-
 		// Assign to EVERY logical axis a physical axis
 		// TODO finish this list w/real logical axis names & real mapping
 		axisForward = driverController.aLeftY;
@@ -132,96 +141,97 @@ public class OI {
 	}
 
 
-	
-	// Inner classes - defined & used only in here
-
 	// Represents the physical buttons & axis on one controller
 	private static class PhysicalController {
 
 		@SuppressWarnings("unused")
-		private final Button 
+		private final PhysicalButton 
 			bSquare, bCross, bCircle,  bTriangle, 
 			bL1, bR1, bL2, bR2,
 			bShare, bOptions, bLstick, bRstick,
 			bPS4, bTrackpad;
 
 		@SuppressWarnings("unused")
-		private final Axis 
+		private final PhysicalAxis 
 			aLeftX, aLeftY, aRightX, aRightY, aL2, aR2;
 
 		private PhysicalController( Joystick controller) {
-			bSquare = new JoystickButton(controller, PS4Constants.SQUARE.getValue());
-			bCross = new JoystickButton(controller, PS4Constants.CROSS.getValue());
-			bCircle = new JoystickButton(controller, PS4Constants.CIRCLE.getValue());
-			bTriangle = new JoystickButton(controller, PS4Constants.TRIANGLE.getValue());
-			bL1 = new JoystickButton(controller, PS4Constants.L1.getValue());
-			bR1 = new JoystickButton(controller, PS4Constants.R1.getValue());
-			bL2 = new JoystickButton(controller, PS4Constants.L2.getValue());
-			bR2 = new JoystickButton(controller, PS4Constants.R2.getValue());
-			bShare = new JoystickButton(controller, PS4Constants.SHARE.getValue());
-			bOptions = new JoystickButton(controller, PS4Constants.OPTIONS.getValue());
-			bLstick = new JoystickButton(controller, PS4Constants.L_STICK.getValue());
-			bRstick = new JoystickButton(controller, PS4Constants.R_STICK.getValue());
-			bPS4 = new JoystickButton(controller, PS4Constants.PS4.getValue());
-			bTrackpad = new JoystickButton(controller, PS4Constants.TRACKPAD.getValue());
+			bSquare = new PhysicalButton(controller, PS4Constants.SQUARE.getValue());
+			bCross = new PhysicalButton(controller, PS4Constants.CROSS.getValue());
+			bCircle = new PhysicalButton(controller, PS4Constants.CIRCLE.getValue());
+			bTriangle = new PhysicalButton(controller, PS4Constants.TRIANGLE.getValue());
+			bL1 = new PhysicalButton(controller, PS4Constants.L1.getValue());
+			bR1 = new PhysicalButton(controller, PS4Constants.R1.getValue());
+			bL2 = new PhysicalButton(controller, PS4Constants.L2.getValue());
+			bR2 = new PhysicalButton(controller, PS4Constants.R2.getValue());
+			bShare = new PhysicalButton(controller, PS4Constants.SHARE.getValue());
+			bOptions = new PhysicalButton(controller, PS4Constants.OPTIONS.getValue());
+			bLstick = new PhysicalButton(controller, PS4Constants.L_STICK.getValue());
+			bRstick = new PhysicalButton(controller, PS4Constants.R_STICK.getValue());
+			bPS4 = new PhysicalButton(controller, PS4Constants.PS4.getValue());
+			bTrackpad = new PhysicalButton(controller, PS4Constants.TRACKPAD.getValue());
 
-			aLeftX = new Axis( controller, PS4Constants.LEFT_STICK_X.getValue(), false);
-			aLeftY = new Axis( controller, PS4Constants.LEFT_STICK_Y.getValue(), true);
-			aRightX = new Axis( controller, PS4Constants.RIGHT_STICK_X.getValue(), false);
-			aRightY = new Axis( controller, PS4Constants.RIGHT_STICK_Y.getValue(), true);
-			aL2 = new Axis( controller, PS4Constants.L2_AXIS.getValue(), false);
-			aR2 = new Axis( controller, PS4Constants.R2_AXIS.getValue(), false);		
+			aLeftX = new PhysicalAxis( controller, PS4Constants.LEFT_STICK_X.getValue(), false);
+			aLeftY = new PhysicalAxis( controller, PS4Constants.LEFT_STICK_Y.getValue(), true);
+			aRightX = new PhysicalAxis( controller, PS4Constants.RIGHT_STICK_X.getValue(), false);
+			aRightY = new PhysicalAxis( controller, PS4Constants.RIGHT_STICK_Y.getValue(), true);
+			aL2 = new PhysicalAxis( controller, PS4Constants.L2_AXIS.getValue(), false);
+			aR2 = new PhysicalAxis( controller, PS4Constants.R2_AXIS.getValue(), false);		
 		}
 	}
 
-
-	/**
-	 * Represents Logical Axis
-	 * @author twilson
-	 */
-	public static class Axis {
-		Joystick controller;
-		int axisNum;
-		boolean invert;
-		protected Axis( Joystick controller, int axisNum, boolean invert) {
-			this.controller = controller;
-			this.axisNum = axisNum;
-			this.invert = invert;
-		}
-
-		/**
-		 * 
-		 * @return Axis value, [-1..1] (except the L2 & R2, they run from 0 to 1). 
-		 */
-		public double get() {
-			return (invert ? -1.0 : 1.0 ) * controller.getRawAxis(axisNum);
+	// Represents a generic button
+	public static interface LogicalButton {
+		public boolean get();
+		public default void push() {}
+		public default void release() {}
+		public default void hit() { hit(.3); }
+		public default void hit( double time) {}
+	}
+	
+	// A button that can be operated by software
+	private static class SoftButton implements LogicalButton {
+		boolean state;
+		@Override
+		public boolean get() { return state; }
+		@Override
+		public void push() { state = true; }
+		@Override
+		public void release() { state = false; }
+		@Override
+		public void hit( double time) {
+			// TODO
+			// Put code in here to start a thread that pushes, then releases this		
 		}
 	}
+	
+	// A button on a controller
+	private static class PhysicalButton implements LogicalButton {
+		Button btn;
+		PhysicalButton( Joystick controller, int btnNum) { 
+			btn = new JoystickButton( controller, btnNum); 
+		}		
+		@Override
+		public boolean get() { return btn.get(); }
+	}
+	
 
-	/**
-	 * Represents logical button, in convenient event-ized form for Commands to use.
-	 * @author twilson	 
-	 */
+	
+	// Wraps a LogicalButton & makes it easy to catch rising/falling edges
 	public static class ButtonEvent {
 
-		private final Button m_button;
+		private final LogicalButton m_button;
 		boolean m_wasPressed;
 
-		protected ButtonEvent( Button button) {
+		protected ButtonEvent( LogicalButton button) {
 			m_button = button;
 			m_wasPressed = isPressed();
-		}
-
-		protected ButtonEvent( Joystick cntrl, int buttonNum) {
-			this( new JoystickButton( cntrl, buttonNum));		
 		}
 
 		/**
 		 * Returns true if the button is currently pressed
 		 */
-		public boolean isPressed() {
-			return m_button.get();
-		}
+		public boolean isPressed() { return m_button.get(); }
 
 		/**
 		 * Returns true only once when the button is pressed
@@ -253,51 +263,56 @@ public class OI {
 			return rtn;		
 		}
 	}
+	
+	
+	// Represents a generic Axis
+	public static interface LogicalAxis {
+		public double get();
+		public default void set( double value) {}
+	}
+	
+	// An Axis that can be operated by software
+	private static class SoftAxis implements LogicalAxis {
+		double value = 0;
+		@Override
+		public double get() { return value; }
+		@Override
+		public void set( double value) { this.value = value; }
+	}
+	
+	
+	// An Axis on a controller
+	private static class PhysicalAxis implements LogicalAxis {
+		Joystick controller;
+		int axisNum;
+		boolean invert;
+		protected PhysicalAxis( Joystick controller, int axisNum, boolean invert) {
+			this.controller = controller;
+			this.axisNum = axisNum;
+			this.invert = invert;
+		}
 
-	// Can use this to wrap a RawAxis, then it can also be used as a Button
+		@Override
+		public double get() {
+			return (invert ? -1.0 : 1.0 ) * controller.getRawAxis(axisNum);
+		}
+	}
+
+
+	// Can use this to wrap a LogicalAxis, then it can also be used as a Button
+	// (not sure how useful?)
 	public static class JoystickAxisButton extends Button {
-		private final Axis axis;
+		private final LogicalAxis axis;
 
-		protected JoystickAxisButton(Axis axis) {
+		protected JoystickAxisButton(LogicalAxis axis) {
 			this.axis = axis;
 		}
 
 		@Override 
 		public boolean get() {
-			return axis.get() > 0.75;
+			return axis.get() > 0.5;
 		}
 	}
-
-
-	// Left these Template comments in for convenience... TODO delete them later
-
-	//// CREATING BUTTONS
-	// One type of button is a joystick button which is any button on a
-	//// joystick.
-	// You create one by telling it which joystick it's on and which button
-	// number it is.
-	// Joystick stick = new Joystick(port);
-	// Button button = new JoystickButton(stick, buttonNumber);
-
-	// There are a few additional built in buttons you can use. Additionally,
-	// by subclassing Button you can create custom triggers and bind those to
-	// commands the same as any other Button.
-
-	//// TRIGGERING COMMANDS WITH BUTTONS
-	// Once you have a button, it's trivial to bind it to a button in one of
-	// three ways:
-
-	// Start the command when the button is pressed and let it run the command
-	// until it is finished as determined by it's isFinished method.
-	// button.whenPressed(new ExampleCommand());
-
-	// Run the command while the button is being held down and interrupt it once
-	// the button is released.
-	// button.whileHeld(new ExampleCommand());
-
-	// Start the command when the button is released and let it run the command
-	// until it is finished as determined by it's isFinished method.
-	// button.whenReleased(new ExampleCommand());
 }
 
 

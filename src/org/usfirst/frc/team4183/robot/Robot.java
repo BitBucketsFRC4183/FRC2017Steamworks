@@ -4,9 +4,13 @@ package org.usfirst.frc.team4183.robot;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.usfirst.frc.team4183.robot.subsystems.BallManipSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
@@ -29,9 +33,7 @@ public class Robot extends IterativeRobot {
 
 	public static OI oi;
 
-	Command autonomousCommand;
-	SendableChooser<Command> chooser = new SendableChooser<>();
-
+	
 	// Anybody needing the (singleton) Robot instance 
 	// can get it by doing Robot.instance().
 	// Bit of a hack but WPILib leaves me no other way.
@@ -49,12 +51,13 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		oi = OI.instance();
-		
-//		chooser.addDefault("Default Auto", new ExampleCommand());
-		// chooser.addObject("My Auto", new MyAutoCommand());
-		SmartDashboard.putData("Auto mode", chooser);
-		SmartDashboard.putNumber("ClimbMotorCurrent", 0);
-		SmartDashboard.putNumber("Motor Velocity", 0);
+				
+		// Add all subsystems for debugging
+		addSubsystemToDebug(ballManipSubsystem);
+		addSubsystemToDebug(climbSubsystem);
+		addSubsystemToDebug(driveSubsystem);
+		addSubsystemToDebug(gearHandlerSubsystem);		
+		showDebugInfo();
 	}
 
 	/**
@@ -64,7 +67,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void disabledInit() {
-
+		// Clear out the scheduler
+		Scheduler.getInstance().removeAll();
 	}
 
 	@Override
@@ -85,18 +89,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		autonomousCommand = chooser.getSelected();
-
-		/*
-		 * String autoSelected = SmartDashboard.getString("Auto Selector",
-		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-		 * = new MyAutoCommand(); break; case "Default Auto": default:
-		 * autonomousCommand = new ExampleCommand(); break; }
-		 */
-
-		// schedule the autonomous command (example)
-		if (autonomousCommand != null)
-			autonomousCommand.start();
 	}
 
 	/**
@@ -109,12 +101,8 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
-		// This makes sure that the autonomous stops running when
-		// teleop starts running. If you want the autonomous to
-		// continue until interrupted by another command, remove
-		// this line or comment it out.
-		if (autonomousCommand != null)
-			autonomousCommand.cancel();
+		// Clear out the scheduler
+		Scheduler.getInstance().removeAll();
 		
 		// Re-create OI with specific driver & operator
 		// This is just a placeholder
@@ -138,16 +126,93 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void testInit() {
+		// Disable LiveWindow & re-enable Scheduler
+		LiveWindow.setEnabled(false);
+		
+		// Clear out the scheduler
+		Scheduler.getInstance().removeAll();
+				
+		// Get Command-to-test class name
+		String cmdName = SmartDashboard.getString("CmdToTest", "");
+
+		// Attempt to instantiate & start that Command
+		if (!cmdName.equals("")) {
+			Subsystem subsys = dbgChooser.getSelected();
+			if (subsys != null) {
+
+				// We require that Commands for given Subsystem are in package
+				// "org.usfirst.frc.team4183.robot.commands.Subsystem"
+				String subsysName = subsys.getName();
+				String fullName = "org.usfirst.frc.team4183.robot.commands." + subsysName + "." + cmdName;
+				System.out.format("Attempt to test Command: %s...", fullName);
+
+				// Note, for this to work, the Command must have a no-arg
+				// constructor
+				try {
+					Command cmd = (Command) Class.forName(fullName).newInstance();
+					cmd.start();
+					System.out.println("Success!");
+					
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+						| IllegalArgumentException e) {
+
+					System.out.println("Sorry, could not test that command");
+				}
+			}
+		}
 	}
+
 	
+	/**
+	 * This function is called periodically during test mode
+	 */
 	@Override
 	public void testPeriodic() {
-		LiveWindow.run();
+		// LiveWindow.run(); -- NOPE!!
+		Scheduler.getInstance().run();
 	}
 	
+	
+	
+	// State-testing-mode code follows
+	// This is work-in-progress - tjw
+	
+	private Set<Subsystem> subSystems = new HashSet<>();
+	private SendableChooser<Subsystem> dbgChooser;
 
-	// TODO implement State testing mode
-	public boolean isStateTestMode() {
-		return false;		
+	// Put debug info on SmartDashboard
+	private void showDebugInfo() {
+
+		// Show the scheduler
+		SmartDashboard.putData(Scheduler.getInstance());
+
+		// Show the Subsystems
+		for (Subsystem subsys : subSystems)
+			SmartDashboard.putData(subsys);
+
+		// Chooser to select a Subsystem
+		dbgChooser = new SendableChooser<Subsystem>();
+		for (Subsystem subsys : subSystems)
+			dbgChooser.addObject(subsys.getName(), subsys);
+		SmartDashboard.putData("Debug", dbgChooser);
+
+		
+		// Text field to type in Command to test
+		SmartDashboard.putString("CmdToTest", "");
 	}
+
+	public void addSubsystemToDebug(Subsystem subsys) {
+		subSystems.add(subsys);
+	}
+
+	public void stateChange( Command fromState, Command toState) {
+
+		// TODO this works OK for simple cases
+		// but needs more work for CommandGroups and probably Auto mode
+		
+		if( !isTest())
+			toState.start();
+		else 			
+			Scheduler.getInstance().removeAll();
+	}	
 }
