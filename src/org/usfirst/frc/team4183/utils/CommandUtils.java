@@ -18,33 +18,8 @@ public class CommandUtils {
 	 * 
 	 * @param next  The Command that represents the next state
 	 */
-	public static boolean stateChange( Command next) {
-		
-		if( Robot.instance().isStateTestMode() ) {
-			
-			// In State Test Mode, we want to execute only the Command (=State)
-			// being tested and disallow all subsequent Commands.
-			// So an attempt to transition out of the Command under test should be denied;
-			// only the Subsystem's default commands (if any) should remain.
-			//
-			// The removeAll() might seem like overkill (why not just NOT do
-			// the next.start() call?) but it's to handle the case where the 
-			// Command under test is actually a CommandGroup, and the Command calling
-			// this function is a member of that Group.
-			// 
-			// If we didn't do the removeAll(), then the Group could proceed with its
-			// next sequential Command. Not what we want.
-			//
-			// Note: If the calling Command is not a member of a CommandGroup, 
-			// then end() will be called on it;
-			// but if the calling Command is a member of a CommandGroup,
-			// then it will get interrupted() instead.
-					
-			Scheduler.getInstance().removeAll();
-		}
-		else
-			next.start();
-		
+	public static boolean stateChange( Command from, Command to) {
+		Robot.instance().stateChange(from, to);		
 		return true;
 	}
 

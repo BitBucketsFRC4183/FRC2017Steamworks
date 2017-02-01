@@ -2,9 +2,7 @@ package org.usfirst.frc.team4183.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.CANTalon;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team4183.robot.RobotMap;
-import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team4183.robot.commands.ClimbSubsystem.Idle;
 import org.usfirst.frc.team4183.robot.commands.ClimbSubsystem.ClimbForward;
 /**
@@ -23,18 +21,9 @@ public class ClimbSubsystem extends Subsystem {
 
 	public void enable() {}
 
-	public void disable() {}
-	
-	public void on(double drive){
-		climbMotor.set(drive);
-	}
-	
-
-	public void initDefaultCommand() {
-
-		// Set the default command for a subsystem here,
-		// then delete the "throw"
-		setDefaultCommand(new Idle());
+public void initDefaultCommand() {
+    setDefaultCommand(new Idle());
+}
 
 	}
 
