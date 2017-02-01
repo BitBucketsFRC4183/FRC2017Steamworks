@@ -126,6 +126,7 @@ public class OI {
 		
 		// Assign to EVERY logical axis a soft axis
 		axisForward = new SoftAxis();
+		axisTurn = new SoftAxis();
 	}
 	
 	private void doDefaultMapping() {
@@ -185,8 +186,8 @@ public class OI {
 		public boolean get();
 		public default void push() {}
 		public default void release() {}
-		public default void hit() { hit(.3); }
-		public default void hit( double time) {}
+		public default void hit() { hit(300); }
+		public default void hit( long msecs) {}
 	}
 	
 	// A button that can be operated by software
@@ -199,9 +200,18 @@ public class OI {
 		@Override
 		public void release() { state = false; }
 		@Override
-		public void hit( double time) {
-			// TODO
-			// Put code in here to start a thread that pushes, then releases this		
+		public void hit( long msecs) {
+			// push() this, 
+			// then start a thread to release() after a short while
+			push();
+			new Thread() {
+				public void run() {
+					try {
+						Thread.sleep(msecs);
+					} catch (InterruptedException e) {}
+					release();
+				}
+			}.start();
 		}
 	}
 	
@@ -215,7 +225,6 @@ public class OI {
 		public boolean get() { return btn.get(); }
 	}
 	
-
 	
 	// Wraps a LogicalButton & makes it easy to catch rising/falling edges
 	public static class ButtonEvent {

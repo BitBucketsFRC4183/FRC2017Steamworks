@@ -136,6 +136,7 @@ public class Robot extends IterativeRobot {
 		String cmdName = SmartDashboard.getString("CmdToTest", "");
 
 		// Attempt to instantiate & start that Command
+		cmdUnderTest = null;
 		if (!cmdName.equals("")) {
 			Subsystem subsys = dbgChooser.getSelected();
 			if (subsys != null) {
@@ -151,6 +152,7 @@ public class Robot extends IterativeRobot {
 				try {
 					Command cmd = (Command) Class.forName(fullName).newInstance();
 					cmd.start();
+					cmdUnderTest = cmd;
 					System.out.println("Success!");
 					
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -179,6 +181,7 @@ public class Robot extends IterativeRobot {
 	
 	private Set<Subsystem> subSystems = new HashSet<>();
 	private SendableChooser<Subsystem> dbgChooser;
+	Command cmdUnderTest;
 
 	// Put debug info on SmartDashboard
 	private void showDebugInfo() {
@@ -210,9 +213,17 @@ public class Robot extends IterativeRobot {
 		// TODO this works OK for simple cases
 		// but needs more work for CommandGroups and probably Auto mode
 		
-		if( !isTest())
+		if( !isTest()) {
 			toState.start();
-		else 			
+			return;
+		}
+		
+		if( cmdUnderTest == null || fromState == cmdUnderTest) {
+			cmdUnderTest = null;
 			Scheduler.getInstance().removeAll();
+		}
+		else
+			toState.start();
+			
 	}	
 }
