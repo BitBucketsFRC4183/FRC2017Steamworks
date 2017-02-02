@@ -13,7 +13,7 @@ public class Idle extends Command {
 
     public Idle() {
         // Use requires() here to declare subsystem dependencies
-    	requires( Robot.driveSubsystem);
+    	requires(Robot.driveSubsystem);
     }
 
     // Called just before this Command runs the first time
@@ -28,7 +28,7 @@ public class Idle extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
     	if(OI.btnActivateDrive.get()) {
-    		return CommandUtils.stateChange( this, new DriverControl());
+    		return CommandUtils.stateChange(new ActiveState());
     	}
     	return false;
     }

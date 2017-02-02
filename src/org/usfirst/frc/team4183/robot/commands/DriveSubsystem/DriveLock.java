@@ -1,7 +1,5 @@
-
 package org.usfirst.frc.team4183.robot.commands.DriveSubsystem;
 
-import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -9,12 +7,11 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class DriverControl extends Command {
+public class DriveLock extends Command {
 
-    public DriverControl() {
+    public DriveLock() {
         // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-    	requires( Robot.driveSubsystem);
+        requires(Robot.driveSubsystem);
     }
 
     // Called just before this Command runs the first time
@@ -23,7 +20,6 @@ public class DriverControl extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.driveSubsystem.arcadeDrive(OI.axisForward.get(), OI.axisTurn.get());
     }
 
     // Make this return true when this Command no longer needs to run execute()

@@ -7,9 +7,10 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class Template extends Command {
+public class AlignLock extends Command {
 
-    public Template() {
+    public AlignLock() {
+        // Use requires() here to declare subsystem dependencies
         requires(Robot.driveSubsystem);
     }
 
@@ -33,6 +34,5 @@ public class Template extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	end();
     }
 }
