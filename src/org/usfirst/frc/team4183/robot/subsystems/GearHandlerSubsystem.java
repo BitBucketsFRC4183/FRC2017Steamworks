@@ -15,4 +15,20 @@ public class GearHandlerSubsystem extends Subsystem {
 	    setDefaultCommand(new Idle());
 	}
 	
+	public void openGate() {
+		
+	}
+	
+	public void closeGate() {
+		
+	}
+	
+	public void spinRollerBalls() {
+		
+	}
+	
+	public void spinRollerGear() {
+		
+	}
+	
 }
