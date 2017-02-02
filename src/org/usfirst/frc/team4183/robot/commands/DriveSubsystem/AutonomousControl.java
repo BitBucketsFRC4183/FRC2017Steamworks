@@ -1,20 +1,17 @@
 package org.usfirst.frc.team4183.robot.commands.DriveSubsystem;
 
-import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
-import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class IdleState extends Command {
+public class AutonomousControl extends Command {
 
-    public IdleState() {
+    public AutonomousControl() {
         // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-    	requires( Robot.driveSubsystem);
+        requires(Robot.driveSubsystem);
     }
 
     // Called just before this Command runs the first time
@@ -23,15 +20,11 @@ public class IdleState extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(OI.btnActivateDrive.get()) {
-    		return CommandUtils.stateChange(new ActiveState());
-    	}
-    	return false;
+        return false;
     }
 
     // Called once after isFinished returns true
