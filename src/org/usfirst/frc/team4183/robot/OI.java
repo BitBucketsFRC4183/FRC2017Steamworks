@@ -76,6 +76,7 @@ public class OI {
 	// in isFinished(): OI.btnShoot.get().
 	// TODO complete this list, using the meaningful logical names.
 	public static LogicalButton btnActivateDrive;
+	public static LogicalButton btnClimbControl;
 	// etc for up to 14 buttons on each controller (might be fewer)
 
 
@@ -134,6 +135,7 @@ public class OI {
 		// Assign to EVERY logical button a physical button
 		// TODO finish this list w/real logical button names & real default mapping
 		btnActivateDrive = driverController.bCircle;
+		btnClimbControl = operatorController.bShare;
 		
 		// Assign to EVERY logical axis a physical axis
 		// TODO finish this list w/real logical axis names & real mapping
