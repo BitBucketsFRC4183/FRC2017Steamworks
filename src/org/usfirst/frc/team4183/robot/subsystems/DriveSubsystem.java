@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.RobotDrive;
 import org.usfirst.frc.team4183.robot.RobotMap;
-import org.usfirst.frc.team4183.robot.commands.DriveSubsystem.IdleState;
+import org.usfirst.frc.team4183.robot.commands.DriveSubsystem.Idle;
 
 import edu.wpi.first.wpilibj.GyroBase;
 /**
@@ -27,7 +27,8 @@ public class DriveSubsystem extends Subsystem {
 			RIGHT_MOTOR_1 = new CANTalon(RobotMap.RIGHT_MOTOR1_ID);
 	
 			drive = new RobotDrive(LEFT_MOTOR_0, LEFT_MOTOR_1, RIGHT_MOTOR_0, RIGHT_MOTOR_1);
-	
+			drive.setSafetyEnabled(false);
+			
 			LEFT_MOTOR_0.setFeedbackDevice(RobotMap.DRIVE_ENCODER1);
 			LEFT_MOTOR_0.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV); 
 			RIGHT_MOTOR_0.setFeedbackDevice(RobotMap.DRIVE_ENCODER2);
@@ -47,11 +48,7 @@ public class DriveSubsystem extends Subsystem {
 		}
 		
 		public void initDefaultCommand() {
-		    // Set the default command for a subsystem here,
-			// then delete the "throw"
-		    //setDefaultCommand(new MySpecialCommand());
-
-			throw new RuntimeException("Define a Default Command!");        // Set the default command for a subsystem here.
+			setDefaultCommand(new Idle());
 		}
 }
 
