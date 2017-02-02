@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class ActiveState extends Command {
+public class DriverControl extends Command {
 
-    public ActiveState() {
+    public DriverControl() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires( Robot.driveSubsystem);
