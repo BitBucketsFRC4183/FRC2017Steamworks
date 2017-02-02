@@ -89,6 +89,16 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		
+		// Set up OI for autonomous mode
+		// NOTE: Must do this BEFORE clearing out scheduler!
+		// Clearing out scheduler causes Default Commands (Idle-s)
+		// to start, and we want those to see the new OI mappings.
+		oi.autonomousInit();
+		
+		// Clear out the scheduler
+		// Will result in only Default Commands (Idle-s) running.
+		Scheduler.getInstance().removeAll();		
 	}
 
 	/**
@@ -101,15 +111,15 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
-		// Clear out the scheduler
-		Scheduler.getInstance().removeAll();
 		
-		// Re-create OI with specific driver & operator
-		// This is just a placeholder
+		// Set up OI with specific driver & operator mappings.
+		// Must do this before clearing out scheduler, see note in autonomousInit().
 		// TODO use real names
 		// TODO get this info from SmartDashboard
-		oi.mapDriverOperator( OI.Driver.JOE, OI.Operator.BILL);
+		oi.teleopInit( OI.Driver.JOE, OI.Operator.BILL);
 
+		// Clear out the scheduler
+		Scheduler.getInstance().removeAll();		
 	}
 
 	/**
@@ -129,6 +139,17 @@ public class Robot extends IterativeRobot {
 		// Disable LiveWindow & re-enable Scheduler
 		LiveWindow.setEnabled(false);
 		
+		// Set up OI mode for this test
+		// (as always, do this before clearing out Scheduler!)
+		switch( dbgOImapChooser.getSelected()) {
+		case Auto:
+			oi.autonomousInit();
+			break;
+		case Teleop:
+			oi.teleopInit();
+			break;
+		}
+
 		// Clear out the scheduler
 		Scheduler.getInstance().removeAll();
 				
@@ -136,21 +157,25 @@ public class Robot extends IterativeRobot {
 		String cmdName = SmartDashboard.getString("CmdToTest", "");
 
 		// Attempt to instantiate & start that Command
+		stateUnderTest = null;
 		if (!cmdName.equals("")) {
-			Subsystem subsys = dbgChooser.getSelected();
+			
+			// Get selected Subsystem
+			Subsystem subsys = dbgSubsysChooser.getSelected();
 			if (subsys != null) {
 
-				// We require that Commands for given Subsystem are in package
+				// Commands for given Subsystem are in package
 				// "org.usfirst.frc.team4183.robot.commands.Subsystem"
 				String subsysName = subsys.getName();
 				String fullName = "org.usfirst.frc.team4183.robot.commands." + subsysName + "." + cmdName;
 				System.out.format("Attempt to test Command: %s...", fullName);
 
-				// Note, for this to work, the Command must have a no-arg
-				// constructor
+				// Note, for this to work, the Command must have a 
+				// public no-arg constructor
 				try {
 					Command cmd = (Command) Class.forName(fullName).newInstance();
 					cmd.start();
+					stateUnderTest = cmd;
 					System.out.println("Success!");
 					
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -168,22 +193,30 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		// LiveWindow.run(); -- NOPE!!
-		Scheduler.getInstance().run();
+		// LiveWindow.run(); -- Not this!!
+		Scheduler.getInstance().run();  // This!!
 	}
 	
 	
 	
 	// State-testing-mode code follows
-	// This is work-in-progress - tjw
+	// This is work-in-progress - twilson
 	
 	private Set<Subsystem> subSystems = new HashSet<>();
-	private SendableChooser<Subsystem> dbgChooser;
+	private SendableChooser<Subsystem> dbgSubsysChooser;
+	private enum DbgOIMode {Teleop, Auto};
+	private SendableChooser<DbgOIMode> dbgOImapChooser;
+	Command stateUnderTest;
+
+	// Add Subsystem to the test set
+	public void addSubsystemToDebug(Subsystem subsys) {
+		subSystems.add(subsys);
+	}
 
 	// Put debug info on SmartDashboard
 	private void showDebugInfo() {
 
-		// Show the scheduler
+		// Show the Scheduler
 		SmartDashboard.putData(Scheduler.getInstance());
 
 		// Show the Subsystems
@@ -191,28 +224,54 @@ public class Robot extends IterativeRobot {
 			SmartDashboard.putData(subsys);
 
 		// Chooser to select a Subsystem
-		dbgChooser = new SendableChooser<Subsystem>();
+		dbgSubsysChooser = new SendableChooser<Subsystem>();
 		for (Subsystem subsys : subSystems)
-			dbgChooser.addObject(subsys.getName(), subsys);
-		SmartDashboard.putData("Debug", dbgChooser);
-
+			dbgSubsysChooser.addObject(subsys.getName(), subsys);
+		SmartDashboard.putData("Debug", dbgSubsysChooser);
 		
-		// Text field to type in Command to test
+		// Chooser to select the OI mapping in test mode
+		dbgOImapChooser = new SendableChooser<DbgOIMode>();
+		dbgOImapChooser.addObject("Teleop", DbgOIMode.Teleop);
+		dbgOImapChooser.addObject("Auto", DbgOIMode.Auto);
+		SmartDashboard.putData("OI Mode", dbgOImapChooser);
+		
+		// Text field to enter Command to test
 		SmartDashboard.putString("CmdToTest", "");
 	}
 
-	public void addSubsystemToDebug(Subsystem subsys) {
-		subSystems.add(subsys);
-	}
 
 	public void stateChange( Command fromState, Command toState) {
-
-		// TODO this works OK for simple cases
-		// but needs more work for CommandGroups and probably Auto mode
 		
-		if( !isTest())
+		if( !isTest()) {
+			// Normal operation, just do the transition as ordered
 			toState.start();
-		else 			
+			return;
+		}
+		
+		if( stateUnderTest == null) {
+			// In test mode, but no state-under-test;
+			// disallow all transitions
 			Scheduler.getInstance().removeAll();
+			return;
+		}
+			
+		// Modify fromState to be the top-level CommandGroup containing fromState
+		// (for simple stand-alone Command, fromState is unchanged)
+		// TODO test this with CommandGroup
+		while( fromState.getGroup() != null)
+			fromState = fromState.getGroup();
+		// Same for toState
+		while( toState.getGroup() != null)
+			toState = toState.getGroup();
+		
+		if( fromState == stateUnderTest && toState != stateUnderTest) {
+			// This is the transition that terminates state-test-mode
+			stateUnderTest = null;
+			Scheduler.getInstance().removeAll();
+		}
+		else {
+			// Other transitions are OK though
+			toState.start();
+		}	
 	}	
 }

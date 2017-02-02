@@ -1,6 +1,8 @@
 package org.usfirst.frc.team4183.robot.commands.ClimbSubsystem;
 
+import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
+import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -19,10 +21,14 @@ public class Idle extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	Robot.climbSubsystem.on(0.0);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
+    	if( OI.btnClimbControl.get() )
+    		return CommandUtils.stateChange(this, new ClimbForward());
+    	
         return false;
     }
 
