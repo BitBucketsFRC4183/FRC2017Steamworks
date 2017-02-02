@@ -104,8 +104,22 @@ public class OI {
 		doDefaultMapping();		
 	}
 	
-
+	// Default mapping of physical to logical buttons & axis
+	private void doDefaultMapping() {
+		
+		// Assign to EVERY logical button a physical button
+		// TODO finish this list w/real logical button names & real default mapping
+		btnActivateDrive = driverController.bCircle;
+		btnClimbControl = operatorController.bShare;
+		
+		// Assign to EVERY logical axis a physical axis
+		// TODO finish this list w/real logical axis names & real mapping
+		axisForward = driverController.aLeftY;
+		axisTurn = driverController.aLeftX;
+	}
+	
 	// Person-specific mapping functions.
+	// Override Defaults here.
 	
 	// Example: remap driver controller for Joe as driver
 	// TODO: change name of method for real driver name,
@@ -119,6 +133,8 @@ public class OI {
 	private void mapOperator_Bill( PhysicalController controller) {
 	}
 	
+	
+	// Mapping of Soft(ware) to logical buttons & axis
 	// TODO complete this
 	private void doAutonomousMapping() {
 		
@@ -130,19 +146,6 @@ public class OI {
 		axisTurn = new SoftAxis();
 	}
 	
-	private void doDefaultMapping() {
-		
-		// Assign to EVERY logical button a physical button
-		// TODO finish this list w/real logical button names & real default mapping
-		btnActivateDrive = driverController.bCircle;
-		btnClimbControl = operatorController.bShare;
-		
-		// Assign to EVERY logical axis a physical axis
-		// TODO finish this list w/real logical axis names & real mapping
-		axisForward = driverController.aLeftY;
-		axisTurn = driverController.aLeftX;
-	}
-
 
 	// Represents the physical buttons & axis on one controller
 	private static class PhysicalController {
