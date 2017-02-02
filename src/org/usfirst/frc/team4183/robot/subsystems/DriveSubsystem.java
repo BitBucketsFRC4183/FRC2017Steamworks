@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.DriveSubsystem.Idle;
 
-import edu.wpi.first.wpilibj.GyroBase;
 /**
  *
  */
@@ -29,13 +28,11 @@ public class DriveSubsystem extends Subsystem {
 			drive = new RobotDrive(LEFT_MOTOR_0, LEFT_MOTOR_1, RIGHT_MOTOR_0, RIGHT_MOTOR_1);
 			drive.setSafetyEnabled(false);
 			
-			LEFT_MOTOR_0.setFeedbackDevice(RobotMap.DRIVE_ENCODER1);
+			LEFT_MOTOR_0.setFeedbackDevice(RobotMap.DRIVE_ENCODER);
 			LEFT_MOTOR_0.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV); 
-			RIGHT_MOTOR_0.setFeedbackDevice(RobotMap.DRIVE_ENCODER2);
-			RIGHT_MOTOR_0.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV2);
+			RIGHT_MOTOR_0.setFeedbackDevice(RobotMap.DRIVE_ENCODER);
+			RIGHT_MOTOR_0.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV);
 	
-			// TODO need to slave motors
-			// Might need to reverse
 		}	
 
 		public void enable() {}

@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj.command.Command;
 public class ClimbForward extends Command {
 
     public ClimbForward() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
     	requires(Robot.climbSubsystem);
     }
 
@@ -24,9 +22,7 @@ public class ClimbForward extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	double drive = 1.0;
-    	Robot.climbSubsystem.on(drive);
-   
+    	Robot.climbSubsystem.on(1.0);
     }
     
 
@@ -34,11 +30,11 @@ public class ClimbForward extends Command {
     protected boolean isFinished() {
     	
     	if ( (timeSinceInitialized() < 1.0) && (Robot.climbSubsystem.getCurrent() >= 40) ) {
-    		return CommandUtils.stateChange( new ClimbReverse() );
+    		return CommandUtils.stateChange( this, new ClimbReverse() );
     		
     	}
     	if ((timeSinceInitialized() > 1.0) && (Robot.climbSubsystem.getCurrent() >=40) ) {
-    		return CommandUtils.stateChange(new ClimbFinish() );
+    		return CommandUtils.stateChange( this, new ClimbFinish() );
     	}
         return false;
     }

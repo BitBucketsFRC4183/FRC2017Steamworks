@@ -15,25 +15,25 @@ public class ClimbSubsystem extends Subsystem {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 	public ClimbSubsystem(){
-		climbMotor = new CANTalon(RobotMap.climbMotor);
-
+		climbMotor = new CANTalon(RobotMap.CLIMB_MOTOR);
 	}
 
 	public void enable() {}
 
-public void initDefaultCommand() {
-    setDefaultCommand(new Idle());
-}
+	public void disable() {}
 
+	public void on( double drive) {
+		climbMotor.set(drive);
 	}
-
+	
 	public double getCurrent()
 	{
 		return climbMotor.getOutputCurrent();
 	}
-
-
-
+	
+	public void initDefaultCommand() {
+		setDefaultCommand(new Idle());
+	}
 }
 
 

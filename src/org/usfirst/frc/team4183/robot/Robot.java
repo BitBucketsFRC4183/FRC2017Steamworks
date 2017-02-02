@@ -129,30 +129,33 @@ public class Robot extends IterativeRobot {
 		// Disable LiveWindow & re-enable Scheduler
 		LiveWindow.setEnabled(false);
 		
-		// Clear out the scheduler
+		// Clear out the scheduler -
+		// Leaves only default (Idle) states for all Subsystems
 		Scheduler.getInstance().removeAll();
 				
 		// Get Command-to-test class name
 		String cmdName = SmartDashboard.getString("CmdToTest", "");
 
 		// Attempt to instantiate & start that Command
-		cmdUnderTest = null;
+		stateUnderTest = null;
 		if (!cmdName.equals("")) {
+			
+			// Get selected Subsystem
 			Subsystem subsys = dbgChooser.getSelected();
 			if (subsys != null) {
 
-				// We require that Commands for given Subsystem are in package
+				// Commands for given Subsystem are in package
 				// "org.usfirst.frc.team4183.robot.commands.Subsystem"
 				String subsysName = subsys.getName();
 				String fullName = "org.usfirst.frc.team4183.robot.commands." + subsysName + "." + cmdName;
 				System.out.format("Attempt to test Command: %s...", fullName);
 
-				// Note, for this to work, the Command must have a no-arg
-				// constructor
+				// Note, for this to work, the Command must have a 
+				// public no-arg constructor
 				try {
 					Command cmd = (Command) Class.forName(fullName).newInstance();
 					cmd.start();
-					cmdUnderTest = cmd;
+					stateUnderTest = cmd;
 					System.out.println("Success!");
 					
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -171,7 +174,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 		// LiveWindow.run(); -- NOPE!!
-		Scheduler.getInstance().run();
+		Scheduler.getInstance().run();  // YEP!!
 	}
 	
 	
@@ -181,7 +184,12 @@ public class Robot extends IterativeRobot {
 	
 	private Set<Subsystem> subSystems = new HashSet<>();
 	private SendableChooser<Subsystem> dbgChooser;
-	Command cmdUnderTest;
+	Command stateUnderTest;
+
+	// Add Subsystem to the test set
+	public void addSubsystemToDebug(Subsystem subsys) {
+		subSystems.add(subsys);
+	}
 
 	// Put debug info on SmartDashboard
 	private void showDebugInfo() {
@@ -198,32 +206,44 @@ public class Robot extends IterativeRobot {
 		for (Subsystem subsys : subSystems)
 			dbgChooser.addObject(subsys.getName(), subsys);
 		SmartDashboard.putData("Debug", dbgChooser);
-
 		
-		// Text field to type in Command to test
+		// Text field to enter Command to test
 		SmartDashboard.putString("CmdToTest", "");
 	}
 
-	public void addSubsystemToDebug(Subsystem subsys) {
-		subSystems.add(subsys);
-	}
 
 	public void stateChange( Command fromState, Command toState) {
-
-		// TODO this works OK for simple cases
-		// but needs more work for CommandGroups and probably Auto mode
 		
 		if( !isTest()) {
+			// Normal operation, just do the transition as ordered
 			toState.start();
 			return;
 		}
 		
-		if( cmdUnderTest == null || fromState == cmdUnderTest) {
-			cmdUnderTest = null;
+		if( stateUnderTest == null) {
+			// In test mode, but no state-under-test;
+			// disallow all transitions
+			Scheduler.getInstance().removeAll();
+			return;
+		}
+			
+		// Modify fromState to be the top-level CommandGroup containing fromState
+		// (for simple stand-alone Command, fromState is unchanged)
+		// TODO test this with CommandGroup
+		while( fromState.getGroup() != null)
+			fromState = fromState.getGroup();
+		// Same for toState
+		while( toState.getGroup() != null)
+			toState = toState.getGroup();
+		
+		if( fromState == stateUnderTest && toState != stateUnderTest) {
+			// This is the one that terminates state-test-mode
+			stateUnderTest = null;
 			Scheduler.getInstance().removeAll();
 		}
-		else
+		else {
+			// Other transitions are OK though
 			toState.start();
-			
+		}	
 	}	
 }
