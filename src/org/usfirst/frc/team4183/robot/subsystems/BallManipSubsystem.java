@@ -8,21 +8,21 @@ import org.usfirst.frc.team4183.robot.commands.BallManipSubsystem.Idle;
 
 public class BallManipSubsystem extends Subsystem {
 	
-	boolean isShooting;
+	
 	
 	private CANTalon shooterMotor;
-	private CANTalon conveyerVerti;
-	private CANTalon conveyerHoriz;
+	private CANTalon conveyer;
+	private CANTalon intakeMotor;
 	
 	double shooterVel;
-	double vertiVel;
-	double horizVel;
+	double conveyerVel;
+	double intakeVel;
 	
 	
 	public BallManipSubsystem(){
 		shooterMotor = new CANTalon(RobotMap.shooterMotor);
-		conveyerVerti = new CANTalon(RobotMap.vertiMotor);
-		conveyerHoriz = new CANTalon(RobotMap.horizMotor);
+		conveyer = new CANTalon(RobotMap.conveyerMotor);
+		intakeMotor = new CANTalon(RobotMap.intakeMotor);
 		
 	}
 	
