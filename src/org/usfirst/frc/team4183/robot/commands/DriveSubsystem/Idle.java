@@ -28,7 +28,7 @@ public class Idle extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
     	if(OI.btnActivateDrive.get()) {
-    		return CommandUtils.stateChange(this, new ActiveState());
+    		return CommandUtils.stateChange(this, new DriverControl());
     	}
     	return false;
     }
