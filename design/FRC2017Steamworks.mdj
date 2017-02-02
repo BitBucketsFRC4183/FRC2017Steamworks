@@ -34120,7 +34120,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFZ76Y7HMuQvWc="
 							},
-							"name": "Subsystem Pacakages",
+							"name": "Subsystem Command Pacakages",
 							"visible": true,
 							"defaultDiagram": false,
 							"ownedViews": [
