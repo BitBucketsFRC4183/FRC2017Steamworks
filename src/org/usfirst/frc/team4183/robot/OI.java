@@ -133,23 +133,29 @@ public class OI {
 	}
 	
 	
-	// Mapping of Soft(ware) to logical buttons & axis
+	// Mapping of Soft(ware) button/axis to Logical buttons & axis
 	// TODO complete this
 	private void doAutonomousMapping() {
 		
 		// Assign to EVERY logical button a soft button
-    btnActivateDrive = new SoftButton();
+		btnActivateDrive = new SoftButton();
 		btnClimbControl = new SoftButton();
+		btnWaitingForGear = new SoftButton();
+		btnWaitingForBalls = new SoftButton();
+		btnGearIdle = new SoftButton();
+		btnOpenGate = new SoftButton();
 		
 		// Assign to EVERY logical axis a soft axis
 		axisForward = new SoftAxis();
 		axisTurn = new SoftAxis();
 	}
 	
+	// Default mapping of Physical to Logical button, axis
 	private void doDefaultMapping() {
 		
 		// Assign to EVERY logical button a physical button
 		// TODO finish this list w/real logical button names & real default mapping
+		// FIXME these mappings below NOT 1-to-1!
 		btnActivateDrive = driverController.bCircle;
 		btnClimbControl = operatorController.bShare;
 		btnWaitingForGear = operatorController.bCross;
