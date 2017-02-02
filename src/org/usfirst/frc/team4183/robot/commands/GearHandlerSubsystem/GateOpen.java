@@ -1,20 +1,24 @@
 package org.usfirst.frc.team4183.robot.commands.GearHandlerSubsystem;
 
+import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
+import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class Template extends Command {
+public class GateOpen extends Command {
 
-    public Template() {
+    public GateOpen() {
+        // Use requires() here to declare subsystem dependencies
         requires(Robot.gearHandlerSubsystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	Robot.gearHandlerSubsystem.openGate();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -23,6 +27,10 @@ public class Template extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
+    	if(OI.btnGearIdle.get()) {
+    		Robot.gearHandlerSubsystem.closeGate();
+    		return CommandUtils.stateChange(this, new Idle());
+    	}
         return false;
     }
 
@@ -33,6 +41,5 @@ public class Template extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	end();
     }
 }

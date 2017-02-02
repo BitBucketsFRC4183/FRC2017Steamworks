@@ -9,30 +9,28 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class Idle extends Command {
+public class WaitingForGear extends Command {
 
-    public Idle() {
+    public WaitingForGear() {
+        // Use requires() here to declare subsystem dependencies
         requires(Robot.gearHandlerSubsystem);
+    
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	Robot.gearHandlerSubsystem.closeGate();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	Robot.gearHandlerSubsystem.spinRollerGear();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(OI.btnWaitingForBalls.get()) {
-    		return CommandUtils.stateChange(this, new GateOpen());
-    	}
-    	else if(OI.btnWaitingForGear.get()) {
-    		return CommandUtils.stateChange(this, new WaitingForGear());
-    	}
-    	else if(OI.btnOpenGate.get()) {
-    		return CommandUtils.stateChange(this, new WaitingForBalls());
+    	if(OI.btnGearIdle.get()) {
+    		return CommandUtils.stateChange(this, new Idle());
     	}
         return false;
     }
@@ -44,6 +42,5 @@ public class Idle extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	end();
     }
 }
