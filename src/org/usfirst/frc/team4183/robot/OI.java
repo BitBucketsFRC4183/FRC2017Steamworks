@@ -21,19 +21,22 @@ public class OI {
 	}
 	
 	// Call on entry to Autonomous Mode to set up the Soft Buttons
-	public void mapAutonomous() {
+	public void autonomousInit() {
 		doAutonomousMapping();
 	}
 	
 	public enum Driver {
-		JOE, SAM;  // TODO Put in actual names, add more as needed
+		DEFAULT, JOE, SAM;  // TODO Put in actual names, add more as needed
 	}
 	
 	public enum Operator {
-		BILL, MIKE;  // TODO Put in actual names, add more as needed
+		DEFAULT, BILL, MIKE;  // TODO Put in actual names, add more as needed
 	}
 	
-	public void mapDriverOperator( Driver driver, Operator operator) {
+	public void teleopInit( Driver driver, Operator operator) {
+		
+		// Begin by setting defaults
+		doDefaultMapping();
 		
 		// Override default mappings for particular driver.
 		// Make sure to pass driverController!
@@ -43,6 +46,8 @@ public class OI {
 			break;
 		case SAM:
 			// Currently no remapping for Sam
+			break;
+		case DEFAULT:
 			break;
 		}
 		
@@ -55,12 +60,16 @@ public class OI {
 		case MIKE:
 			// Currently no remapping for Mike
 			break;
+		case DEFAULT:
+			break;
 		}		
 	}
 
+	public void teleopInit() {
+		teleopInit(Driver.DEFAULT, Operator.DEFAULT);
+	}
 	
 	/**
-	 * 
 	 * If your Command needs rising or falling edge detect on a button,
 	 * use this method to get a ButtonEvent for that purpose.
 	 * In initialize(), get your ButtonEvent: OI.ButtonEvent btnShoot = OI.getBtnEvt( OI.btnShoot).
@@ -100,12 +109,26 @@ public class OI {
 		driverController = new PhysicalController( new Joystick(0));
 		operatorController = new PhysicalController( new Joystick(1));
 		
-		// Default mapping
+		// Set default mapping
 		doDefaultMapping();		
 	}
 	
-
+	// Default mapping of physical to logical buttons & axis
+	private void doDefaultMapping() {
+		
+		// Assign to EVERY logical button a physical button
+		// TODO finish this list w/real logical button names & real default mapping
+		btnActivateDrive = driverController.bCircle;
+		btnClimbControl = operatorController.bShare;
+		
+		// Assign to EVERY logical axis a physical axis
+		// TODO finish this list w/real logical axis names & real mapping
+		axisForward = driverController.aLeftY;
+		axisTurn = driverController.aLeftX;
+	}
+	
 	// Person-specific mapping functions.
+	// Override Defaults here.
 	
 	// Example: remap driver controller for Joe as driver
 	// TODO: change name of method for real driver name,
@@ -119,30 +142,20 @@ public class OI {
 	private void mapOperator_Bill( PhysicalController controller) {
 	}
 	
+	
+	// Mapping of Soft(ware) to logical buttons & axis
 	// TODO complete this
 	private void doAutonomousMapping() {
 		
 		// Assign to EVERY logical button a soft button
 		btnActivateDrive = new SoftButton();
+		btnClimbControl = new SoftButton();
 		
 		// Assign to EVERY logical axis a soft axis
 		axisForward = new SoftAxis();
 		axisTurn = new SoftAxis();
 	}
 	
-	private void doDefaultMapping() {
-		
-		// Assign to EVERY logical button a physical button
-		// TODO finish this list w/real logical button names & real default mapping
-		btnActivateDrive = driverController.bCircle;
-		btnClimbControl = operatorController.bShare;
-		
-		// Assign to EVERY logical axis a physical axis
-		// TODO finish this list w/real logical axis names & real mapping
-		axisForward = driverController.aLeftY;
-		axisTurn = driverController.aLeftX;
-	}
-
 
 	// Represents the physical buttons & axis on one controller
 	private static class PhysicalController {
