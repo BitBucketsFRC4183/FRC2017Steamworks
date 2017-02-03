@@ -17,13 +17,16 @@ public class ShooterOn extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.ballManipSubsystem.topMotorShooterSpeed();
-    	Robot.ballManipSubsystem.conveyerMotorOn();
-    	Robot.ballManipSubsystem.sweeperMotorOff();
+    	Robot.ballManipSubsystem.enable();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	// Subsystem actions must be called every cycle to keep
+    	// things running
+    	Robot.ballManipSubsystem.setTopRollerToShootingSpeed();
+    	Robot.ballManipSubsystem.setConveyerOn();
+    	Robot.ballManipSubsystem.setSweeperOff();
     }
 
     // Make this return true when this Command no longer needs to run execute()
