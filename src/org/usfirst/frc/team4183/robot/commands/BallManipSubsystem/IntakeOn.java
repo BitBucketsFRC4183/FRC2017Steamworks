@@ -17,13 +17,15 @@ public class IntakeOn extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.ballManipSubsystem.topMotorIntakeSpeed();
-    	Robot.ballManipSubsystem.conveyerMotorOn();
-    	Robot.ballManipSubsystem.sweeperMotorOn();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	// Subsystem actions must be called every cycle to keep
+    	// things running
+    	Robot.ballManipSubsystem.setTopRollerToIntakeSpeed();
+    	Robot.ballManipSubsystem.setConveyerOn();
+    	Robot.ballManipSubsystem.setSweeperOn();
     }
 
     // Make this return true when this Command no longer needs to run execute()
