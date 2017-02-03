@@ -34,6 +34,9 @@ public class BallManipSubsystem extends Subsystem {
 	}
 	
 	public void enable() {
+		// Enable closed-loop motor;
+		// motor won't actually turn on until set() is done
+		shooterMotor.enableControl();
 	}
 	
 	public void disable() {
@@ -47,16 +50,15 @@ public class BallManipSubsystem extends Subsystem {
     }
     
     public void topMotorIntakeSpeed(){
-		shooterMotor.enableControl();
     	shooterMotor.set(shooterIntakeVel);
     }
     
     public void topMotorShooterSpeed(){
-		shooterMotor.enableControl();
     	shooterMotor.set(shooterVel);
     }
     
 	public void topMotorOff(){
+		// Stop closed-loop motor (immediate)
 		shooterMotor.disableControl();;
 	}
 	
