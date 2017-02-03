@@ -9,15 +9,14 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class Idle extends Command {
+public class Template extends Command {
 
-    public Idle() {
+    public Template() {
         requires(Robot.gearHandlerSubsystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.gearHandlerSubsystem.disable();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -26,21 +25,11 @@ public class Idle extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(OI.btnWaitingForBalls.get()) {
-    		return CommandUtils.stateChange(this, new GateOpen());
-    	}
-    	else if(OI.btnWaitingForGear.get()) {
-    		return CommandUtils.stateChange(this, new WaitingForGear());
-    	}
-    	else if(OI.btnOpenGate.get()) {
-    		return CommandUtils.stateChange(this, new WaitingForBalls());
-    	}
         return false;
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.gearHandlerSubsystem.enable();
     }
 
     // Called when another command which requires one or more of the same
