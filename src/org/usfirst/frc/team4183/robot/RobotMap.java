@@ -24,23 +24,14 @@ public class RobotMap {
 	public static final int CLIMB_MOTOR = 10;
 	
 	
-	// Ball Manipulator Subsystem
-	public static final int shooterMotor = 9; 
-	public static final int vertiMotor = 10;
-	public static final int horizMotor = 11;
-	
-//stuff for the BALL MANIPULATOR is below here
+
+	//stuff for the BALL MANIPULATOR is below here
 	public static int shooterMotor = 9; 
 	public static int conveyerMotor = 10;
-	public static int intakeMotor = 11;
+	public static int sweeperMotor = 11;
 	
-	public static final CANTalon.FeedbackDevice SHOOTER_ROLLER_ENCODER = CANTalon.FeedbackDevice.QuadEncoder;
-	public static final CANTalon.FeedbackDevice CONVEYER_ENCODER = CANTalon.FeedbackDevice.QuadEncoder;
-	public static final CANTalon.FeedbackDevice INTAKE_ROLLER_ENCODER = CANTalon.FeedbackDevice.QuadEncoder;
 	
 	public static final int SHOOTER_ROLLER_PULSES_PER_REV = 256;
-	public static final int CONV_PULSES_PER_REV = 256;
-	public static final int INTAKE_ROLLER_PULSES_PER_REV = 256;
 	
 	
 	

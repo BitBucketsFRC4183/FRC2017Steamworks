@@ -1,6 +1,8 @@
 package org.usfirst.frc.team4183.robot.commands.BallManipSubsystem;
 
+import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
+import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -15,6 +17,9 @@ public class ShooterOn extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	Robot.ballManipSubsystem.topMotorShooterSpeed();
+    	Robot.ballManipSubsystem.conveyerMotorOn();
+    	Robot.ballManipSubsystem.sweeperMotorOff();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -23,7 +28,13 @@ public class ShooterOn extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+        if(OI.btnBallIdle.get()){
+        	return CommandUtils.stateChange(this, new Idle());  
+        }
+        if(OI.btnIntakeOn.get()){
+        	return CommandUtils.stateChange(this, new IntakeOn());
+        }
+    	return false;
     }
 
     // Called once after isFinished returns true
