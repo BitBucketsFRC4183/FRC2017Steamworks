@@ -47,15 +47,17 @@ public class BallManipSubsystem extends Subsystem {
     }
     
     public void topMotorIntakeSpeed(){
+		shooterMotor.enableControl();
     	shooterMotor.set(shooterIntakeVel);
     }
     
     public void topMotorShooterSpeed(){
+		shooterMotor.enableControl();
     	shooterMotor.set(shooterVel);
     }
     
 	public void topMotorOff(){
-		shooterMotor.set(0.0);
+		shooterMotor.disableControl();;
 	}
 	
     public void conveyerMotorOn(){

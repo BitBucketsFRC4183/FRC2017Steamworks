@@ -21,14 +21,14 @@ public class RobotMap {
 	
 	
 	// Climb Subsystem
-	public static final int CLIMB_MOTOR = 10;
+	public static final int CLIMB_MOTOR = 21;
 	
 	
 
 	//stuff for the BALL MANIPULATOR is below here
 	public static int shooterMotor = 9; 
-	public static int conveyerMotor = 12;
-	public static int sweeperMotor = 11;
+	public static int conveyerMotor = 10;
+	public static int sweeperMotor = 2;
 	
 	
 	public static final int SHOOTER_ROLLER_PULSES_PER_REV = 256;
