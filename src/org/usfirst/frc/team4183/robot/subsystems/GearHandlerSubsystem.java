@@ -7,7 +7,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class GearHandlerSubsystem extends Subsystem {
 
-	public void enable() {}
+	public void enable() {
+	}
 	
 	public void disable() {
 		stopRoller();
