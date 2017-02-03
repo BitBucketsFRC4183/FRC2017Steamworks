@@ -89,6 +89,9 @@ public class OI {
 	public static LogicalButton btnWaitingForBalls;
 	public static LogicalButton btnGearIdle;
 	public static LogicalButton btnOpenGate;
+	public static LogicalButton btnIntakeOn;
+	public static LogicalButton btnShooterStart;
+	public static LogicalButton btnBallIdle;
 	// etc for up to 14 buttons on each controller (might be fewer)
 
 
@@ -161,6 +164,9 @@ public class OI {
 		btnWaitingForBalls = operatorController.bCircle;
 		btnGearIdle = operatorController.bSquare;
 		btnOpenGate = operatorController.bTriangle;
+		btnIntakeOn = operatorController.bL1;
+		btnShooterStart = operatorController.bR1;
+		btnBallIdle = operatorController.bTrackpad;
 		
 		// Assign to EVERY logical axis a physical axis
 		// TODO finish this list w/real logical axis names & real mapping

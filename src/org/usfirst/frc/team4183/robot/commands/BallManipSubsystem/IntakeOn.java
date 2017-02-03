@@ -9,15 +9,17 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class Idle extends Command {
+public class IntakeOn extends Command {
 
-    public Idle() {
+    public IntakeOn() {
         requires(Robot.ballManipSubsystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.ballManipSubsystem.disable();
+    	Robot.ballManipSubsystem.topMotorIntakeSpeed();
+    	Robot.ballManipSubsystem.conveyerMotorOn();
+    	Robot.ballManipSubsystem.sweeperMotorOn();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -26,19 +28,17 @@ public class Idle extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        if (OI.btnIntakeOn.get()){
-        	return CommandUtils.stateChange(this, new IntakeOn());
+        if(OI.btnBallIdle.get()){
+        	return CommandUtils.stateChange(this, new Idle());
         }
-        if (OI.btnShooterStart.get()){
+        if(OI.btnShooterStart.get()){
         	return CommandUtils.stateChange(this, new ShooterOn());
         }
     	return false;
-        
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.ballManipSubsystem.enable();
     }
 
     // Called when another command which requires one or more of the same
