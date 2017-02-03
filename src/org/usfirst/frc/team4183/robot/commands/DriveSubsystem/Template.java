@@ -1,4 +1,4 @@
-package org.usfirst.frc.team4183.robot.commands.GearHandlerSubsystem;
+package org.usfirst.frc.team4183.robot.commands.DriveSubsystem;
 
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
@@ -9,38 +9,29 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class Idle extends Command {
+public class Template extends Command {
 
-    public Idle() {
-        requires(Robot.gearHandlerSubsystem);
+    public Template() {
+        // Use requires() here to declare subsystem dependencies
+    	requires(Robot.driveSubsystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.gearHandlerSubsystem.disable();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(OI.btnWaitingForBalls.get()) {
-    		return CommandUtils.stateChange(this, new GateOpen());
-    	}
-    	if(OI.btnWaitingForGear.get()) {
-    		return CommandUtils.stateChange(this, new WaitingForGear());
-    	}
-    	if(OI.btnOpenGate.get()) {
-    		return CommandUtils.stateChange(this, new WaitingForBalls());
-    	}
-        return false;
+    	return false;
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.gearHandlerSubsystem.enable();
     }
 
     // Called when another command which requires one or more of the same

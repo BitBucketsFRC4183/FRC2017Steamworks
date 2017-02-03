@@ -28,7 +28,6 @@ public class GateOpen extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
     	if(OI.btnGearIdle.get()) {
-    		Robot.gearHandlerSubsystem.closeGate();
     		return CommandUtils.stateChange(this, new Idle());
     	}
         return false;
@@ -36,10 +35,12 @@ public class GateOpen extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+		Robot.gearHandlerSubsystem.closeGate();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+    	end();
     }
 }
