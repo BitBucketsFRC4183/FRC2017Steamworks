@@ -10,14 +10,14 @@ public class BallManipSubsystem extends Subsystem {
 	
 	
 	
-	private CANTalon shooterMotor;
-	private CANTalon conveyer;
+	private CANTalon topRollerMotor;		// Used for shooting AND intake (i.e., multi-speed)
+	private CANTalon conveyerMotor;
 	private CANTalon sweeperMotor;
 	
-	private final double shooterVel = 4200.0;		//velocity of top roller when shooting in rpm
-	private final double shooterIntakeVel = 500.0;	//velocity of top roller when intake in rpm
-	private final double conveyerDrive = 0.8;		
-	private final double sweeperDrive = 0.1;
+	private final double SHOOTER_SPEED_RPM = 4200.0;	//speed of top roller when shooting
+	private final double INTAKE_SPEED_RPM = 500.0;		//speed of top roller when intake
+	private final double CONVEYER_SPEED_PMAX = 0.8;		//open loop control of conveyer in fraction vbus
+	private final double SWEEPER_SPEED_PMAX = 0.1;		//open loop control of sweeper in fraction vbus
 	
 	private final double P_VALUE = 0.6;
 	private final double I_VALUE = 1.2*0.001;
@@ -26,74 +26,77 @@ public class BallManipSubsystem extends Subsystem {
 	
 	
 	public BallManipSubsystem(){
-		shooterMotor = new CANTalon(RobotMap.shooterMotor);
-		conveyer = new CANTalon(RobotMap.conveyerMotor);
-		sweeperMotor = new CANTalon(RobotMap.sweeperMotor);
+		topRollerMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_TOP_ROLLER_MOTOR_ID);
+		conveyerMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_CONVEYER_MOTOR_ID);
+		sweeperMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_SWEEPER_MOTOR_ID);
 		
-		setupSpeedMode();
+		initializeMotorModes();
 	}
+	
+    private void initializeMotorModes(){
+    	topRollerMotor.changeControlMode(CANTalon.TalonControlMode.Speed);
+    	topRollerMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+    	topRollerMotor.configEncoderCodesPerRev(RobotMap.SHOOTER_ROLLER_PULSES_PER_REV);
+    	
+    	topRollerMotor.reverseOutput(false);
+    	topRollerMotor.reverseSensor(false);
+    	
+    	topRollerMotor.setPID(P_VALUE, I_VALUE, D_VALUE);
+    	topRollerMotor.setF(F_VALUE);
+    	
+    	topRollerMotor.setIZone(0);
+    	topRollerMotor.setCloseLoopRampRate(0.0);
+    	topRollerMotor.setAllowableClosedLoopErr(0);
+    	topRollerMotor.configNominalOutputVoltage(0.0, 0.0);
+    	topRollerMotor.configPeakOutputVoltage(+12.0, -12.0);
+    }
 	
 	public void enable() {
 		// Enable closed-loop motor;
 		// motor won't actually turn on until set() is done
-		shooterMotor.enableControl();
+		topRollerMotor.enableControl();
 	}
 	
 	public void disable() {
-		topMotorOff();
-		conveyerMotorOff();
-		sweeperMotorOff();	
+		setTopRollerOff();
+		setConveyerOff();
+		setSweeperOff();	
 	}
 		
     public void initDefaultCommand() {
         setDefaultCommand(new Idle());
     }
     
-    public void topMotorIntakeSpeed(){
-    	shooterMotor.set(shooterIntakeVel);
+    public void setTopRollerToIntakeSpeed(){
+    	topRollerMotor.set(INTAKE_SPEED_RPM);
     }
     
-    public void topMotorShooterSpeed(){
-    	shooterMotor.set(shooterVel);
+    public void setTopRollerToShootingSpeed(){
+    	topRollerMotor.set(SHOOTER_SPEED_RPM);
     }
     
-	public void topMotorOff(){
+	public void setTopRollerOff(){
 		// Stop closed-loop motor (immediate)
-		shooterMotor.disableControl();;
+		// NOTE: Motor is disabled rather than setting speed to 0
+		// to avoid using power to maintain zero speed
+		topRollerMotor.disableControl();
 	}
 	
-    public void conveyerMotorOn(){
-    	conveyer.set(conveyerDrive);
+    public void setConveyerOn(){
+    	conveyerMotor.set(CONVEYER_SPEED_PMAX);
     }
     
-    public void conveyerMotorOff(){
-    	conveyer.set(0);
+    public void setConveyerOff(){
+    	conveyerMotor.set(0);
     }
     
-    public void sweeperMotorOn(){
-    	sweeperMotor.set(sweeperDrive);
+    public void setSweeperOn(){
+    	sweeperMotor.set(SWEEPER_SPEED_PMAX);
     }
     
-    public void sweeperMotorOff(){
+    public void setSweeperOff(){
     	sweeperMotor.set(0);
     }
     
-    private void setupSpeedMode(){
-    	shooterMotor.changeControlMode(CANTalon.TalonControlMode.Speed);
-    	shooterMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
-    	shooterMotor.configEncoderCodesPerRev(RobotMap.SHOOTER_ROLLER_PULSES_PER_REV);
-    	
-    	shooterMotor.reverseOutput(false);
-    	shooterMotor.reverseSensor(false);
-    	
-    	shooterMotor.setPID(P_VALUE, I_VALUE, D_VALUE);
-    	shooterMotor.setF(F_VALUE);
-    	
-    	shooterMotor.setIZone(0);
-    	shooterMotor.setCloseLoopRampRate(0.0);
-    	shooterMotor.setAllowableClosedLoopErr(0);
-    	shooterMotor.configNominalOutputVoltage(0.0, 0.0);
-    	shooterMotor.configPeakOutputVoltage(+12.0, -12.0);
-    }
 }
 
