@@ -27,7 +27,7 @@ public class RobotMap {
 
 	//stuff for the BALL MANIPULATOR is below here
 	public static int shooterMotor = 9; 
-	public static int conveyerMotor = 10;
+	public static int conveyerMotor = 12;
 	public static int sweeperMotor = 11;
 	
 	
