@@ -7,9 +7,13 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class GearHandlerSubsystem extends Subsystem {
 
-	public void enable() {}
+	public void enable() {
+	}
 	
-	public void disable() {}
+	public void disable() {
+		stopRoller();
+		closeGate();
+	}
 	
 	public void initDefaultCommand() {
 	    setDefaultCommand(new Idle());
@@ -28,6 +32,10 @@ public class GearHandlerSubsystem extends Subsystem {
 	}
 	
 	public void spinRollerGear() {
+		
+	}
+	
+	public void stopRoller() {
 		
 	}
 	

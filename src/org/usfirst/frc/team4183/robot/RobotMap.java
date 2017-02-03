@@ -10,26 +10,35 @@ import com.ctre.CANTalon;
  */
 public class RobotMap {
 
+	// tjw:
+	// Current proto board has only 4 controllers;
+	// until we get that fixed, I've assigned fantastic motor numbers in here
+	// to make sure there's no collisions.
+	// When testing a particular subsystem, put real numbers in here,
+	// build & download, but DON'T commit that version.
+	
 	// Drive Subsystem
-	public static final int LEFT_MOTOR0_ID = 0;
-	public static final int LEFT_MOTOR1_ID = 1;
-	public static final int RIGHT_MOTOR0_ID = 3;
-	public static final int RIGHT_MOTOR1_ID = 4; 
+	public static final int LEFT_MOTOR0_ID = 20;
+	public static final int LEFT_MOTOR1_ID = 21;
+	public static final int RIGHT_MOTOR0_ID = 22;
+	public static final int RIGHT_MOTOR1_ID = 23; 
 	
 	public static final CANTalon.FeedbackDevice DRIVE_ENCODER = CANTalon.FeedbackDevice.QuadEncoder;
 	public static final int DRIVE_PULSES_PER_REV = 2048; 
 	
 	
 	// Climb Subsystem
-	public static final int CLIMB_MOTOR = 10;
-	
-	
-	// Ball Manipulator Subsystem
-	public static final int shooterMotor = 9; 
-	public static final int vertiMotor = 10;
-	public static final int horizMotor = 11;
-	
-	public static final CANTalon.FeedbackDevice SHOOTER_ENCODER = CANTalon.FeedbackDevice.QuadEncoder;	
-	public static final int SHOOTER_PULSES_PER_REV = 256;
+	public static final int CLIMB_MOTOR = 31;
 		
+
+	// Ball Manipulator
+	public static final int BALL_SUBSYSTEM_TOP_ROLLER_MOTOR_ID = 40; 
+	public static final int BALL_SUBSYSTEM_CONVEYER_MOTOR_ID = 41;
+	public static final int BALL_SUBSYSTEM_SWEEPER_MOTOR_ID = 42;
+	
+	public static final int SHOOTER_ROLLER_PULSES_PER_REV = 256;
+	
+	
+	// Gear Handler
+	public static final int GEAR_HANDLER_MOTOR = 51;
 }
