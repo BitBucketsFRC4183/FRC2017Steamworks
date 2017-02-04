@@ -17,6 +17,7 @@ public class ShooterOn extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	Robot.ballManipSubsystem.setFlapModeShoot();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -26,7 +27,6 @@ public class ShooterOn extends Command {
     	Robot.ballManipSubsystem.setTopRollerToShootingSpeed();
     	Robot.ballManipSubsystem.setConveyerOn();
     	Robot.ballManipSubsystem.setSweeperOff();
-    	Robot.ballManipSubsystem.setFlapModeShoot();
     }
 
     // Make this return true when this Command no longer needs to run execute()

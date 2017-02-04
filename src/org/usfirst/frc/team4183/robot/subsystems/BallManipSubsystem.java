@@ -81,7 +81,9 @@ public class BallManipSubsystem extends Subsystem {
 	public void setTopRollerOff(){
 		// Stop closed-loop motor (immediate)
 		// NOTE: Motor is disabled rather than setting speed to 0
-		// to avoid using power to maintain zero speed
+		// because this is a velocity-closed-loop motor, 
+		// and if loop is not closed (position sensor not connected)
+		// setting speed to 0 will not actually stop the motor.
 		topRollerMotor.disableControl();
 	}
 	
