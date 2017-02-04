@@ -46,7 +46,7 @@ public class RobotMap {
 	public static final int BALLSUB_SHOOT_PNEUMA_CHANNEL = 1;
 	
 	// Gear Handler
-	public static final int GEAR_HANDLER_MOTOR = 51;
+	public static final int GEAR_HANDLER_MOTOR_ID = 51;
 	
 	public static final int GEAR_HANDLER_PNEUMA_OPEN_CHANNEL = 2;
 	public static final int GEAR_HANDLER_PNEUMA_CLOSED_CHANNEL = 3;
