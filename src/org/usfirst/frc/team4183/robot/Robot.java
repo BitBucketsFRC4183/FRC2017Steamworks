@@ -1,6 +1,7 @@
 
 package org.usfirst.frc.team4183.robot;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -31,6 +32,8 @@ public class Robot extends IterativeRobot {
 	public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
 	public static final GearHandlerSubsystem gearHandlerSubsystem = new GearHandlerSubsystem();
 
+	private static final Compressor compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);
+
 	public static OI oi;
 
 	
@@ -50,6 +53,14 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+		
+		// Start pressurizing the tanks as soon as we are initialized
+		// NOTE: The compressor object is foundation of all things
+		// connected to the Pneumatics Control Module (PCM) so does
+		// not belong to any one subsystem.
+		compressor.setClosedLoopControl(true);
+		
+		
 		oi = OI.instance();
 				
 		// Add all subsystems for debugging
