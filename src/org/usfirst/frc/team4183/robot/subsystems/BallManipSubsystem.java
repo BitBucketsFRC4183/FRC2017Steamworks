@@ -30,8 +30,8 @@ public class BallManipSubsystem extends Subsystem {
 	
 	public BallManipSubsystem(){
 		
-//		Preferences prefs = Preferences.getInstance();
-//		SHOOTER_SPEED_RPM = prefs.getDouble("SHOOTER_SPEED_RPM", 4200.0);
+		//Preferences prefs = Preferences.getInstance();
+		//SHOOTER_SPEED_RPM = prefs.getDouble("SHOOTER_SPEED_RPM", 4200.0);
 		
 		topRollerMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_TOP_ROLLER_MOTOR_ID);
 		conveyerMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_CONVEYER_MOTOR_ID);
