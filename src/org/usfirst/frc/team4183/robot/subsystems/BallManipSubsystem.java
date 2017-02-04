@@ -1,6 +1,7 @@
 package org.usfirst.frc.team4183.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.CANTalon;
 import org.usfirst.frc.team4183.robot.RobotMap;
@@ -15,7 +16,7 @@ public class BallManipSubsystem extends Subsystem {
 	private CANTalon conveyerMotor;
 	private CANTalon sweeperMotor;
 	
-	private final double SHOOTER_SPEED_RPM = 4200.0;	//speed of top roller when shooting
+	private final double SHOOTER_SPEED_RPM;				//speed of top roller when shooting
 	private final double INTAKE_SPEED_RPM = 500.0;		//speed of top roller when intake
 	private final double CONVEYER_SPEED_PMAX = 0.8;		//open loop control of conveyer in fraction vbus
 	private final double SWEEPER_SPEED_PMAX = 0.1;		//open loop control of sweeper in fraction vbus
@@ -28,6 +29,10 @@ public class BallManipSubsystem extends Subsystem {
 	DoubleSolenoid flapSolenoid = new DoubleSolenoid(RobotMap.BALLSUB_INTAKE_PNEUMA_CHANNEL, RobotMap.BALLSUB_SHOOT_PNEUMA_CHANNEL);
 	
 	public BallManipSubsystem(){
+		
+		Preferences prefs = Preferences.getInstance();
+		SHOOTER_SPEED_RPM = prefs.getDouble("SHOOTER_SPEED_RPM", 4200.0);
+		
 		topRollerMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_TOP_ROLLER_MOTOR_ID);
 		conveyerMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_CONVEYER_MOTOR_ID);
 		sweeperMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_SWEEPER_MOTOR_ID);
@@ -81,7 +86,9 @@ public class BallManipSubsystem extends Subsystem {
 	public void setTopRollerOff(){
 		// Stop closed-loop motor (immediate)
 		// NOTE: Motor is disabled rather than setting speed to 0
-		// to avoid using power to maintain zero speed
+		// because this is a velocity-closed-loop motor, 
+		// and if loop is not closed (position sensor not connected)
+		// setting speed to 0 will not actually stop the motor.
 		topRollerMotor.disableControl();
 	}
 	

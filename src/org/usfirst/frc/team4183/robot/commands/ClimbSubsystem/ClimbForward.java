@@ -22,19 +22,19 @@ public class ClimbForward extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.climbSubsystem.on(1.0);
+    	Robot.climbSubsystem.onForward();
     }
     
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
     	
-    	if ( (timeSinceInitialized() < 1.0) && (Robot.climbSubsystem.getCurrent() >= 40) ) {
+    	if ( (timeSinceInitialized() < 1.0) && (Robot.climbSubsystem.isPastCurrentLimit()) ) {
     		return CommandUtils.stateChange( this, new ClimbReverse() );
     		
     	}
-    	if ( (timeSinceInitialized() > 1.0) && 
-    	   ( (Robot.climbSubsystem.getCurrent() >=40) || Robot.climbSubsystem.bumperSwitch() )
+    	if ( (timeSinceInitialized() >= 1.0) && 
+    	   ( (Robot.climbSubsystem.isPastCurrentLimit()) || Robot.climbSubsystem.bumperSwitch() )
     	) 
     	{
     		return CommandUtils.stateChange( this, new ClimbFinish() );
