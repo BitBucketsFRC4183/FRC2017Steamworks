@@ -1,5 +1,6 @@
 package org.usfirst.frc.team4183.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.CANTalon;
 import org.usfirst.frc.team4183.robot.RobotMap;
@@ -24,6 +25,7 @@ public class BallManipSubsystem extends Subsystem {
 	private final double D_VALUE = .02*1000.0;
 	private final double F_VALUE = 0.13;
 	
+	DoubleSolenoid flapSolenoid = new DoubleSolenoid(RobotMap.BALLSUB_INTAKE_PNEUMA_CHANNEL, RobotMap.BALLSUB_SHOOT_PNEUMA_CHANNEL);
 	
 	public BallManipSubsystem(){
 		topRollerMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_TOP_ROLLER_MOTOR_ID);
@@ -61,6 +63,7 @@ public class BallManipSubsystem extends Subsystem {
 		setTopRollerOff();
 		setConveyerOff();
 		setSweeperOff();	
+		flapSolenoid.set(DoubleSolenoid.Value.kOff);
 	}
 		
     public void initDefaultCommand() {
@@ -96,6 +99,14 @@ public class BallManipSubsystem extends Subsystem {
     
     public void setSweeperOff(){
     	sweeperMotor.set(0);
+    }
+    
+    public void setFlapModeIntake(){
+    	flapSolenoid.set(DoubleSolenoid.Value.kForward);
+    }
+    
+    public void setFlapModeShoot(){
+    	flapSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
     
 }

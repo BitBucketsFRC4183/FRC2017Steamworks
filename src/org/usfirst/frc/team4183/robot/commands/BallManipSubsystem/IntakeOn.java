@@ -26,6 +26,7 @@ public class IntakeOn extends Command {
     	Robot.ballManipSubsystem.setTopRollerToIntakeSpeed();
     	Robot.ballManipSubsystem.setConveyerOn();
     	Robot.ballManipSubsystem.setSweeperOn();
+    	Robot.ballManipSubsystem.setFlapModeIntake();
     }
 
     // Make this return true when this Command no longer needs to run execute()

@@ -132,6 +132,7 @@ public class OI {
 	// TODO: change name of method for real operator name,
 	// and of course put in actual desired mapping
 	private void mapOperator_Bill( PhysicalController controller) {
+		btnClimbControl = controller.bShare;
 	}
 	
 	

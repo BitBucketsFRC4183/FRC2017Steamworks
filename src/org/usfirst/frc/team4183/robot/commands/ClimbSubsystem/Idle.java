@@ -5,6 +5,7 @@ import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
+import org.usfirst.frc.team4183.robot.OI;
 
 /**
  *
@@ -12,7 +13,9 @@ import edu.wpi.first.wpilibj.command.Command;
 public class Idle extends Command {
 
     public Idle() {
-        requires(Robot.climbSubsystem);
+        // Use requires() here to declare subsystem dependencies
+        // eg. requires(chassis);
+    	requires(Robot.climbSubsystem);
     }
 
     // Called just before this Command runs the first time
@@ -39,6 +42,5 @@ public class Idle extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	end();
     }
 }
