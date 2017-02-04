@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
  */
 public class ClimbSubsystem extends Subsystem {
 
+	private static final double CLIMB_MOTOR_SPEED_PVBUS = 1.0;
+	private static final double CLIMB_MOTOR_CURRENT_LIMIT_AMPS = 40.0;
 	private CANTalon climbMotor;
 	private DigitalInput leftSwitch; 
 	private DigitalInput rightSwitch;
@@ -22,13 +24,18 @@ public class ClimbSubsystem extends Subsystem {
 		leftSwitch = new DigitalInput(RobotMap.LEFT_SWITCH_PORT);
 		rightSwitch = new DigitalInput(RobotMap.RIGHT_SWITCH_PORT);
 	}
-
-	public void enable() {}
-
-	public void disable() {}
-
-	public void on( double drive) {
-		climbMotor.set(drive);
+	
+	public void off()
+	{
+		climbMotor.set(0.0);
+	}
+	public void onForward()
+	{
+		climbMotor.set(CLIMB_MOTOR_SPEED_PVBUS);
+	}
+	public void onReverse()
+	{
+		climbMotor.set(-CLIMB_MOTOR_SPEED_PVBUS);
 	}
 	
 	public double getCurrent()
@@ -36,6 +43,10 @@ public class ClimbSubsystem extends Subsystem {
 		return climbMotor.getOutputCurrent();
 	}
 	
+	public boolean isPastCurrentLimit()
+	{
+		return (getCurrent() >= CLIMB_MOTOR_CURRENT_LIMIT_AMPS);
+	}
 	public boolean bumperSwitch() {	
 		boolean invertSwitch = RobotMap.INVERT_BUMPER_SWITCH;
 		return (invertSwitch ^ leftSwitch.get() ) || ( invertSwitch ^ rightSwitch.get() );
