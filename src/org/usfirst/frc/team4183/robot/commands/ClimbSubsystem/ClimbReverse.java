@@ -20,12 +20,14 @@ public class ClimbReverse extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.climbSubsystem.on(-1.0);
+    	Robot.climbSubsystem.onReverse();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if ((timeSinceInitialized() > 0.200) && (Robot.climbSubsystem.getCurrent() >=40) ) {
+    	if ( (timeSinceInitialized() > 0.200) && 
+    		( (Robot.climbSubsystem.isPastCurrentLimit()) || Robot.climbSubsystem.bumperSwitch() )
+    	) {
     		return CommandUtils.stateChange( this, new ClimbFinish() ); 
     	}
     	return false;
