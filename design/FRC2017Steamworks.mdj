@@ -43133,38 +43133,7 @@
 															"model": {
 																"$ref": "AAAAAAFZ/OkeN+HjV10="
 															},
-															"subViews": [
-																{
-																	"_type": "UMLInternalActivityView",
-																	"_id": "AAAAAAFZ/Om63+JVEi4=",
-																	"_parent": {
-																		"$ref": "AAAAAAFZ/OkeOOHqWOE="
-																	},
-																	"model": {
-																		"$ref": "AAAAAAFZ/Om6q+JSv38="
-																	},
-																	"visible": true,
-																	"enabled": true,
-																	"lineColor": "#000000",
-																	"fillColor": "#a3e0ff",
-																	"fontColor": "#000000",
-																	"font": "Arial;13;0",
-																	"showShadow": true,
-																	"containerChangeable": false,
-																	"containerExtending": false,
-																	"left": 397,
-																	"top": 214,
-																	"width": 137.3125,
-																	"height": 13,
-																	"autoResize": false,
-																	"underline": false,
-																	"text": "entry/MotorsOff",
-																	"horizontalAlignment": 0,
-																	"verticalAlignment": 5,
-																	"wordWrap": false
-																}
-															],
-															"visible": true,
+															"visible": false,
 															"enabled": true,
 															"lineColor": "#000000",
 															"fillColor": "#a3e0ff",
@@ -43176,7 +43145,7 @@
 															"left": 392,
 															"top": 209,
 															"width": 147.3125,
-															"height": 23,
+															"height": 10,
 															"autoResize": false
 														},
 														{
@@ -43222,7 +43191,7 @@
 															"containerChangeable": false,
 															"containerExtending": false,
 															"left": 392,
-															"top": 232,
+															"top": 209,
 															"width": 147.3125,
 															"height": 0,
 															"autoResize": false
@@ -43323,7 +43292,7 @@
 																	"containerExtending": false,
 																	"left": 517,
 																	"top": 279,
-																	"width": 122.87158203125,
+																	"width": 186.4052734375,
 																	"height": 13,
 																	"autoResize": false,
 																	"underline": false,
@@ -43395,7 +43364,7 @@
 															"containerExtending": false,
 															"left": 512,
 															"top": 272,
-															"width": 132.87158203125,
+															"width": 196.4052734375,
 															"height": 25,
 															"autoResize": false,
 															"stereotypeLabel": {
@@ -43441,11 +43410,11 @@
 																	"containerExtending": false,
 																	"left": 517,
 																	"top": 302,
-																	"width": 122.87158203125,
+																	"width": 186.4052734375,
 																	"height": 13,
 																	"autoResize": false,
 																	"underline": false,
-																	"text": "do/arcadeDrive",
+																	"text": "do/DriveSubsystem.arcadeDrive",
 																	"horizontalAlignment": 0,
 																	"verticalAlignment": 5,
 																	"wordWrap": false
@@ -43462,7 +43431,7 @@
 															"containerExtending": false,
 															"left": 512,
 															"top": 297,
-															"width": 132.87158203125,
+															"width": 196.4052734375,
 															"height": 23,
 															"autoResize": false
 														},
@@ -43510,7 +43479,7 @@
 															"containerExtending": false,
 															"left": 512,
 															"top": 320,
-															"width": 132.87158203125,
+															"width": 196.4052734375,
 															"height": 0,
 															"autoResize": false
 														}
@@ -43526,7 +43495,7 @@
 													"containerExtending": false,
 													"left": 512,
 													"top": 272,
-													"width": 132.87158203125,
+													"width": 196.4052734375,
 													"height": 48,
 													"autoResize": false,
 													"stereotypeDisplay": "label",
@@ -43719,8 +43688,8 @@
 															"showShadow": true,
 															"containerChangeable": false,
 															"containerExtending": false,
-															"left": 530,
-															"top": 233,
+															"left": 545,
+															"top": 232,
 															"width": 0,
 															"height": 13,
 															"autoResize": false,
@@ -43753,8 +43722,8 @@
 															"showShadow": true,
 															"containerChangeable": false,
 															"containerExtending": false,
-															"left": 539,
-															"top": 221,
+															"left": 553,
+															"top": 219,
 															"width": 0,
 															"height": 13,
 															"autoResize": false,
@@ -43787,8 +43756,8 @@
 															"showShadow": true,
 															"containerChangeable": false,
 															"containerExtending": false,
-															"left": 511,
-															"top": 256,
+															"left": 530,
+															"top": 257,
 															"width": 0,
 															"height": 13,
 															"autoResize": false,
@@ -43820,7 +43789,7 @@
 														"$ref": "AAAAAAFZ/OkeN+HkGCw="
 													},
 													"lineStyle": 3,
-													"points": "497:232;546:271",
+													"points": "506:232;570:271",
 													"stereotypeDisplay": "label",
 													"showVisibility": true,
 													"showProperty": true,
@@ -43854,7 +43823,7 @@
 													"width": 169,
 													"height": 25,
 													"autoResize": false,
-													"text": "(activateDrive == true)",
+													"text": "btnActivateDrive.get",
 													"wordWrap": true
 												},
 												{
@@ -43879,7 +43848,7 @@
 														"$ref": "AAAAAAFZ/Ol+K+JCgTA="
 													},
 													"lineStyle": 3,
-													"points": "521:251;652:209"
+													"points": "538:251;656:209"
 												}
 											]
 										}
@@ -43911,19 +43880,7 @@
 														"$ref": "AAAAAAFZ/OiuHuGmsf4="
 													},
 													"name": "Idle",
-													"visibility": "public",
-													"entryActivities": [
-														{
-															"_type": "UMLOpaqueBehavior",
-															"_id": "AAAAAAFZ/Om6q+JSv38=",
-															"_parent": {
-																"$ref": "AAAAAAFZ/OkeN+HjV10="
-															},
-															"name": "MotorsOff",
-															"visibility": "public",
-															"isReentrant": true
-														}
-													]
+													"visibility": "public"
 												},
 												{
 													"_type": "UMLState",
@@ -43940,7 +43897,7 @@
 															"_parent": {
 																"$ref": "AAAAAAFZ/Ok5zOIJxlM="
 															},
-															"name": "arcadeDrive",
+															"name": "DriveSubsystem.arcadeDrive",
 															"visibility": "public",
 															"isReentrant": true
 														}
