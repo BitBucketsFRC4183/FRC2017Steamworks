@@ -43,4 +43,6 @@ public class RobotMap {
 	
 	public static final int GEAR_HANDLER_PNEUMA_OPEN_CHANNEL = 2;
 	public static final int GEAR_HANDLER_PNEUMA_CLOSED_CHANNEL = 3;
+	
+	public static final int COMPRESSOR_CHANNEL = 0;
 }

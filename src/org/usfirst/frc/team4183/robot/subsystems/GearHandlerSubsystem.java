@@ -4,6 +4,7 @@ package org.usfirst.frc.team4183.robot.subsystems;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.GearHandlerSubsystem.Idle;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -14,9 +15,15 @@ public class GearHandlerSubsystem extends Subsystem {
 	private final CANTalon gearHandlerMotor = new CANTalon(RobotMap.GEAR_HANDLER_MOTOR_ID);
 	private static final double GEAR_RECEIVE_MOTOR_SPEED_PVBUS = 1.0;
 	private static final double BALL_RECEIVE_MOTOR_SPEED_PVBUS = -1.0;
+	private final Compressor compressor = new Compressor(RobotMap.COMPRESSOR_CHANNEL);
 	
-	public void enable() {}
+	public GearHandlerSubsystem(){
+		compressor.setClosedLoopControl(true);
+	}
 	
+	public void enable() {
+	}
+		
 	public void disable() {
 		stopRoller();
 		closeGate();
@@ -46,5 +53,6 @@ public class GearHandlerSubsystem extends Subsystem {
 	public void stopRoller() {
 		gearHandlerMotor.set(0);
 	}
+	
 	
 }
