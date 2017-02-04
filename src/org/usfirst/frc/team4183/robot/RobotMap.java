@@ -30,6 +30,9 @@ public class RobotMap {
 	
 	// Climb Subsystem
 	public static final int CLIMB_MOTOR = 31;
+	public static final int LEFT_SWITCH_PORT = 0; 
+	public static final int RIGHT_SWITCH_PORT = 1; 
+	public static final boolean INVERT_BUMPER_SWITCH = false;
 		
 
 	// Ball Manipulator
