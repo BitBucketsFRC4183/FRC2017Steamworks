@@ -25,7 +25,9 @@ public class ClimbReverse extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if ((timeSinceInitialized() > 0.200) && (Robot.climbSubsystem.getCurrent() >=40) ) {
+    	if ( (timeSinceInitialized() > 0.200) && 
+    		( (Robot.climbSubsystem.getCurrent() >=40) || Robot.climbSubsystem.bumperSwitch() )
+    	) {
     		return CommandUtils.stateChange( this, new ClimbFinish() ); 
     	}
     	return false;
