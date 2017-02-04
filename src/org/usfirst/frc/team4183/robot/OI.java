@@ -85,8 +85,8 @@ public class OI {
 	// TODO complete this list, using the meaningful logical names.
 	public static LogicalButton btnActivateDrive;
 	public static LogicalButton btnClimbControl;
-	public static LogicalButton btnWaitingForGear;
-	public static LogicalButton btnWaitingForBalls;
+	public static LogicalButton btnWaitForGear;
+	public static LogicalButton btnWaitForBalls;
 	public static LogicalButton btnGearIdle;
 	public static LogicalButton btnOpenGate;
 	public static LogicalButton btnIntakeOn;
@@ -142,8 +142,8 @@ public class OI {
 		// Assign to EVERY logical button a soft button
 		btnActivateDrive = new SoftButton();
 		btnClimbControl = new SoftButton();
-		btnWaitingForGear = new SoftButton();
-		btnWaitingForBalls = new SoftButton();
+		btnWaitForGear = new SoftButton();
+		btnWaitForBalls = new SoftButton();
 		btnGearIdle = new SoftButton();
 		btnOpenGate = new SoftButton();
 		
@@ -160,8 +160,8 @@ public class OI {
 		// FIXME these mappings below NOT 1-to-1!
 		btnActivateDrive = driverController.bCircle;
 		btnClimbControl = operatorController.bShare;
-		btnWaitingForGear = operatorController.bCross;
-		btnWaitingForBalls = operatorController.bCircle;
+		btnWaitForGear = operatorController.bCross;
+		btnWaitForBalls = operatorController.bCircle;
 		btnGearIdle = operatorController.bSquare;
 		btnOpenGate = operatorController.bTriangle;
 		btnIntakeOn = operatorController.bL1;
