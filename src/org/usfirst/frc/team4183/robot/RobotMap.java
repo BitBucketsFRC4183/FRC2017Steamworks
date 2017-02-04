@@ -2,6 +2,7 @@ package org.usfirst.frc.team4183.robot;
 
 import com.ctre.CANTalon;
 
+
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
  * to a variable name. This provides flexibility changing wiring, makes checking
@@ -38,7 +39,12 @@ public class RobotMap {
 	
 	public static final int SHOOTER_ROLLER_PULSES_PER_REV = 256;
 	
+	public static final int BALLSUB_INTAKE_PNEUMA_CHANNEL = 0;
+	public static final int BALLSUB_SHOOT_PNEUMA_CHANNEL = 1;
 	
 	// Gear Handler
-	public static final int GEAR_HANDLER_MOTOR_ID = 51;
+	public static final int GEAR_HANDLER_MOTOR = 51;
+	
+	public static final int GEAR_HANDLER_PNEUMA_OPEN_CHANNEL = 2;
+	public static final int GEAR_HANDLER_PNEUMA_CLOSED_CHANNEL = 3;
 }
