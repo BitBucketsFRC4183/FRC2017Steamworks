@@ -14,7 +14,6 @@ public class ClimbSubsystem extends Subsystem {
 	private CANTalon climbMotor;
 	private DigitalInput leftSwitch; 
 	private DigitalInput rightSwitch;
-	private final boolean invertSwitch = false;
 
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
