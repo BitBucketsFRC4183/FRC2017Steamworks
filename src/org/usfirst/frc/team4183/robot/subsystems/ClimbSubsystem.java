@@ -19,7 +19,7 @@ public class ClimbSubsystem extends Subsystem {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 	public ClimbSubsystem(){
-		climbMotor = new CANTalon(RobotMap.CLIMB_MOTOR);
+		climbMotor = new CANTalon(RobotMap.CLIMB_MOTOR_ID);
 		leftSwitch = new DigitalInput(RobotMap.LEFT_SWITCH_PORT);
 		rightSwitch = new DigitalInput(RobotMap.RIGHT_SWITCH_PORT);
 	}
