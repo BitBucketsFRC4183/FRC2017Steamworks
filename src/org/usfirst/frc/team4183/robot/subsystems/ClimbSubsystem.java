@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.CANTalon;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.ClimbSubsystem.Idle;
-import org.usfirst.frc.team4183.robot.commands.ClimbSubsystem.ClimbForward;
 import edu.wpi.first.wpilibj.DigitalInput;
 /**
  *
