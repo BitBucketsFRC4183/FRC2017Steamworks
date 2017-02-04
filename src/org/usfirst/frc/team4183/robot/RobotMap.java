@@ -43,5 +43,5 @@ public class RobotMap {
 	
 	
 	// Gear Handler
-	public static final int GEAR_HANDLER_MOTOR = 51;
+	public static final int GEAR_HANDLER_MOTOR_ID = 51;
 }
