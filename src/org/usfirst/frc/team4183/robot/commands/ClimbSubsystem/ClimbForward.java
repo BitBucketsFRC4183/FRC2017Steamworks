@@ -33,9 +33,13 @@ public class ClimbForward extends Command {
     		return CommandUtils.stateChange( this, new ClimbReverse() );
     		
     	}
-    	if ((timeSinceInitialized() > 1.0) && (Robot.climbSubsystem.getCurrent() >=40) ) {
+    	if ( (timeSinceInitialized() > 1.0) && 
+    	   ( (Robot.climbSubsystem.getCurrent() >=40) || Robot.climbSubsystem.bumperSwitch() )
+    	) 
+    	{
     		return CommandUtils.stateChange( this, new ClimbFinish() );
     	}
+    	
         return false;
     }
 
