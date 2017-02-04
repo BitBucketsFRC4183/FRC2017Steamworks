@@ -10,12 +10,10 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class GearHandlerSubsystem extends Subsystem {
 	
-	private final CANTalon BALL_GEAR_INTAKE_MOTOR = new CANTalon(RobotMap.GEAR_HANDLER_MOTOR);
-	private static final double MOTOR_SPEED = 1.0;
+	private final CANTalon gearHandlerMotor = new CANTalon(RobotMap.GEAR_HANDLER_MOTOR_ID);
+	private static final double MOTOR_SPEED_PVBUS = 1.0;
 	
-	public void enable() {
-		
-	}
+	public void enable() {}
 	
 	public void disable() {
 		stopRoller();
@@ -35,15 +33,15 @@ public class GearHandlerSubsystem extends Subsystem {
 	}
 	
 	public void spinRollerBalls() {
-		BALL_GEAR_INTAKE_MOTOR.set(MOTOR_SPEED);
+		gearHandlerMotor.set(MOTOR_SPEED_PVBUS);
 	}
 	
 	public void spinRollerGear() {
-		BALL_GEAR_INTAKE_MOTOR.set(-MOTOR_SPEED);
+		gearHandlerMotor.set(-MOTOR_SPEED_PVBUS);
 	}
 	
 	public void stopRoller() {
-		BALL_GEAR_INTAKE_MOTOR.set(0);
+		gearHandlerMotor.set(0);
 	}
 	
 }
