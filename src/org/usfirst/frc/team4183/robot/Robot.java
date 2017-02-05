@@ -27,14 +27,14 @@ import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
  */
 public class Robot extends IterativeRobot {
 
-	public static final BallManipSubsystem ballManipSubsystem = new BallManipSubsystem();
-	public static final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
-	public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
-	public static final GearHandlerSubsystem gearHandlerSubsystem = new GearHandlerSubsystem();
-
-	private static final Compressor compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);
+	public static BallManipSubsystem ballManipSubsystem;
+	public static ClimbSubsystem climbSubsystem;
+	public static DriveSubsystem driveSubsystem;
+	public static GearHandlerSubsystem gearHandlerSubsystem;
 
 	public static OI oi;
+
+	private Compressor compressor;
 
 	
 	// Anybody needing the (singleton) Robot instance 
@@ -54,15 +54,25 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		
-		// Start pressurizing the tanks as soon as we are initialized
-		// NOTE: The compressor object is foundation of all things
-		// connected to the Pneumatics Control Module (PCM) so does
-		// not belong to any one subsystem.
+		// Construct the Subsystems
+		ballManipSubsystem = new BallManipSubsystem();
+		climbSubsystem = new ClimbSubsystem();
+		driveSubsystem = new DriveSubsystem();
+		gearHandlerSubsystem = new GearHandlerSubsystem();
+
+		// Construct Compressor
+		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);
+		
+		// Construct the OI
+		oi = OI.instance();
+		
+		// Construction is complete
+		
+		
+		// Start pressurizing the tanks
 		compressor.setClosedLoopControl(true);
 		
 		
-		oi = OI.instance();
-				
 		// Add all subsystems for debugging
 		addSubsystemToDebug(ballManipSubsystem);
 		addSubsystemToDebug(climbSubsystem);
