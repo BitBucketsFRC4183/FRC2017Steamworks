@@ -31,6 +31,9 @@ public class WaitingForBalls extends Command {
     	if(OI.btnGearIdle.get()) {
     		return CommandUtils.stateChange(this, new Idle());
     	}
+    	if( OI.btnWaitForGear.get()) {
+    		return CommandUtils.stateChange(this, new WaitingForGear());
+    	}
         return false;
     }
 

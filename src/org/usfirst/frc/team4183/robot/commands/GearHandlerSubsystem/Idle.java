@@ -26,10 +26,10 @@ public class Idle extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(OI.btnWaitingForBalls.get()) {
+    	if(OI.btnWaitForBalls.get()) {
     		return CommandUtils.stateChange(this, new GateOpen());
     	}
-    	if(OI.btnWaitingForGear.get()) {
+    	if(OI.btnWaitForGear.get()) {
     		return CommandUtils.stateChange(this, new WaitingForGear());
     	}
     	if(OI.btnOpenGate.get()) {
