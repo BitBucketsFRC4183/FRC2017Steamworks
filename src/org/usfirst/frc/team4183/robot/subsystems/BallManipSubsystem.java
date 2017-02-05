@@ -67,8 +67,8 @@ public class BallManipSubsystem extends Subsystem {
 	public void disable() {
 		setTopRollerOff();
 		setConveyerOff();
-		setSweeperOff();	
-		flapSolenoid.set(DoubleSolenoid.Value.kOff);
+		setSweeperOff();
+		setFlapModeShoot();
 	}
 		
     public void initDefaultCommand() {

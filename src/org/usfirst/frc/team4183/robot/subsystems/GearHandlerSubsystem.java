@@ -22,7 +22,6 @@ public class GearHandlerSubsystem extends Subsystem {
 	public void disable() {
 		stopRoller();
 		closeGate();
-		gearGateSolenoid.set(DoubleSolenoid.Value.kOff);
 	}
 	
 	public void initDefaultCommand() {
