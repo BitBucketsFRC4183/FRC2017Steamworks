@@ -100,6 +100,7 @@ public class OI {
 	// TODO complete this list, using actual meaningful logical names.
 	public static LogicalAxis axisForward;
 	public static LogicalAxis axisTurn;
+	public static LogicalAxis axisShootRpm;
 	// etc for up to 6 axis on each controller (might be fewer)
 
 
@@ -173,6 +174,7 @@ public class OI {
 		// TODO finish this list w/real logical axis names & real mapping
 		axisForward = driverController.aLeftY;
 		axisTurn = driverController.aLeftX;
+		axisShootRpm = operatorController.aLeftY;
 	}
 
 	// Represents the physical buttons & axis on one controller
