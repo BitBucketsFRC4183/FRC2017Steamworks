@@ -32,8 +32,10 @@ public class WaitingForGear extends Command {
     	if(OI.btnGearIdle.get()) {
     		return CommandUtils.stateChange(this, new Idle());
     	}
-    	if( OI.btnWaitForBalls.get())
+    	if( OI.btnWaitForBalls.get()) {
+    		Robot.gearHandlerSubsystem.stopRoller();
     		return CommandUtils.stateChange(this, new WaitingForBalls());
+    	}
     	
         return false;
     }
