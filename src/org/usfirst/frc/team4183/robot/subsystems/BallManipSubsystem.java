@@ -3,11 +3,9 @@ package org.usfirst.frc.team4183.robot.subsystems;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.CANTalon;
 
-import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.BallManipSubsystem.Idle;
 
@@ -19,7 +17,7 @@ public class BallManipSubsystem extends Subsystem {
 	private CANTalon sweeperMotor;
 	
 	private final double shooterRpm;		    //speed of top roller when shooting
-	private final double intakeDrive;		    //speed of top roller when intake
+	private final double intakeRpm;		    //speed of top roller when intake
 	private final double conveyorDrive;	        //open loop control of conveyer in fraction vbus
 	private final double sweeperDrive;			//open loop control of sweeper in fraction vbus
 	
@@ -41,10 +39,10 @@ public class BallManipSubsystem extends Subsystem {
 		// Load preferences
 		Preferences prefs = Preferences.getInstance();
 		shooterRpm = prefs.getDouble("ShooterRpm", 4200.0);
-		intakeDrive = prefs.getDouble("IntakeDrive", 0.3);
+		intakeRpm = prefs.getDouble("IntakeRpm", 500.0);
 		conveyorDrive = prefs.getDouble("ConveyorDrive", 0.8);	
 		sweeperDrive = prefs.getDouble("SweeperDrive", 0.1);
-    	
+		    	
 		topRollerMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_TOP_ROLLER_MOTOR_ID);
 		conveyerMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_CONVEYER_MOTOR_ID);
 		sweeperMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_SWEEPER_MOTOR_ID);
@@ -88,7 +86,7 @@ public class BallManipSubsystem extends Subsystem {
     }
     
     public void setTopRollerToIntakeSpeed(){
-    	topRollerMotor.set(intakeDrive);
+    	topRollerMotor.set(intakeRpm);
     }
           
     public void setTopRollerToShootingSpeed(){
