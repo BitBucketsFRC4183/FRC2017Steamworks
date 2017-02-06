@@ -226,8 +226,6 @@ public class Robot extends IterativeRobot {
 		// LiveWindow.run(); -- Not this!!
 		Scheduler.getInstance().run();  // This!!
 		
-		// BallManip needs some runtime
-		ballManipSubsystem.animate();
 	}
 	
 	

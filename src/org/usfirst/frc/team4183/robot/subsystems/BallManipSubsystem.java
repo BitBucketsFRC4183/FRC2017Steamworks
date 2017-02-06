@@ -132,6 +132,9 @@ public class BallManipSubsystem extends Subsystem {
     		value = 0.0;
     	
     	shooterRpm += 15.0*value;
+    	if( shooterRpm > 5000.0) shooterRpm = 5000.0;
+    	if( shooterRpm < 0.0) shooterRpm = 0.0;
+    	
     	SmartDashboard.putNumber("ShooterRpm(SetPt)", shooterRpm);
     	SmartDashboard.putNumber("ShooterRpm(Actual)", topRollerMotor.get());
     }
