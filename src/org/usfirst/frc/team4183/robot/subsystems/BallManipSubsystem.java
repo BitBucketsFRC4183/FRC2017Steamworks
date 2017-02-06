@@ -128,12 +128,16 @@ public class BallManipSubsystem extends Subsystem {
     	flapSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
     
-    // Called from Robot in all modes except Test
-    // to give this subsystem a little runtime.
+	/* Allows the operator to adjust the shooter RPM setpoint --
+	 * disabled for now. tjw.
+	 * To re-enable:
+	 * 1) uncomment this fcn
+	 * 2) call this fcn from Robot.disabledPeriodic, .autonomousPeriodic, and .teleopPeriodic
+	 * 3) make a Logical Axis in OI (called axisShootRpm below)
+	 * 4) define the MAX_SHOOTER_RPM and MIN_SHOOTER_RPM constants
     public void animate() {
     	
-    	/* Allows the operator to adjust the shooter RPM setpoint --
-    	 * disabled for now. tjw.
+
     	 
     	// Change the Shooter RPM setpoint
     	double value = OI.axisShootRpm.get();
@@ -146,7 +150,8 @@ public class BallManipSubsystem extends Subsystem {
     	
     	SmartDashboard.putNumber("ShooterRpm(SetPt)", shooterRpm);
     	SmartDashboard.putNumber("ShooterRpm(Actual)", topRollerMotor.get());    	
-    	*/
-    }  
+    	
+    }
+    */
 }
 

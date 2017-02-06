@@ -95,9 +95,6 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
-		
-		// BallManip needs some runtime
-		ballManipSubsystem.animate();
 	}
 
 	/**
@@ -131,9 +128,6 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
-		
-		// BallManip needs some runtime
-		ballManipSubsystem.animate();
 	}
 
 	@Override
@@ -155,9 +149,6 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		
-		// BallManip needs some runtime
-		ballManipSubsystem.animate();
 	}
 
 	/**
