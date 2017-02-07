@@ -23,9 +23,11 @@ public class RobotMap {
 	
 	// Climb Subsystem
 	public static final int CLIMB_MOTOR_ID = 9;
+	public static final int CLIMB_PNEUMA_CHANNEL = 4;
+	
 	public static final int LEFT_SWITCH_PORT = 0; 
 	public static final int RIGHT_SWITCH_PORT = 1; 
-	public static final boolean INVERT_BUMPER_SWITCH = false;
+	public static final boolean INVERT_BUMPER_SWITCH = true;
 		
 
 	// Ball Manipulator
@@ -44,5 +46,5 @@ public class RobotMap {
 	public static final int GEAR_HANDLER_PNEUMA_OPEN_CHANNEL = 2;
 	public static final int GEAR_HANDLER_PNEUMA_CLOSED_CHANNEL = 3;
 	
-	public static final int COMPRESSOR_CHANNEL = 0;
+	public static final int PNEUMATICS_CONTROL_MODULE_ID = 0;
 }

@@ -1,6 +1,7 @@
 
 package org.usfirst.frc.team4183.robot;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -26,12 +27,14 @@ import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
  */
 public class Robot extends IterativeRobot {
 
-	public static final BallManipSubsystem ballManipSubsystem = new BallManipSubsystem();
-	public static final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
-	public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
-	public static final GearHandlerSubsystem gearHandlerSubsystem = new GearHandlerSubsystem();
+	public static BallManipSubsystem ballManipSubsystem;
+	public static ClimbSubsystem climbSubsystem;
+	public static DriveSubsystem driveSubsystem;
+	public static GearHandlerSubsystem gearHandlerSubsystem;
 
 	public static OI oi;
+
+	private Compressor compressor;
 
 	
 	// Anybody needing the (singleton) Robot instance 
@@ -50,8 +53,26 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+		
+		// Construct the Subsystems
+		ballManipSubsystem = new BallManipSubsystem();
+		climbSubsystem = new ClimbSubsystem();
+		driveSubsystem = new DriveSubsystem();
+		gearHandlerSubsystem = new GearHandlerSubsystem();
+
+		// Construct Compressor
+		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);
+		
+		// Construct the OI
 		oi = OI.instance();
-				
+		
+		// Construction is complete
+		
+		
+		// Start pressurizing the tanks
+		compressor.setClosedLoopControl(true);
+		
+		
 		// Add all subsystems for debugging
 		addSubsystemToDebug(ballManipSubsystem);
 		addSubsystemToDebug(climbSubsystem);
@@ -195,6 +216,7 @@ public class Robot extends IterativeRobot {
 	public void testPeriodic() {
 		// LiveWindow.run(); -- Not this!!
 		Scheduler.getInstance().run();  // This!!
+		
 	}
 	
 	
