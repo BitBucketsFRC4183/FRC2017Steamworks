@@ -2,190 +2,161 @@ package org.usfirst.frc.team4183.robot;
 
 import java.io.PrintWriter;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 
 public class TeensyIMU {
+	
 	private SerialPort serialPort;
-	//public NetworkTable imuData;	
 	private final int IMUMESSAGELEN = 39;
-	
-	public double yaw = 0.0;
-	private double yawRate = 0.0;
-	private double prevYaw;
-	private double prevTime;
-	
-	private double biasBuffer[] = new double[100];
-	private int biasBufferIdx = 0;
-	private boolean calcBias = false;
-	private int bufferLen = 0;
-	
+	private double yaw = 0.0;
 	PrintWriter pw;
 
-	private double calYawRateBias = 0.0;
-	private double accumulatedYawError = 0.0;  // Ignore warning about initial condition not being used
-	
-	// Cal bias is a small running average of the 
-	public void setcalYawRateBias(double biasValue) {
-		calYawRateBias = biasValue;
-	}
-	
-	public double getYawAngle() {
+
+	public double getYawDeg() {
 		return yaw;
 	}
-	
-	public void enableBiasSampling(boolean enable) {
-		calcBias = enable;
-		
-		if(calcBias) {
-			bufferLen = 0;
-		} else {
-			calYawRateBias = 0;
-			for(int i = 0; i < bufferLen; i++) {
-				calYawRateBias += biasBuffer[i];
-			}
-			calYawRateBias /= bufferLen;
-		}
-	}
-	
-	public void incrementBuffer(double val) {
-		biasBuffer[biasBufferIdx] = val;
-		
-		biasBufferIdx++;
-		bufferLen = bufferLen >= biasBuffer.length ? biasBuffer.length : bufferLen++;
-		
-		if(biasBufferIdx >= biasBuffer.length) {
-			biasBufferIdx = 0;
-		}
-	}
-	
+
+
 	public TeensyIMU(){
-		System.out.println("Starting teeeeeeeeeeensy");
+		
+		System.out.println("Starting Teensy");
 		serialPort = new SerialPort(SerialPortList.getPortNames()[0]);
 		//System.out.println(serialPort.getPortName());
+		
 		try {
-			pw = new PrintWriter("imutest-"+System.currentTimeMillis()+".txt", "UTF-8");
+			pw = new PrintWriter("imutest-"+System.currentTimeMillis()+".txt");
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		try {
 			//Open serial port
 			serialPort.openPort();
 			//Set params.
-		    serialPort.setParams(SerialPort.BAUDRATE_115200, 
-		                         SerialPort.DATABITS_8, 
-		                         SerialPort.STOPBITS_1, 
-		                         SerialPort.PARITY_NONE);
+			serialPort.setParams(SerialPort.BAUDRATE_115200, 
+					SerialPort.DATABITS_8, 
+					SerialPort.STOPBITS_1, 
+					SerialPort.PARITY_NONE);
 		}catch (SerialPortException ex) {
-		        System.out.println(ex);
+			System.out.println(ex);
 		}
-		//Thread for reading in serial data
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				//Used as a bottleneck for raw data
-				String inBuffer = "";
-				//Raw data
-				String rawIn = "";
-				long timePrev = System.currentTimeMillis();
-				long timeCurrent = System.currentTimeMillis();
-				while(true){
-					
-					try {
-						if((rawIn=serialPort.readString())!=null){
-							//System.out.println(rawIn);
-							inBuffer+=rawIn;
-							for(String line : inBuffer.split("\n")){
-								//New line counted as character
-								line=line.substring(0, line.length()-1);
-								if(line.length()==IMUMESSAGELEN){
-									String[]poseData = line.split(",");
-									if(poseData.length>=5){
-										timeCurrent = System.currentTimeMillis();
-
-										long imutime = hexToLong(poseData[0]);
-																		
-										double timeDelta = (imutime - prevTime)/1000000.0;
-										
-										// Be absolutely certain the accumulated error is NOT
-										// used while bias calibration is in progress, this also
-										// resets the accumulated error if we re-enter the calibration
-										// state... not the best toggle, but good enought for now
-										if ( ! calcBias)
-										{
-											accumulatedYawError += calYawRateBias * timeDelta;
-										}
-										else
-										{
-											accumulatedYawError = 0.0;
-										}
-										yaw = hexToDouble(poseData[4])*(180.0/Math.PI); //- accumulatedYawError;
-										yawRate = (yaw - prevYaw)/timeDelta;
-										
-										if(calcBias) 
-										{
-											incrementBuffer(yawRate);
-										}
-//										
-//										Robot.IMUTable.putNumber("IMU time", imutime);
-//										Robot.IMUTable.putNumber("Yaw", yaw);
-//										Robot.IMUTable.putNumber("Pitch", hexToDouble(poseData[3])*(180.0/Math.PI));
-//										Robot.IMUTable.putNumber("Roll", hexToDouble(poseData[2])*(180.0/Math.PI));
-//										Robot.IMUTable.putNumber("Update rate", (double)(timeCurrent-timePrev));
-										
-										SmartDashboard.putNumber("IMU time", imutime);
-										SmartDashboard.putNumber("IMU rate", timeDelta);
-										SmartDashboard.putNumber("IMU yaw rate", yawRate);
-										
-										//System.out.println((double)(timeCurrent-timePrev));
-										System.out.println("IMU Time: \t" + imutime + "\tYaw: \t" + yaw);
-										
-										pw.println("Time: " + imutime + "\tYaw Rate:" + yawRate);
-										
-										timePrev = timeCurrent;
-										prevTime = imutime;
-										prevYaw = yaw;
-									}
-//									for(String datum:line.split(",")){
-//										//First number is yaw angle
-//										float yaw = hexToDouble(datum);
-//										
-//										//Puts yaw in public network table
-//										Robot.IMUTable.putNumber("Yaw", yaw*(180.0/Math.PI));
-//									}
-									//Resets buffer
-									inBuffer="";
-								}else {
-									inBuffer="";
-								}
-							}
-						}		
-					} catch (SerialPortException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					//Thread timeout
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}			                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
-			}
-		}).start();		 
+		
+		// Thread for reading in serial data
+		new Thread(new TeensyRunnable()).start();		 
 	}
+	
 	private float hexToDouble(String str){		
 		//Parses string as decimal
-	    Long i = Long.parseLong(str, 16);
-	    //Converts newly created decimals to floating point    
-	    return Float.intBitsToFloat(i.intValue());
+		Long i = Long.parseLong(str, 16);
+		//Converts newly created decimals to floating point    
+		return Float.intBitsToFloat(i.intValue());
 	}
-		
+
 	private long hexToLong(String str){
 		return Long.parseLong(str,16);		
 	}
 
+	
+	class TeensyRunnable implements Runnable {
+
+		private boolean firsttime = true;
+
+		private double prevYaw;
+		private double prevTime;
+
+		private double unwrapAccum = 0.0;
+		private double prevWrappedYaw;
+
+		@Override
+		public void run() {
+
+			// Raw data
+			String rawIn;
+			
+			// Used as a buffer for raw data
+			String inBuffer = "";
+			
+			while(true) {
+
+				try {
+
+					if( (rawIn=serialPort.readString()) == null) 
+						continue;
+
+					inBuffer += rawIn;
+
+					int indx2 = inBuffer.lastIndexOf('\n');
+					if( indx2 != -1) {
+
+						int indx1 = inBuffer.lastIndexOf('\n', indx2-1) + 1;
+						String line = inBuffer.substring( indx1, indx2-1);
+
+						if( line.length() == IMUMESSAGELEN) {
+							processLine(line);
+							firsttime = false;
+						}
+
+						inBuffer = inBuffer.substring(indx2+1);
+					}
+
+
+				} catch (SerialPortException e) {
+					e.printStackTrace();
+				}
+
+				// Thread wait
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
+		
+		
+		private void processLine( String line) {
+						
+			// poseData[]:
+			// 0: IMU time, usecs: 8 hex bytes representing 4-byte long
+			// 1: Fusion status, boolean: 2 hex bytes representing 1 byte boolean
+			// 2: Roll, radians: 8 hex bytes representing 4-byte IEEE 754 single-precision float
+			// 3: Pitch, radians: same as Roll
+			// 4: Yaw, radians: same as Roll
+			String[] poseData = line.split(",");
+			if( poseData.length < 5)
+				return;
+
+
+			long imutime = hexToLong(poseData[0]);
+			double wrappedYaw = hexToDouble(poseData[4])*(180.0/Math.PI);
+
+			// Run the yaw angle unwrapper
+			if( !firsttime) {
+				if( wrappedYaw - prevWrappedYaw < -180.0 )
+					unwrapAccum += 360.0;
+				if( wrappedYaw - prevWrappedYaw > 180.0)
+					unwrapAccum -= 360.0;
+			}
+			yaw = wrappedYaw + unwrapAccum;
+			prevWrappedYaw = wrappedYaw;
+
+			
+			// Calculate yaw rate (gotta watch out for excessive rate)
+			if( !firsttime) {
+				double timeDelta = (imutime - prevTime)/1000000.0;			
+				double yawRate = (yaw - prevYaw)/timeDelta;
+				System.out.format("IMU Time:%d Yaw:%f YawRate:%f", imutime, yaw, yawRate);			
+//				pw.format("IMU Time:%d Yaw:%f YawRate:%f", imutime, yaw, yawRate);
+			}		
+			prevTime = imutime;
+			prevYaw = yaw;
+
+		}	
+	}
 }
+
+
+
