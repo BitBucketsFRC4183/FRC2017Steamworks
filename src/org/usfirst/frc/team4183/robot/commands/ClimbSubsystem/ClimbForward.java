@@ -3,7 +3,7 @@ package org.usfirst.frc.team4183.robot.commands.ClimbSubsystem;
 
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.utils.CommandUtils;
-
+import org.usfirst.frc.team4183.robot.LightingControl;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -17,7 +17,7 @@ public class ClimbForward extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    
+    Robot.lightingControl.setBlue();
     }
 
     // Called repeatedly when this Command is scheduled to run
