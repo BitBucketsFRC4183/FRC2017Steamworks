@@ -16,7 +16,7 @@ public class BallManipSubsystem extends Subsystem {
 	private CANTalon conveyerMotor;
 	private CANTalon sweeperMotor;
 	
-	private final double shooterRpm;		    //speed of top roller when shooting
+	private final double shooterRpm;		 //speed of top roller when shooting
 	private final double intakeRpm;		    //speed of top roller when intake
 	private final double conveyorDrive;	        //open loop control of conveyer in fraction vbus
 	private final double sweeperDrive;			//open loop control of sweeper in fraction vbus
@@ -27,6 +27,11 @@ public class BallManipSubsystem extends Subsystem {
 	private final double MIN_SHOOTER_RPM = 3800.0;
 	*/
 	
+	// The *.001, *1000 are there because Talon doesn't scale by 
+	// their own deltaT (=1msec) in their loop implementation, 
+	// so we must do it for them here.
+	// i.e. if we want a Ki of 0.5, then must pass 0.5*0.001;
+	// if we want Kd of 0.01 must pass 0.01*1000.0 (thanks guys!!).
 	private final double P_VALUE = 0.6;
 	private final double I_VALUE = 1.2*0.001;
 	private final double D_VALUE = .02*1000.0;
