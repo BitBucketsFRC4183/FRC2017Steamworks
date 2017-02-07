@@ -61,7 +61,7 @@ public class Robot extends IterativeRobot {
 		driveSubsystem = new DriveSubsystem();
 		gearHandlerSubsystem = new GearHandlerSubsystem();
 		lightingControl = new LightingControl(); 
-		lightingControl.initDefaultCommand();
+		lightingControl.initialize();
 		// Construct Compressor
 		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);
 		

@@ -8,8 +8,7 @@ import jssc.SerialPortList;
 public class LightingControl {
 	private SerialPort serialPort =  new SerialPort(SerialPortList.getPortNames()[0]);
 
-
-	public void initDefaultCommand() {
+	public void initialize () {
 		System.out.println("Light Change");
 		try {
 			serialPort.openPort();
@@ -21,24 +20,39 @@ public class LightingControl {
 		} catch (SerialPortException ex) {
 			// TODO Auto-generated catch block
 			System.out.println(ex);
-		}
-		for (int i=0;i<100; i++) 
-		{
+		}	
+
+	}
+
+	public void setBlue() {
+		
 		try {
 			serialPort.writeByte((byte)'b');
 		} catch (SerialPortException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		}
-		try{
-			serialPort.closePort(); 
-			System.out.println("Closing Port");
-		} catch (SerialPortException ex) {
-			// TODO Auto-generated catch block
-			System.out.println(ex); }
-
 	}
 
+	public void setOrange() {
+		
+		try {
+			serialPort.writeByte((byte)'o');
+		} catch (SerialPortException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void setViolet() {
+		
+		try {
+			serialPort.writeByte((byte)'v');
+		} catch (SerialPortException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
+	
 }
