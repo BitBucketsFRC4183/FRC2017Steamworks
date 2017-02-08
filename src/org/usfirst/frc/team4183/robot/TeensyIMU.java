@@ -42,12 +42,13 @@ public class TeensyIMU {
 				throw new Exception("No ports available!");
 			
 			System.out.println("Using port:" + ports[0]);
-			serialPort = new SerialPort(ports[0]);  // TODO how to choose if multiple ports?
+			// TODO how to choose if multiple ports?
+			serialPort = new SerialPort(ports[0]);  
 			
 			// Open serial port
 			serialPort.openPort();
 			// Set params
-			serialPort.setParams(SerialPort.BAUDRATE_38400,   // FIXME NOT THIS! 115200! (and why?)
+			serialPort.setParams(SerialPort.BAUDRATE_115200,   // TODO: why? Teensy code says 250000
 					SerialPort.DATABITS_8, 
 					SerialPort.STOPBITS_1, 
 					SerialPort.PARITY_NONE);
