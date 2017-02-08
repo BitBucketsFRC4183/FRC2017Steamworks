@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ import org.usfirst.frc.team4183.robot.subsystems.BallManipSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
-
+import org.usfirst.frc.team4183.robot.LightingControl;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -31,7 +32,7 @@ public class Robot extends IterativeRobot {
 	public static ClimbSubsystem climbSubsystem;
 	public static DriveSubsystem driveSubsystem;
 	public static GearHandlerSubsystem gearHandlerSubsystem;
-
+	public static LightingControl lightingControl;
 	public static OI oi;
 
 	private Compressor compressor;
@@ -59,7 +60,8 @@ public class Robot extends IterativeRobot {
 		climbSubsystem = new ClimbSubsystem();
 		driveSubsystem = new DriveSubsystem();
 		gearHandlerSubsystem = new GearHandlerSubsystem();
-
+		lightingControl = new LightingControl(); 
+		lightingControl.initialize();
 		// Construct Compressor
 		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);
 		

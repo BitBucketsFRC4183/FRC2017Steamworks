@@ -18,6 +18,7 @@ public class ClimbFinish extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.climbSubsystem.disable();
+    	Robot.lightingControl.setViolet();
     }
 
     // Called repeatedly when this Command is scheduled to run
