@@ -100,13 +100,13 @@ public class TeensyIMU {
 					}
 					
 					if(inBuff.contains("TeensyIMU")) {
-						System.out.format("Saw TeensyIMU ident on port %s\n", portName);
+						System.out.format("Found TeensyIMU ident on port %s\n", portName);
 						return port;
 					}
 					String[] lines = inBuff.split("\n");
 					for( String line : lines) 
 						if( line.endsWith("\r") && (line.length() == IMUMESSAGELEN+1) ) {
-							System.out.format("Saw TeensyIMU message on port %s\n", portName);
+							System.out.format("Found TeensyIMU message on port %s\n", portName);
 							return port;
 						}
 				}
