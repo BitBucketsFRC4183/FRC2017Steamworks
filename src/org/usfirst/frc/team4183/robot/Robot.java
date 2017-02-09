@@ -21,7 +21,6 @@ import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
 
 // Non-subsystem (i.e., non-commandable) controls
-import org.usfirst.frc.team4183.robot.SerialManager;
 import org.usfirst.frc.team4183.robot.LightingControl;
 import org.usfirst.frc.team4183.robot.TeensyIMU;
 
@@ -38,14 +37,10 @@ public class Robot extends IterativeRobot {
 	public static ClimbSubsystem climbSubsystem;
 	public static DriveSubsystem driveSubsystem;
 	public static GearHandlerSubsystem gearHandlerSubsystem;
-	
-	public static SerialManager serialManager;
-	public static LightingControl lightingControl;
-	public static TeensyIMU teensyImu;
-	
 	public static OI oi;
-	public static TeensyIMU teensy;
 	
+	public static LightingControl lightingControl;	
+	public static TeensyIMU teensyImu;
 	
 	private Compressor compressor;
 
@@ -73,25 +68,16 @@ public class Robot extends IterativeRobot {
 		driveSubsystem = new DriveSubsystem();
 		gearHandlerSubsystem = new GearHandlerSubsystem();
 		
-		// Pattern for these objects separates construction and initialization
-		// to clarify dependency boundaries if we ever decide to move construction
-		serialManager = new SerialManager();
-		serialManager.initialize();
-		
-		lightingControl = new LightingControl(); 
-		lightingControl.initialize();
-		
-		teensyImu = new TeensyIMU();
-		teensyImu.initialize();
-		
 		// Construct Compressor
 		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);
 		
 		// Construct the OI
 		oi = OI.instance();
 		
-		// Construct Teensy
-		teensy = new TeensyIMU();
+		// Construct LightingControl, Teens
+		lightingControl = new LightingControl(); 		
+		teensyImu = new TeensyIMU();
+		
 		
 		// Construction is complete
 		
