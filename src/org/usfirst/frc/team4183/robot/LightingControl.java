@@ -1,5 +1,6 @@
 package org.usfirst.frc.team4183.robot;
 
+
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
@@ -10,12 +11,20 @@ public class LightingControl
 	public enum LightingObjects
 	{
 		// Currently planning on lighting on these controls
-		DRIVE_SUBSYSTEM,
-		GEAR_SUBSYSTEM,
-		BALL_SUBSYSTEM,
-		CLIMB_SUBSYSTEM,
+		DRIVE_SUBSYSTEM(0),
+		GEAR_SUBSYSTEM(1),
+		BALL_SUBSYSTEM(2),
+		CLIMB_SUBSYSTEM(3),		
+		MAX_LIGHTING(9);
 		
-		MAX_LIGHTING
+		private int value;
+		
+		LightingObjects(int value)
+		{
+			this.value = value;
+		}
+		
+		public int getValue() { return value; }
 	};
 	
 	private SerialPort serialPort;
@@ -64,7 +73,7 @@ public class LightingControl
 	public static final String COLOR_ORANGE = "O";
 	public static final String COLOR_VIOLET = "V";
 	
-	private static final String FORMAT = "%u%c%c%u%03u%04u";
+	private static final String FORMAT = "%d%s%s%d%03d%04d";
 	
 	public LightingControl() {
 		
@@ -102,24 +111,26 @@ public class LightingControl
 						SerialPort.PARITY_NONE);
 				
 				String inStr, inBuf = "";
-				long tQuit = System.currentTimeMillis() + 1000;
+				long tQuit = System.currentTimeMillis() + 3000;
 				while( System.currentTimeMillis() < tQuit) 
 				{
-					if( (inStr = serialPort.readString()) != null)
+					if( (inStr = port.readString()) != null)
 					{
 						inBuf += inStr;
-						if( inBuf.contains("Bucket"))
-						{
-							System.out.format("Found BucketLights on port %s\n", portName);	        	
-							return port;							
-						}
 					}
+					
+					if( inBuf.contains("BucketLights"))
+					{
+						System.out.format("Found BucketLights on port %s\n", portName);	        	
+						return port;							
+					}
+					
 				}
 
 				port.closePort();
 
 			}
-			catch( Exception ex) {}	
+			catch( SerialPortException ex) {}	
 		}
 
 		// Not found
@@ -134,13 +145,14 @@ public class LightingControl
 			try
 			{
 				String command = String.format(FORMAT,
-											   lightingObject,
+											   lightingObject.getValue(),
 											   function,
 											   color,
 											   nspace,
 											   brightness,
 											   period_msec);
 				
+				System.out.println(command);
 				serialPort.writeString(command);
 			}
 			catch (SerialPortException e) 

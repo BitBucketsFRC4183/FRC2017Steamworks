@@ -61,6 +61,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+
+		// Construct the OI
+		// Do this first in case any Subsystems need to look at it
+		oi = OI.instance();
 		
 		// Construct the Subsystems
 		ballManipSubsystem = new BallManipSubsystem();
@@ -69,12 +73,9 @@ public class Robot extends IterativeRobot {
 		gearHandlerSubsystem = new GearHandlerSubsystem();
 		
 		// Construct Compressor
-		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);
+		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);		
 		
-		// Construct the OI
-		oi = OI.instance();
-		
-		// Construct LightingControl, Teens
+		// Construct LightingControl, Teensy
 		lightingControl = new LightingControl(); 		
 		teensyImu = new TeensyIMU();
 		

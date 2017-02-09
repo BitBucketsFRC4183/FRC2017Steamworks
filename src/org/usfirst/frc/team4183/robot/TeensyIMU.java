@@ -12,7 +12,7 @@ public class TeensyIMU {
 	private SerialPort serialPort;
 	private double unwrappedYaw = 0.0;
 	PrintWriter pw;
-	private final boolean DEBUG_THREAD = true;
+	private final boolean DEBUG_THREAD = false;
 	private final int IMUMESSAGELEN = 39;
 
 
@@ -26,7 +26,7 @@ public class TeensyIMU {
 		System.out.println("Starting Teensy");
 		
 		try {
-			pw = new PrintWriter("imutest-"+System.currentTimeMillis()+".txt");
+			pw = new PrintWriter("/home/lvuser/imutest-"+System.currentTimeMillis()+".txt");
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -114,7 +114,7 @@ public class TeensyIMU {
 				port.closePort();
 				
 			}
-			catch( Exception ex) {}			
+			catch( SerialPortException ex) {}			
 		}
 		
 		// Not found
