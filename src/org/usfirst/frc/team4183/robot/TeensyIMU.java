@@ -2,18 +2,24 @@ package org.usfirst.frc.team4183.robot;
 
 
 import java.io.PrintWriter;
+import java.util.regex.Pattern;
 
 import jssc.SerialPort;
-import jssc.SerialPortException;
 import jssc.SerialPortList;
 
 public class TeensyIMU {
 	
-	private SerialPort serialPort;
+	// Serial USB ports on RoboRIO (linux) show up as "/dev/ttyUSBx"
+	private final String PORT_MATCH_PATTERN = "ttyUSB";
+
+	// Use the first (0-th) port in the port list
+	private final int WHICH_PORT = 0;
+
+	private final boolean DEBUG_THREAD = true;
 	private double unwrappedYaw = 0.0;
+	private SerialPort serialPort;
 	PrintWriter pw;
-
-
+	
 	public double getYawDeg() {
 		return unwrappedYaw;
 	}
@@ -24,14 +30,14 @@ public class TeensyIMU {
 		System.out.println("Starting Teensy");
 
 		try {
-			pw = new PrintWriter("imutest-"+System.currentTimeMillis()+".txt");
+			pw = new PrintWriter("/home/lvuser/imutest-"+System.currentTimeMillis()+".txt");
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 
 		try {
 			
-			String[] ports = SerialPortList.getPortNames();
+			String[] ports = SerialPortList.getPortNames(Pattern.compile(PORT_MATCH_PATTERN));
 
 			System.out.print("Ports:");
 			for(String port : ports)
@@ -41,20 +47,35 @@ public class TeensyIMU {
 			if( ports.length == 0) 
 				throw new Exception("No ports available!");
 			
-			System.out.println("Using port:" + ports[0]);
-			// TODO how to choose if multiple ports?
-			serialPort = new SerialPort(ports[0]);  
+			System.out.println("Using port:" + ports[WHICH_PORT]);
+			serialPort = new SerialPort(ports[WHICH_PORT]); 
 			
 			// Open serial port
 			serialPort.openPort();
 			// Set params
-			serialPort.setParams(SerialPort.BAUDRATE_115200,   // TODO: why? Teensy code says 250000
+			// TODO: why BAUDRATE_115200? Teensy code says 250000
+			serialPort.setParams(SerialPort.BAUDRATE_115200,   
 					SerialPort.DATABITS_8, 
 					SerialPort.STOPBITS_1, 
 					SerialPort.PARITY_NONE);
 			
 			// Start thread for reading in serial data
 			new Thread(new TeensyRunnable()).start();
+			
+			// Start thread to print out something at a reasonable rate (testing)
+			if( DEBUG_THREAD) {
+				new Thread() { 
+					public void run() {
+						while(true) {
+							try {
+								Thread.sleep(500);
+							} catch (InterruptedException e) {}	
+							System.out.format("Yaw %.2f\n", getYawDeg());						
+						}
+					}
+				}.start();
+			}
+
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -114,7 +135,7 @@ public class TeensyIMU {
 						}						
 					}
 					
-				} catch (SerialPortException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
@@ -141,8 +162,10 @@ public class TeensyIMU {
 			// 2: Roll, radians: 8 hex chars representing 4-byte IEEE 754 single-precision float
 			// 3: Pitch, radians: same as Roll
 			// 4: Yaw, radians: same as Roll
+			// Full message string is:
+			// "tttttttt,ff,rrrrrrrr,pppppppp,yyyyyyyy,"
 			String[] poseData = msg.split(",");
-			if( poseData.length < 5)
+			if( poseData.length != 5)
 				return;
 
 			long imutime = hexToLong(poseData[0]);
@@ -162,8 +185,12 @@ public class TeensyIMU {
 			if( !Double.isNaN(prevYaw)) {
 				double timeDelta = (imutime - prevTime)/1000000.0;			
 				double yawRate = (unwrappedYaw - prevYaw)/timeDelta;
-				System.out.format("IMU Time:%d YawRate:%f Yaw:%f\n", imutime, yawRate, unwrappedYaw);			
-//				pw.format("IMU Time:%d YawRate:%f Yaw:%f\n", imutime, yawRate, unwrappedYaw);
+				
+				// This really clutters up the console
+				//System.out.format("IMU Time:%d YawRate:%f Yaw:%f\n", imutime, yawRate, unwrappedYaw);			
+
+				// And this produces a really big file really fast, so watch out!
+				// pw.format("IMU Time:%d YawRate:%f Yaw:%f\n", imutime, yawRate, unwrappedYaw);
 			}		
 			prevTime = imutime;
 			prevYaw = unwrappedYaw;

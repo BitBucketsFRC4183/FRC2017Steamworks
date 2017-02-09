@@ -33,7 +33,9 @@ public class Robot extends IterativeRobot {
 	public static GearHandlerSubsystem gearHandlerSubsystem;
 
 	public static OI oi;
-
+	public static TeensyIMU teensy;
+	
+	
 	private Compressor compressor;
 
 	
@@ -65,6 +67,9 @@ public class Robot extends IterativeRobot {
 		
 		// Construct the OI
 		oi = OI.instance();
+		
+		// Construct Teensy
+		teensy = new TeensyIMU();
 		
 		// Construction is complete
 		
