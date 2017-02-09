@@ -61,27 +61,18 @@ public class TeensyIMU {
 		}
 	}
 	
-	public TeensyIMU(){
+	public TeensyIMU()
+	{
+		// Nothing here for the moment
+		// We just want to formally separate construction
+		// and initialization to ensure clean startups
+	}
+	public void initialize()
+	{
 		System.out.println("Starting teeeeeeeeeeensy");
-		serialPort = new SerialPort(SerialPortList.getPortNames()[0]);
-		//System.out.println(serialPort.getPortName());
-		try {
-			pw = new PrintWriter("imutest-"+System.currentTimeMillis()+".txt", "UTF-8");
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+		serialPort = Robot.serialManager.getLightingPort();
 		
-		try {
-			//Open serial port
-			serialPort.openPort();
-			//Set params.
-		    serialPort.setParams(SerialPort.BAUDRATE_115200, 
-		                         SerialPort.DATABITS_8, 
-		                         SerialPort.STOPBITS_1, 
-		                         SerialPort.PARITY_NONE);
-		}catch (SerialPortException ex) {
-		        System.out.println(ex);
-		}
+
 		//Thread for reading in serial data
 		new Thread(new Runnable() {
 			@Override
