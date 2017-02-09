@@ -2,24 +2,20 @@ package org.usfirst.frc.team4183.robot;
 
 
 import java.io.PrintWriter;
-import java.util.regex.Pattern;
 
 import jssc.SerialPort;
+import jssc.SerialPortException;
 import jssc.SerialPortList;
 
 public class TeensyIMU {
 	
-	// Serial USB ports on RoboRIO (linux) show up as "/dev/ttyUSBx"
-	private final String PORT_MATCH_PATTERN = "ttyUSB";
-
-	// Use the first (0-th) port in the port list
-	private final int WHICH_PORT = 0;
-
-	private final boolean DEBUG_THREAD = true;
-	private double unwrappedYaw = 0.0;
 	private SerialPort serialPort;
+	private double unwrappedYaw = 0.0;
 	PrintWriter pw;
-	
+	private final boolean DEBUG_THREAD = true;
+	private final int IMUMESSAGELEN = 39;
+
+
 	public double getYawDeg() {
 		return unwrappedYaw;
 	}
@@ -28,59 +24,103 @@ public class TeensyIMU {
 	public TeensyIMU(){
 		
 		System.out.println("Starting Teensy");
-
+		
 		try {
-			pw = new PrintWriter("/home/lvuser/imutest-"+System.currentTimeMillis()+".txt");
+			pw = new PrintWriter("imutest-"+System.currentTimeMillis()+".txt");
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 
-		try {
-			
-			String[] ports = SerialPortList.getPortNames(Pattern.compile(PORT_MATCH_PATTERN));
-
-			System.out.print("Ports:");
-			for(String port : ports)
-				System.out.print(" " + port);
-			System.out.println();
-
-			if( ports.length == 0) 
-				throw new Exception("No ports available!");
-			
-			System.out.println("Using port:" + ports[WHICH_PORT]);
-			serialPort = new SerialPort(ports[WHICH_PORT]); 
-			
-			// Open serial port
-			serialPort.openPort();
-			// Set params
-			// TODO: why BAUDRATE_115200? Teensy code says 250000
-			serialPort.setParams(SerialPort.BAUDRATE_115200,   
-					SerialPort.DATABITS_8, 
-					SerialPort.STOPBITS_1, 
-					SerialPort.PARITY_NONE);
-			
-			// Start thread for reading in serial data
-			new Thread(new TeensyRunnable()).start();
-			
-			// Start thread to print out something at a reasonable rate (testing)
-			if( DEBUG_THREAD) {
-				new Thread() { 
-					public void run() {
-						while(true) {
-							try {
-								Thread.sleep(500);
-							} catch (InterruptedException e) {}	
-							System.out.format("Yaw %.2f\n", getYawDeg());						
-						}
-					}
-				}.start();
-			}
-
+		serialPort = findTeensy();
+		if( serialPort == null) {
+			System.out.println("No Teensy found");
+			return;
 		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		}		
+			
+		// Start thread for reading in serial data
+		new Thread(new TeensyRunnable()).start();
+		
+		// Start thread to print out something at a reasonable rate (testing)
+		if( DEBUG_THREAD) {
+			new Thread() { 
+				public void run() {
+					while(true) {
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException e) {}	
+						System.out.format("Yaw %.2f\n", getYawDeg());						
+					}
+				}
+			}.start();
+		}
 	}
+	
+	private SerialPort findTeensy() {
+		
+		String[] portNames = SerialPortList.getPortNames();
+
+		System.out.print("Port list:");
+		for(String portName : portNames)
+			System.out.print(" " + portName);
+		System.out.println();		
+		
+		for( String portName : portNames) {
+			
+			try {				
+				System.out.println("Trying port:" + portName);
+				SerialPort port = new SerialPort(portName);
+				port.openPort();
+
+				// Set params
+				// (Baud rate doesn't matter with Teensy,
+				// because it's USB all the way thru)
+				port.setParams(SerialPort.BAUDRATE_115200,
+						SerialPort.DATABITS_8, 
+						SerialPort.STOPBITS_1, 
+						SerialPort.PARITY_NONE);
+				
+				// Spotting Teensy is a bit tricky.
+				// Opening the port doesn't cause a reboot (like it does with Arduino).
+				// If the Teensy has just been powered up, then it waits in bootloader;
+				// opening the port will cause the user code to start.
+				// BUT if it hasn't just been powered up (maybe the RoboRIO restarted,
+				// but the Teensy remained powered), then the Teensy will just continue to run
+				// the user program, which means it'll be streaming its messages.
+				// So we have to look for either of 2 things:
+				// 1) The "TeensyIMU" ident which is sent at the beginning of program
+				// 2) A legitimate-looking TeensyIMU message
+				// If we see either of those within 1 second, then we've found it.
+				String inBuff = "", inStr;				
+				long tQuit = System.currentTimeMillis() + 1000;
+				while( System.currentTimeMillis() < tQuit) {
+					
+					// Get input & append to inBuff
+					if( (inStr = port.readString()) != null) {
+						inBuff += inStr;
+					}
+					
+					if(inBuff.contains("TeensyIMU")) {
+						System.out.format("Saw TeensyIMU ident on port %s\n", portName);
+						return port;
+					}
+					String[] lines = inBuff.split("\n");
+					for( String line : lines) 
+						if( line.endsWith("\r") && (line.length() == IMUMESSAGELEN+1) ) {
+							System.out.format("Saw TeensyIMU message on port %s\n", portName);
+							return port;
+						}
+				}
+				
+				port.closePort();
+				
+			}
+			catch( Exception ex) {}			
+		}
+		
+		// Not found
+		return null;
+	}
+	
 	
 	private float hexToDouble(String str){		
 		//Parses string as decimal
@@ -135,7 +175,7 @@ public class TeensyIMU {
 						}						
 					}
 					
-				} catch (Exception e) {
+				} catch (SerialPortException e) {
 					e.printStackTrace();
 				}
 
@@ -148,7 +188,6 @@ public class TeensyIMU {
 			}
 		}
 		
-		private final int IMUMESSAGELEN = 39;
 		private double prevYaw = Double.NaN;
 		private double prevTime = Double.NaN;
 		private double unwrapAccum = 0.0;
@@ -186,12 +225,10 @@ public class TeensyIMU {
 				double timeDelta = (imutime - prevTime)/1000000.0;			
 				double yawRate = (unwrappedYaw - prevYaw)/timeDelta;
 				
-				// This really clutters up the console
-				//System.out.format("IMU Time:%d YawRate:%f Yaw:%f\n", imutime, yawRate, unwrappedYaw);			
-
-				// And this produces a really big file really fast, so watch out!
-				// pw.format("IMU Time:%d YawRate:%f Yaw:%f\n", imutime, yawRate, unwrappedYaw);
-			}		
+//				System.out.format("IMU Time:%d YawRate:%f Yaw:%f\n", imutime, yawRate, unwrappedYaw);			
+//				pw.format("IMU Time:%d YawRate:%f Yaw:%f\n", imutime, yawRate, unwrappedYaw);
+			}
+			
 			prevTime = imutime;
 			prevYaw = unwrappedYaw;
 		}	
