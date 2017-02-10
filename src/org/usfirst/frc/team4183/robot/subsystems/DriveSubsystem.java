@@ -2,7 +2,11 @@ package org.usfirst.frc.team4183.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.CANTalon;
+
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.RobotDrive;
+
+import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.DriveSubsystem.Idle;
 
@@ -17,13 +21,18 @@ public class DriveSubsystem extends Subsystem {
 	    
 		private final RobotDrive drive;
 		
+		private double lowSensitivityGain = 0.2;
+		
 	// Put methods for controlling this subsystem
     // here. Call these from Commands.
 		public DriveSubsystem() {
+			Preferences prefs = Preferences.getInstance();
 			leftMotor0 = new CANTalon(RobotMap.LEFT_MOTOR0_ID);
 			leftMotor1 = new CANTalon(RobotMap.LEFT_MOTOR1_ID);
 			rightMotor0 = new CANTalon(RobotMap.RIGHT_MOTOR0_ID);
 			rightMotor1 = new CANTalon(RobotMap.RIGHT_MOTOR1_ID);
+			
+			lowSensitivityGain = prefs.getDouble("Low Sensitivity Gain", lowSensitivityGain);
 	
 			drive = new RobotDrive(leftMotor0, leftMotor1, rightMotor0, rightMotor1);
 			drive.setSafetyEnabled(false);
@@ -41,7 +50,11 @@ public class DriveSubsystem extends Subsystem {
 		
 		
 		public void arcadeDrive(double speed, double turnAngle) {
-			drive.arcadeDrive(speed, turnAngle);
+			if(OI.btnLowSensitiveDrive.get()) {
+				drive.arcadeDrive(speed * lowSensitivityGain, turnAngle * lowSensitivityGain);
+			} else {
+				drive.arcadeDrive(speed, turnAngle);
+			}
 		}
 		
 		public void initDefaultCommand() {

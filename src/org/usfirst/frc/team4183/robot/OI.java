@@ -92,6 +92,7 @@ public class OI {
 	public static LogicalButton btnIntakeOn;
 	public static LogicalButton btnShooterStart;
 	public static LogicalButton btnBallIdle;
+	public static LogicalButton btnLowSensitiveDrive;
 	// etc for up to 14 buttons on each controller (might be fewer)
 
 
@@ -173,6 +174,7 @@ public class OI {
 		// TODO finish this list w/real logical axis names & real mapping
 		axisForward = driverController.aLeftY;
 		axisTurn = driverController.aLeftX;
+		btnLowSensitiveDrive = driverController.bR1;
 	}
 
 	// Represents the physical buttons & axis on one controller
