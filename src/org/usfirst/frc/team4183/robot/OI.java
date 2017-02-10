@@ -135,7 +135,6 @@ public class OI {
 	// TODO: change name of method for real operator name,
 	// and of course put in actual desired mapping
 	private void mapOperator_Bill( PhysicalController controller) {
-		btnClimbControl = controller.bShare;
 	}
 	
 	
@@ -168,7 +167,6 @@ public class OI {
 		
 		// Assign to EVERY logical button a physical button
 		// TODO finish this list w/real logical button names & real default mapping
-		// FIXME these mappings below NOT 1-to-1!
 		btnActivateDrive = driverController.bCircle;
 		btnLowSensitiveDrive = driverController.bR1;
 		btnAlignLock = driverController.bL1;
@@ -185,8 +183,7 @@ public class OI {
 		// Assign to EVERY logical axis a physical axis
 		// TODO finish this list w/real logical axis names & real mapping
 		axisForward = driverController.aLeftY;
-		axisTurn = driverController.aLeftX;
-		
+		axisTurn = driverController.aLeftX;		
 	}
 
 	// Represents the physical buttons & axis on one controller
