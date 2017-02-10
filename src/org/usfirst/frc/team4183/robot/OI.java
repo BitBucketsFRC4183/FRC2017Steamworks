@@ -217,7 +217,7 @@ public class OI {
 			aRightX = new PhysicalAxis( controller, PS4Constants.RIGHT_STICK_X.getValue(), false);
 			aRightY = new PhysicalAxis( controller, PS4Constants.RIGHT_STICK_Y.getValue(), true);
 			aL2 = new PhysicalAxis( controller, PS4Constants.L2_AXIS.getValue(), false);
-			aR2 = new PhysicalAxis( controller, PS4Constants.R2_AXIS.getValue(), false);		
+			aR2 = new PhysicalAxis( controller, PS4Constants.R2_AXIS.getValue(), false);	
 		}
 	}
 
@@ -261,6 +261,9 @@ public class OI {
 		PhysicalButton( Joystick controller, int btnNum) { 
 			btn = new JoystickButton( controller, btnNum); 
 		}		
+		PhysicalButton( Button btn) {
+			this.btn = btn;
+		}
 		@Override
 		public boolean get() { return btn.get(); }
 	}
@@ -347,13 +350,12 @@ public class OI {
 		}
 	}
 
+	// Can use this to wrap a PhysicalAxis, then it can also be used as a PhysicalButton.
+	// Useful if you run out of buttons but have axis to spare.
+	public static class AxisButton extends Button {
+		private final PhysicalAxis axis;
 
-	// Can use this to wrap a LogicalAxis, then it can also be used as a Button
-	// (not sure how useful?)
-	public static class JoystickAxisButton extends Button {
-		private final LogicalAxis axis;
-
-		protected JoystickAxisButton(LogicalAxis axis) {
+		protected AxisButton( PhysicalAxis axis) {
 			this.axis = axis;
 		}
 
@@ -362,6 +364,7 @@ public class OI {
 			return axis.get() > 0.5;
 		}
 	}
+
 }
 
 
