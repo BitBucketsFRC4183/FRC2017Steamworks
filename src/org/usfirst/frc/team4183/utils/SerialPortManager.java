@@ -7,6 +7,11 @@ import jssc.SerialPortList;
 public class SerialPortManager {
 	
 	public interface PortTester {
+		/**
+		 * Must return true iff you recognize your device in the input
+		 * @param input
+		 * @return
+		 */
 		boolean test( String input);
 	}
 	

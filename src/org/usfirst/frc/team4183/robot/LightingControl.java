@@ -84,7 +84,7 @@ public class LightingControl
 	public LightingControl() 
 	{
 	
-		
+		// Had to get at least one Lambda expression in the code somewhere! -tjw
 		serialPort = SerialPortManager.findPort( 
 				(input) -> input.contains("BucketLights"), 
 				SerialPort.BAUDRATE_38400);
