@@ -93,6 +93,7 @@ public class OI {
 	public static LogicalButton btnShooterStart;
 	public static LogicalButton btnBallIdle;
 	public static LogicalButton btnLowSensitiveDrive;
+	public static LogicalButton btnAlignLock;
 	// etc for up to 14 buttons on each controller (might be fewer)
 
 
@@ -161,6 +162,9 @@ public class OI {
 		// TODO finish this list w/real logical button names & real default mapping
 		// FIXME these mappings below NOT 1-to-1!
 		btnActivateDrive = driverController.bCircle;
+		btnLowSensitiveDrive = driverController.bR1;
+		btnAlignLock = driverController.bL1;
+				
 		btnClimbControl = operatorController.bShare;
 		btnWaitForGear = operatorController.bCross;
 		btnWaitForBalls = operatorController.bCircle;
@@ -170,11 +174,12 @@ public class OI {
 		btnShooterStart = operatorController.bR1;
 		btnBallIdle = operatorController.bTrackpad;
 		
+		
 		// Assign to EVERY logical axis a physical axis
 		// TODO finish this list w/real logical axis names & real mapping
 		axisForward = driverController.aLeftY;
 		axisTurn = driverController.aLeftX;
-		btnLowSensitiveDrive = driverController.bR1;
+		
 	}
 
 	// Represents the physical buttons & axis on one controller
