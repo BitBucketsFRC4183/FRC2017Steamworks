@@ -47,7 +47,7 @@ public class SerialPortManager {
 					}
 					
 					if( tester.test(inBuff) ) {
-						System.out.format( "Success on port %s", portName);
+						System.out.format( "Success on port %s\n", portName);
 						return port;
 					}
 				}
