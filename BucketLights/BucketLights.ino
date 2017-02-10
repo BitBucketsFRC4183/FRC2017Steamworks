@@ -36,12 +36,8 @@
 
 #include "BucketLights.h"
 
-const uint16_t PIN  = 6;
-const uint16_t PIXELS = 16;
-const uint16_t MAX_BRIGHTNESS = 255; //  1/8 max brightness, (mostly) eye safe
-const uint16_t MIN_BRIGHTNESS = 2;
-//const uint16_t MAX_BRIGHTNESS = 255; //  100% brightness, NOT eye safe (AND VERY WARM)
-
+// Notes for Adafruit_NeoPixel class
+//
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
 // Parameter 3 = pixel type flags (OPT.), add together as needed:
@@ -50,34 +46,21 @@ const uint16_t MIN_BRIGHTNESS = 2;
 //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
 //   NEO_RGBW    Pixels are wired for RGBW bitstream (NeoPixel RGBW products)
-// Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
-// Example of creating an automatically sized array of objects
-// The constructors are called at program elaboration and each
-// object created is COPIED into each location of the array
-//
-// Use something like sizeof(myStrips)/sizeof(myStrips[0]) to find
-// the dimension of the array
-//
-// These objects are created in a memory space known as "bss" or
-// base static section... usually just referred to as "static" memory
-// Static memory is where all initialized objects are stored
-//
-// int x = 1; is stored in static memory and initialized to 1
-// but unlike "objects" it has an explicit initialization and
-// being "plain old data" (POD) will be stored in a section
-// of memory called "data"
-// where
-// int x; is also static memory, it is stored with the
-// other non-POD objects (bss), but will be initialized
-// to zero (0) based on the C99 standard.
-//
-// This distinction will be important when we discuss "heap"
-// memory later (which does NOT initialize memory)
+enum LightingObjects  // Pin assignments
+{
+    DRIVE_SUBSYSTEM = 3,
+    GEAR_SUBSYSTEM  = 4,
+    BALL_SUBSYSTEM  = 5,
+    CLIMB_SUBSYSTEM = 6  
+};
 
 Adafruit_NeoPixel myStrips[] =
 {
-  Adafruit_NeoPixel(PIXELS, PIN, NEO_GRB + NEO_KHZ800)
+  Adafruit_NeoPixel(16, DRIVE_SUBSYSTEM, NEO_GRB + NEO_KHZ800),
+  Adafruit_NeoPixel(16, GEAR_SUBSYSTEM,  NEO_GRB + NEO_KHZ800),
+  Adafruit_NeoPixel(16, BALL_SUBSYSTEM,  NEO_GRB + NEO_KHZ800),
+  Adafruit_NeoPixel(16, CLIMB_SUBSYSTEM, NEO_GRB + NEO_KHZ800)
 };
 
 BucketLight myLights(myStrips, LENGTH(myStrips));
