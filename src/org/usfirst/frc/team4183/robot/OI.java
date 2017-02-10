@@ -84,6 +84,9 @@ public class OI {
 	// in isFinished(): OI.btnShoot.get().
 	// TODO complete this list, using the meaningful logical names.
 	public static LogicalButton btnActivateDrive;
+	public static LogicalButton btnLowSensitiveDrive;
+	public static LogicalButton btnAlignLock;
+	
 	public static LogicalButton btnClimbControl;
 	public static LogicalButton btnWaitForGear;
 	public static LogicalButton btnWaitForBalls;
@@ -92,8 +95,6 @@ public class OI {
 	public static LogicalButton btnIntakeOn;
 	public static LogicalButton btnShooterStart;
 	public static LogicalButton btnBallIdle;
-	public static LogicalButton btnLowSensitiveDrive;
-	public static LogicalButton btnAlignLock;
 	// etc for up to 14 buttons on each controller (might be fewer)
 
 
@@ -144,11 +145,18 @@ public class OI {
 		
 		// Assign to EVERY logical button a soft button
 		btnActivateDrive = new SoftButton();
+		btnLowSensitiveDrive = new SoftButton();
+		btnAlignLock = new SoftButton();
+		
 		btnClimbControl = new SoftButton();
 		btnWaitForGear = new SoftButton();
 		btnWaitForBalls = new SoftButton();
 		btnGearIdle = new SoftButton();
 		btnOpenGate = new SoftButton();
+		btnIntakeOn = new SoftButton();
+		btnShooterStart = new SoftButton();
+		btnBallIdle = new SoftButton();		
+		
 		
 		// Assign to EVERY logical axis a soft axis
 		axisForward = new SoftAxis();
@@ -190,6 +198,10 @@ public class OI {
 			bL1, bR1, bL2, bR2,
 			bShare, bOptions, bLstick, bRstick,
 			bPS4, bTrackpad;
+		
+		@SuppressWarnings("unused")
+		private final PhysicalPovButton
+			bPovUp, bPovRight, bPovDown, bPovLeft;
 
 		@SuppressWarnings("unused")
 		private final PhysicalAxis 
@@ -210,6 +222,10 @@ public class OI {
 			bRstick = new PhysicalButton(controller, PS4Constants.R_STICK.getValue());
 			bPS4 = new PhysicalButton(controller, PS4Constants.PS4.getValue());
 			bTrackpad = new PhysicalButton(controller, PS4Constants.TRACKPAD.getValue());
+			bPovUp = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.UP);
+			bPovRight = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.RIGHT);
+			bPovDown = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.DOWN);
+			bPovLeft = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.LEFT);
 
 			aLeftX = new PhysicalAxis( controller, PS4Constants.LEFT_STICK_X.getValue(), false);
 			aLeftY = new PhysicalAxis( controller, PS4Constants.LEFT_STICK_Y.getValue(), true);
