@@ -14,11 +14,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.HashSet;
 import java.util.Set;
 
+// Subsystems
 import org.usfirst.frc.team4183.robot.subsystems.BallManipSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
+
+// Non-subsystem (i.e., non-commandable) controls
 import org.usfirst.frc.team4183.robot.LightingControl;
+import org.usfirst.frc.team4183.robot.TeensyIMU;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -32,9 +37,11 @@ public class Robot extends IterativeRobot {
 	public static ClimbSubsystem climbSubsystem;
 	public static DriveSubsystem driveSubsystem;
 	public static GearHandlerSubsystem gearHandlerSubsystem;
-	public static LightingControl lightingControl;
 	public static OI oi;
-
+	
+	public static LightingControl lightingControl;	
+	public static TeensyIMU teensyImu;
+	
 	private Compressor compressor;
 
 	
@@ -54,19 +61,24 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+
+		// Construct the OI
+		// Do this first in case any Subsystems need to look at it
+		oi = OI.instance();
 		
 		// Construct the Subsystems
 		ballManipSubsystem = new BallManipSubsystem();
 		climbSubsystem = new ClimbSubsystem();
 		driveSubsystem = new DriveSubsystem();
 		gearHandlerSubsystem = new GearHandlerSubsystem();
-		lightingControl = new LightingControl(); 
-		lightingControl.initialize();
-		// Construct Compressor
-		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);
 		
-		// Construct the OI
-		oi = OI.instance();
+		// Construct Compressor
+		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);		
+		
+		// Construct LightingControl, Teensy
+		lightingControl = new LightingControl(); 		
+		teensyImu = new TeensyIMU();
+		
 		
 		// Construction is complete
 		
