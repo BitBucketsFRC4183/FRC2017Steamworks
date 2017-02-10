@@ -173,7 +173,11 @@ public class TeensyIMU {
 				return;
 
 			long imutime = hexToLong(poseData[0]);
-			double wrappedYaw = hexToDouble(poseData[4])*(180.0/Math.PI);
+			
+			// Yaw angle delivered by Teensy is backwards from the usual
+			// convention (right-hand-rule with z-axis pointing up).
+			// So we'll fix that here (not tempted to change the Teensy code!)
+			double wrappedYaw = -hexToDouble(poseData[4])*(180.0/Math.PI);
 
 			// Run the yaw angle unwrapper
 			if( !Double.isNaN(prevWrappedYaw)) {

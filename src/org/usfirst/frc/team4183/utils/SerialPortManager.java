@@ -11,7 +11,7 @@ public class SerialPortManager {
 	}
 	
 	public static SerialPort findPort( PortTester tester, int baudRate) {
-		return findPort( tester, baudRate, 2000);
+		return findPort( tester, baudRate, 3000);
 	}
 
 	public static SerialPort findPort( PortTester tester, int baudRate, int msecs) {
@@ -31,7 +31,7 @@ public class SerialPortManager {
 				SerialPort port = new SerialPort(portName);
 				port.openPort();
 
-				port.setParams(SerialPort.BAUDRATE_115200,
+				port.setParams(baudRate,
 						SerialPort.DATABITS_8, 
 						SerialPort.STOPBITS_1, 
 						SerialPort.PARITY_NONE);

@@ -1,6 +1,9 @@
 package org.usfirst.frc.team4183.robot;
 
 
+import org.usfirst.frc.team4183.utils.SerialPortManager;
+import org.usfirst.frc.team4183.utils.SerialPortManager.PortTester;
+
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
@@ -78,9 +81,15 @@ public class LightingControl
 	
 	private static final String FORMAT = "%d%s%s%d%03d%04d";
 	
-	public LightingControl() {
+	public LightingControl() 
+	{
+	
 		
-		if( (serialPort = findLightBoard() ) == null)
+		serialPort = SerialPortManager.findPort( 
+				(input) -> input.contains("BucketLights"), 
+				SerialPort.BAUDRATE_38400);
+		
+		if( serialPort == null)
 		{
 			System.out.println("No BucketLights board found!");
 			return;
@@ -89,57 +98,6 @@ public class LightingControl
 		setAllSleeping();
 	}
 	
-	private SerialPort findLightBoard() 
-	{
-
-		String[] portNames = SerialPortList.getPortNames();
-
-		System.out.print("Port list:");
-		for(String portName : portNames)
-			System.out.print(" " + portName);
-		System.out.println();		
-
-		for( String portName : portNames) 
-		{
-
-			try 
-			{				
-				System.out.println("Trying port:" + portName);
-				SerialPort port = new SerialPort(portName);
-				port.openPort();
-
-				port.setParams(SerialPort.BAUDRATE_38400,
-						SerialPort.DATABITS_8, 
-						SerialPort.STOPBITS_1, 
-						SerialPort.PARITY_NONE);
-				
-				String inStr, inBuf = "";
-				long tQuit = System.currentTimeMillis() + 3000;
-				while( System.currentTimeMillis() < tQuit) 
-				{
-					if( (inStr = port.readString()) != null)
-					{
-						inBuf += inStr;
-					}
-					
-					if( inBuf.contains("BucketLights"))
-					{
-						System.out.format("Found BucketLights on port %s\n", portName);	        	
-						return port;							
-					}
-					
-				}
-
-				port.closePort();
-
-			}
-			catch( SerialPortException ex) {}	
-		}
-
-		// Not found
-		return null;
-	}
-
 
 	public void set(LightingObjects lightingObject, String function, String color, int nspace, int brightness, int period_msec)
 	{
@@ -155,7 +113,6 @@ public class LightingControl
 											   brightness,
 											   period_msec);
 				
-				System.out.println(command);
 				serialPort.writeString(command);
 			}
 			catch (SerialPortException e) 
