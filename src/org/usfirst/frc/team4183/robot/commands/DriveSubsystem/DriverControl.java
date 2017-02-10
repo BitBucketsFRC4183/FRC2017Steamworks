@@ -3,6 +3,7 @@ package org.usfirst.frc.team4183.robot.commands.DriveSubsystem;
 
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
+import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -28,6 +29,9 @@ public class DriverControl extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
+    	if(OI.btnAlignLock.get()) {
+    		return CommandUtils.stateChange(this, new AlignLock());
+    	}
         return false;
     }
 
