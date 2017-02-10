@@ -36,7 +36,7 @@ public class DriveSubsystem extends Subsystem {
 			rightMotor0 = new CANTalon(RobotMap.RIGHT_MOTOR0_ID);
 			rightMotor1 = new CANTalon(RobotMap.RIGHT_MOTOR1_ID);
 			
-			lowSensitivityGain = prefs.getDouble("Low Sensitivity Gain", lowSensitivityGain);
+			lowSensitivityGain = prefs.getDouble("LowSensitivityGain", lowSensitivityGain);
 	
 			drive = new RobotDrive(leftMotor0, leftMotor1, rightMotor0, rightMotor1);
 			drive.setSafetyEnabled(false);

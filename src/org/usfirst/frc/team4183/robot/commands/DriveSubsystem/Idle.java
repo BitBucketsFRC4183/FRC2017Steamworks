@@ -25,7 +25,8 @@ public class Idle extends Command {
                                   LightingControl.COLOR_VIOLET,
 				                  0,
 				                  32,
-				                  0);    	
+				                  0);
+    	OI.ButtonEvent be = OI.getBtnEvt(OI.btnActivateDrive);
     }
 
     // Called repeatedly when this Command is scheduled to run

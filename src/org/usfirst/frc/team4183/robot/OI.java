@@ -173,8 +173,7 @@ public class OI {
 		btnIntakeOn = operatorController.bL1;
 		btnShooterStart = operatorController.bR1;
 		btnBallIdle = operatorController.bTrackpad;
-		
-		
+				
 		// Assign to EVERY logical axis a physical axis
 		// TODO finish this list w/real logical axis names & real mapping
 		axisForward = driverController.aLeftY;
@@ -195,7 +194,7 @@ public class OI {
 		@SuppressWarnings("unused")
 		private final PhysicalAxis 
 			aLeftX, aLeftY, aRightX, aRightY, aL2, aR2;
-
+		
 		private PhysicalController( Joystick controller) {
 			bSquare = new PhysicalButton(controller, PS4Constants.SQUARE.getValue());
 			bCross = new PhysicalButton(controller, PS4Constants.CROSS.getValue());
@@ -217,7 +216,7 @@ public class OI {
 			aRightX = new PhysicalAxis( controller, PS4Constants.RIGHT_STICK_X.getValue(), false);
 			aRightY = new PhysicalAxis( controller, PS4Constants.RIGHT_STICK_Y.getValue(), true);
 			aL2 = new PhysicalAxis( controller, PS4Constants.L2_AXIS.getValue(), false);
-			aR2 = new PhysicalAxis( controller, PS4Constants.R2_AXIS.getValue(), false);	
+			aR2 = new PhysicalAxis( controller, PS4Constants.R2_AXIS.getValue(), false);
 		}
 	}
 
@@ -258,24 +257,59 @@ public class OI {
 	// A button on a controller
 	private static class PhysicalButton implements LogicalButton {
 		Button btn;
-		PhysicalButton( Joystick controller, int btnNum) { 
+		private PhysicalButton( Joystick controller, int btnNum) { 
 			btn = new JoystickButton( controller, btnNum); 
 		}		
-		PhysicalButton( Button btn) {
+		private PhysicalButton( Button btn) {
 			this.btn = btn;
 		}
 		@Override
 		public boolean get() { return btn.get(); }
+		
 	}
 	
+	// Allows you to use a controller axis as a button
+	// Not used yet
+	@SuppressWarnings("unused")
+	private static class PhysicalAxisButton implements LogicalButton {
+		private PhysicalAxis physAxis;
+		private PhysicalAxisButton( Joystick controller, int axisNum, boolean invert) {
+			physAxis = new PhysicalAxis( controller, axisNum, invert);
+		}
+		@Override
+		public boolean get() { return physAxis.get() > 0.5; }
+	}
+	
+	@SuppressWarnings("unused")
+	private static class PhysicalPovButton implements LogicalButton {		
+		private Joystick controller;
+		private POV_BUTTON whichPov;
+		
+		private enum POV_BUTTON { 
+			UP(0), RIGHT(90), DOWN(180), LEFT(270);
+			private int value;
+			private POV_BUTTON(int value) {
+				this.value = value;
+			}
+			private int getValue() { return value; }
+		}
+		
+		private PhysicalPovButton( Joystick controller, POV_BUTTON whichPov) {
+			this.controller = controller;
+			this.whichPov = whichPov;
+		}
+		
+		@Override
+		public boolean get() { return controller.getPOV() == whichPov.getValue(); }		
+	}
 	
 	// Wraps a LogicalButton & makes it easy to catch rising/falling edges
 	public static class ButtonEvent {
 
 		private final LogicalButton m_button;
-		boolean m_wasPressed;
+		private boolean m_wasPressed;
 
-		protected ButtonEvent( LogicalButton button) {
+		private ButtonEvent( LogicalButton button) {
 			m_button = button;
 			m_wasPressed = isPressed();
 		}
@@ -350,20 +384,7 @@ public class OI {
 		}
 	}
 
-	// Can use this to wrap a PhysicalAxis, then it can also be used as a PhysicalButton.
-	// Useful if you run out of buttons but have axis to spare.
-	public static class AxisButton extends Button {
-		private final PhysicalAxis axis;
 
-		protected AxisButton( PhysicalAxis axis) {
-			this.axis = axis;
-		}
-
-		@Override 
-		public boolean get() {
-			return axis.get() > 0.5;
-		}
-	}
 
 }
 
