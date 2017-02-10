@@ -40,7 +40,7 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 	
 	public static LightingControl lightingControl;	
-	public static TeensyIMU teensyImu;
+	public static TeensyIMU IMU;
 	
 	private Compressor compressor;
 
@@ -77,7 +77,7 @@ public class Robot extends IterativeRobot {
 		
 		// Construct LightingControl, Teensy
 		lightingControl = new LightingControl(); 		
-		teensyImu = new TeensyIMU();
+		IMU = new TeensyIMU();
 		
 		
 		// Construction is complete
