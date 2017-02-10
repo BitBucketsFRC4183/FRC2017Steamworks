@@ -14,8 +14,9 @@ public class LightingControl
 		DRIVE_SUBSYSTEM(0),
 		GEAR_SUBSYSTEM(1),
 		BALL_SUBSYSTEM(2),
-		CLIMB_SUBSYSTEM(3),		
-		MAX_LIGHTING(9);
+		CLIMB_SUBSYSTEM(3),
+		// RESERVED 4 - 9
+		MAX_LIGHTING(10);
 		
 		private int value;
 		
@@ -38,7 +39,8 @@ public class LightingControl
 //	        B      = Blink with period pppp msec
 //	        F      = Forward Chase n pixels (n >= 2, 1 on and n-1 off) with period pppp msec
 //	        R      = Reverse Change n pixels (n >= 2, 1 on and n-1 off) with period pppp msec
-//	        C      = Cylon (3-light, only tail chase with 25%, 50%, 100% of desired brightness) with period pppp msec
+//	        C      = Cylon (1-light side-to-side) with update period pppp msec
+//			*      = Sparkles (random colors) changing at period pppp msec
 //	    C - Color Code
 //	        0 = black (OFF)
 //	        W = white
@@ -61,6 +63,7 @@ public class LightingControl
 	public static final String FUNCTION_FORWARD = "F";
 	public static final String FUNCTION_REVERSE = "R";
 	public static final String FUNCTION_CYLON = "C";
+	public static final String FUNCTION_SPARKLES = "*";
 	
 	public static final String COLOR_BLACK = "0";
 	public static final String COLOR_WHITE = "W";
@@ -184,6 +187,23 @@ public class LightingControl
 			   0);	// period_msec - don't care
 	}
 
+	public void setAllSparkles(int period_msec)
+	{
+		setAll(FUNCTION_SPARKLES,
+			   COLOR_BLACK,		// don't care, sparkles are random
+			   0,	// nspace - don't care
+			   0,	// brightness - don't care
+			   period_msec);	// period_msec - nice
+	}
+	public void setAllSparkles()	// Default period
+	{
+		setAll(FUNCTION_SPARKLES,
+			   COLOR_BLACK,		// don't care, sparkles are random
+			   0,	// nspace - don't care
+			   0,	// brightness - don't care
+			   100) ; // period_msec - nice default
+	}
+	
 	public void setAllOff()
 	{
 		setAll(FUNCTION_OFF,
