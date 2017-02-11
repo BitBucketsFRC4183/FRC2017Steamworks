@@ -20,12 +20,7 @@ public class Idle extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.ballManipSubsystem.disable();
-    	Robot.lightingControl.set(	LightingObjects.BALL_SUBSYSTEM, 
-					                LightingControl.FUNCTION_SNORE, 
-					                LightingControl.COLOR_VIOLET,
-					                0,
-					                32,
-					                0);    	
+    	Robot.lightingControl.setSleeping(LightingObjects.BALL_SUBSYSTEM);    	
     }
 
     // Called repeatedly when this Command is scheduled to run

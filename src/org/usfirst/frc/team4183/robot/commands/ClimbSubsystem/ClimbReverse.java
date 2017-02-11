@@ -22,7 +22,6 @@ public class ClimbReverse extends Command {
 					              LightingControl.FUNCTION_REVERSE, 
 					              LightingControl.COLOR_ORANGE,
 					              3,
-					              100,
 					              300);
     }
 

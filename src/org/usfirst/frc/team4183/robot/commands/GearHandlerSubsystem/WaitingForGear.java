@@ -1,7 +1,9 @@
 package org.usfirst.frc.team4183.robot.commands.GearHandlerSubsystem;
 
+import org.usfirst.frc.team4183.robot.LightingControl;
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
+import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
 import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -25,6 +27,12 @@ public class WaitingForGear extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	Robot.gearHandlerSubsystem.spinRollerGear();
+    	Robot.lightingControl.set(LightingObjects.GEAR_SUBSYSTEM,
+                                  LightingControl.FUNCTION_REVERSE,
+                                  OI.btnDriveLock.get()? LightingControl.COLOR_GREEN : LightingControl.COLOR_ORANGE,
+                                  4,		// nspace - good for either 8 or 16 pixel strips
+                                  200);		// period_msec    		
+    	
     }
 
     // Make this return true when this Command no longer needs to run execute()
