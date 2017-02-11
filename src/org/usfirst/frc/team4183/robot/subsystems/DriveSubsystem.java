@@ -57,14 +57,19 @@ public class DriveSubsystem extends Subsystem {
 			} 
 		}
 		
-		public void alignDrive(double speed) {
+		public void alignDrive(double speed, double turn) {
 			
-			double turn = ALIGN_LOOP_GAIN * (yawSetPoint - Robot.imu.getYawDeg());
+			// Turn stick is + to the right,
+			// +yaw is CCW looking down,
+			// so + stick lowers the setpoint. 
+			yawSetPoint += -0.2*turn;
+			
+			double error = ALIGN_LOOP_GAIN * (yawSetPoint - Robot.imu.getYawDeg());
 			
 			if(OI.btnLowSensitiveDrive.get())
 				speed *= lowSensitivityGain;
 				
-			robotDrive.arcadeDrive(speed, turn);			
+			robotDrive.arcadeDrive(speed, error);			
 		}
 		
 		public void arcadeDrive(double speed, double turn) {
