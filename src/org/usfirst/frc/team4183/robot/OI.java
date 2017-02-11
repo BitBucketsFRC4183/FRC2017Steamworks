@@ -183,7 +183,7 @@ public class OI {
 		// Assign to EVERY logical axis a physical axis
 		// TODO finish this list w/real logical axis names & real mapping
 		axisForward = driverController.aLeftY;
-		axisTurn = driverController.aLeftX;		
+		axisTurn = driverController.aRightX;	
 	}
 
 	// Represents the physical buttons & axis on one controller

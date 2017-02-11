@@ -17,9 +17,8 @@ public class LightingControl
 		DRIVE_SUBSYSTEM(0),
 		GEAR_SUBSYSTEM(1),
 		BALL_SUBSYSTEM(2),
-		CLIMB_SUBSYSTEM(3),
+		CLIMB_SUBSYSTEM(3);
 		// RESERVED 4 - 9
-		MAX_LIGHTING(10);
 		
 		private int value;
 		
@@ -79,10 +78,11 @@ public class LightingControl
 	public static final String COLOR_ORANGE = "O";
 	public static final String COLOR_VIOLET = "V";
 	
-	private static final String FORMAT = "%d%s%s%d%03d%04d";
+	private static final String FORMAT = "%d%s%s%d%03d%04d\r";
 	
 	public LightingControl() 
 	{
+		System.out.println( "Starting BucketLights");
 	
 		// Had to get at least one Lambda expression in the code somewhere! -tjw
 		serialPort = SerialPortManager.findPort( 
@@ -113,6 +113,7 @@ public class LightingControl
 											   brightness,
 											   period_msec);
 				
+				//System.out.println(command);
 				serialPort.writeString(command);
 			}
 			catch (SerialPortException e) 
