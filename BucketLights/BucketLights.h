@@ -153,6 +153,8 @@ public:
 
     // -------------------------------------------------------------------------
     // translateFunction - returns function character if valid or 'x' if invalid
+    //
+    // See parse(...) for more information
     // -------------------------------------------------------------------------
     char translateFunction(char aFunction)
     {
@@ -166,6 +168,7 @@ public:
         case 'F':
         case 'R':
         case 'C':
+        case '*':
           break;
         default:
           retFunction = 'x';
@@ -177,32 +180,6 @@ public:
     // -------------------------------------------------------------------------
     // parse - parses a string to determine what operation should be scheduled
     // on which strip
-    //
-    // String format is simple: "NFCnbbbpppp"
-    //    N - Strip Number 0..9
-    //    F - Function
-    //        0 (zero) = off
-    //        1      = Solid ON
-    //        S      = Snore on 3 second period
-    //        B      = Blink with period pppp msec
-    //        F      = Forward Chase n pixels (n >= 2, 1 on and n-1 off) with period pppp msec
-    //        R      = Reverse Change n pixels (n >= 2, 1 on and n-1 off) with period pppp msec
-    //        C      = Cylon (3-light, only tail chase with 25%, 50%, 100% of desired brightness) with period pppp msec
-    //    C - Color Code
-    //        0 = black (OFF)
-    //        g = grey
-    //        W = white
-    //        R = red
-    //        G = green
-    //        B = blue
-    //        C = cyan
-    //        M = magenta
-    //        Y = yellow
-    //        O = orange
-    //        V = violet
-    //    n - Used only in F and R functions to space the pixels (ignored in all other modes)
-    //    bbb - Brightness from 000 to 255
-    //    pppp - Period in milliseconds between transitions
     // -------------------------------------------------------------------------
     void parse(const String &aCommand)
     {
@@ -217,7 +194,8 @@ public:
           Serial.println("        B      = Blink with period pppp msec");
           Serial.println("        F      = Forward Chase n pixels (n >= 2, 1 on and n-1 off) with period pppp msec");
           Serial.println("        R      = Reverse Change n pixels (n >= 2, 1 on and n-1 off) with period pppp msec");
-          Serial.println("        C      = Cylon (3-light, only tail chase with 25%, 50%, 100% of desired brightness) with period pppp msec");
+          Serial.println("        C      = Cylon (1-light side-to-side) with update period pppp msec");
+          Serial.println("        *      = Sparkles (random colors) changing at period pppp msec");
           Serial.println("    C - Color Code");
           Serial.println("        0 = black (OFF)");
           Serial.println("        W = white");
@@ -377,6 +355,19 @@ public:
       }
       
     }
+    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    void nextSparkle(uint16_t i)
+    {
+      uint16_t n = pStrips_[i].numPixels();
+      for (uint16_t pixel = 0; pixel < n; ++pixel)
+      {
+        pStrips_[i].setBrightness(10 + (rand() % 15));
+        pStrips_[i].setPixelColor(pixel, Adafruit_NeoPixel::Color(rand()%255,rand()%255,rand()%255));
+      }
+      pStrips_[i].show();
+        
+    }
     
     // -------------------------------------------------------------------------
     // process - sequence each strip to the next state
@@ -428,8 +419,11 @@ public:
                     case 'R':   // Reverse Change n pixels (n >= 2, 1 on and n-1 off) with period pppp msec
                         nextReverse(i);
                         break;
-                    case 'C':   // Cylon (3-light, only tail chase with 25%, 50%, 100% of desired brightness) with period pppp msec
+                    case 'C':   // Cylon (1-light side-to-side) with update period pppp msec
                         nextCylon(i);
+                        break;
+                    case '*':   // Sparkles (random colors) changing at period pppp msec
+                        nextSparkle(i);
                         break;
                         
                     default:

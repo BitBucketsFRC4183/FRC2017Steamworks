@@ -81,18 +81,32 @@ public class OI {
 
 	// If your Command doesn't require edge detect on the button,
 	// then you can look at one of these directly,
-	// in isFinished(): OI.btnShoot.get().
+	// in isFinished(): OI.btnShoot.get()
+	
 	// TODO complete this list, using the meaningful logical names.
-	public static LogicalButton btnActivateDrive;
+
+	public static LogicalButton btnLowSensitiveDrive;
+	public static LogicalButton btnToggleFrontCameraView;
+	
+	public static LogicalButton btnAlignLock;
+	public static LogicalButton btnDriveLock;
+	
+	public static LogicalButton btnAlignAssist;
+	
 	public static LogicalButton btnClimbControl;
+	
+	// Gear/ball-loading functions
 	public static LogicalButton btnWaitForGear;
 	public static LogicalButton btnWaitForBalls;
-	public static LogicalButton btnGearIdle;
 	public static LogicalButton btnOpenGate;
+	
+	// Ball handling functions
 	public static LogicalButton btnIntakeOn;
 	public static LogicalButton btnShooterStart;
-	public static LogicalButton btnBallIdle;
-	public static LogicalButton btnLowSensitiveDrive;
+	public static LogicalButton btnShoot;
+	
+	public static LogicalButton btnIdle;
+	
 	// etc for up to 14 buttons on each controller (might be fewer)
 
 
@@ -133,7 +147,6 @@ public class OI {
 	// TODO: change name of method for real operator name,
 	// and of course put in actual desired mapping
 	private void mapOperator_Bill( PhysicalController controller) {
-		btnClimbControl = controller.bShare;
 	}
 	
 	
@@ -142,12 +155,26 @@ public class OI {
 	private void doAutonomousMapping() {
 		
 		// Assign to EVERY logical button a soft button
-		btnActivateDrive = new SoftButton();
+		btnLowSensitiveDrive = new SoftButton();
+		btnToggleFrontCameraView = new SoftButton();
+
+		btnAlignAssist = new SoftButton();
+				
+		btnAlignLock = new SoftButton();
+		btnDriveLock = new SoftButton();
+		
 		btnClimbControl = new SoftButton();
+		
 		btnWaitForGear = new SoftButton();
 		btnWaitForBalls = new SoftButton();
-		btnGearIdle = new SoftButton();
 		btnOpenGate = new SoftButton();
+		
+		btnIntakeOn = new SoftButton();
+		btnShooterStart = new SoftButton();
+		btnShoot = new SoftButton();
+		
+		btnIdle = new SoftButton();		
+		
 		
 		// Assign to EVERY logical axis a soft axis
 		axisForward = new SoftAxis();
@@ -159,22 +186,31 @@ public class OI {
 		
 		// Assign to EVERY logical button a physical button
 		// TODO finish this list w/real logical button names & real default mapping
-		// FIXME these mappings below NOT 1-to-1!
-		btnActivateDrive = driverController.bCircle;
+
+		btnLowSensitiveDrive = driverController.bR1;
+		btnToggleFrontCameraView = driverController.bR2;
+		
+		btnAlignAssist = driverController.bTriangle;
+		
+		btnAlignLock = driverController.bL1;
+		btnDriveLock = driverController.bL2;
+				
 		btnClimbControl = operatorController.bShare;
+		
 		btnWaitForGear = operatorController.bCross;
 		btnWaitForBalls = operatorController.bCircle;
-		btnGearIdle = operatorController.bSquare;
 		btnOpenGate = operatorController.bTriangle;
+		
 		btnIntakeOn = operatorController.bL1;
 		btnShooterStart = operatorController.bR1;
-		btnBallIdle = operatorController.bTrackpad;
+		btnShoot = operatorController.bR2;
 		
+		btnIdle = operatorController.bTrackpad;		// Big easy button to make selected operator subs idle
+				
 		// Assign to EVERY logical axis a physical axis
 		// TODO finish this list w/real logical axis names & real mapping
 		axisForward = driverController.aLeftY;
-		axisTurn = driverController.aLeftX;
-		btnLowSensitiveDrive = driverController.bR1;
+		axisTurn = driverController.aRightX;	
 	}
 
 	// Represents the physical buttons & axis on one controller
@@ -186,11 +222,15 @@ public class OI {
 			bL1, bR1, bL2, bR2,
 			bShare, bOptions, bLstick, bRstick,
 			bPS4, bTrackpad;
+		
+		@SuppressWarnings("unused")
+		private final PhysicalPovButton
+			bPovUp, bPovRight, bPovDown, bPovLeft;
 
 		@SuppressWarnings("unused")
 		private final PhysicalAxis 
 			aLeftX, aLeftY, aRightX, aRightY, aL2, aR2;
-
+		
 		private PhysicalController( Joystick controller) {
 			bSquare = new PhysicalButton(controller, PS4Constants.SQUARE.getValue());
 			bCross = new PhysicalButton(controller, PS4Constants.CROSS.getValue());
@@ -206,13 +246,17 @@ public class OI {
 			bRstick = new PhysicalButton(controller, PS4Constants.R_STICK.getValue());
 			bPS4 = new PhysicalButton(controller, PS4Constants.PS4.getValue());
 			bTrackpad = new PhysicalButton(controller, PS4Constants.TRACKPAD.getValue());
+			bPovUp = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.UP);
+			bPovRight = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.RIGHT);
+			bPovDown = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.DOWN);
+			bPovLeft = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.LEFT);
 
 			aLeftX = new PhysicalAxis( controller, PS4Constants.LEFT_STICK_X.getValue(), false);
 			aLeftY = new PhysicalAxis( controller, PS4Constants.LEFT_STICK_Y.getValue(), true);
 			aRightX = new PhysicalAxis( controller, PS4Constants.RIGHT_STICK_X.getValue(), false);
 			aRightY = new PhysicalAxis( controller, PS4Constants.RIGHT_STICK_Y.getValue(), true);
 			aL2 = new PhysicalAxis( controller, PS4Constants.L2_AXIS.getValue(), false);
-			aR2 = new PhysicalAxis( controller, PS4Constants.R2_AXIS.getValue(), false);		
+			aR2 = new PhysicalAxis( controller, PS4Constants.R2_AXIS.getValue(), false);
 		}
 	}
 
@@ -253,21 +297,58 @@ public class OI {
 	// A button on a controller
 	private static class PhysicalButton implements LogicalButton {
 		Button btn;
-		PhysicalButton( Joystick controller, int btnNum) { 
+		private PhysicalButton( Joystick controller, int btnNum) { 
 			btn = new JoystickButton( controller, btnNum); 
 		}		
+		private PhysicalButton( Button btn) {
+			this.btn = btn;
+		}
 		@Override
 		public boolean get() { return btn.get(); }
+		
 	}
 	
+	// Allows you to use a controller axis as a button
+	// Not used yet
+	@SuppressWarnings("unused")
+	private static class PhysicalAxisButton implements LogicalButton {
+		private PhysicalAxis physAxis;
+		private PhysicalAxisButton( Joystick controller, int axisNum, boolean invert) {
+			physAxis = new PhysicalAxis( controller, axisNum, invert);
+		}
+		@Override
+		public boolean get() { return physAxis.get() > 0.5; }
+	}
+	
+	private static class PhysicalPovButton implements LogicalButton {		
+		private Joystick controller;
+		private POV_BUTTON whichPov;
+		
+		private enum POV_BUTTON { 
+			UP(0), RIGHT(90), DOWN(180), LEFT(270);
+			private int value;
+			private POV_BUTTON(int value) {
+				this.value = value;
+			}
+			private int getValue() { return value; }
+		}
+		
+		private PhysicalPovButton( Joystick controller, POV_BUTTON whichPov) {
+			this.controller = controller;
+			this.whichPov = whichPov;
+		}
+		
+		@Override
+		public boolean get() { return controller.getPOV() == whichPov.getValue(); }		
+	}
 	
 	// Wraps a LogicalButton & makes it easy to catch rising/falling edges
 	public static class ButtonEvent {
 
 		private final LogicalButton m_button;
-		boolean m_wasPressed;
+		private boolean m_wasPressed;
 
-		protected ButtonEvent( LogicalButton button) {
+		private ButtonEvent( LogicalButton button) {
 			m_button = button;
 			m_wasPressed = isPressed();
 		}
@@ -343,20 +424,7 @@ public class OI {
 	}
 
 
-	// Can use this to wrap a LogicalAxis, then it can also be used as a Button
-	// (not sure how useful?)
-	public static class JoystickAxisButton extends Button {
-		private final LogicalAxis axis;
 
-		protected JoystickAxisButton(LogicalAxis axis) {
-			this.axis = axis;
-		}
-
-		@Override 
-		public boolean get() {
-			return axis.get() > 0.5;
-		}
-	}
 }
 
 

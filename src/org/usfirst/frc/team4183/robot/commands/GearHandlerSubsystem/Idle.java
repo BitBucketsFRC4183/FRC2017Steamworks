@@ -20,12 +20,7 @@ public class Idle extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.gearHandlerSubsystem.disable();
-    	Robot.lightingControl.set(	LightingObjects.GEAR_SUBSYSTEM, 
-					                LightingControl.FUNCTION_SNORE, 
-					                LightingControl.COLOR_VIOLET,
-					                0,
-					                32,
-					                0);    	
+    	Robot.lightingControl.setSleeping(LightingObjects.GEAR_SUBSYSTEM);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -34,13 +29,13 @@ public class Idle extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(OI.btnWaitForBalls.get()) {
+    	if(OI.btnOpenGate.get()) {
     		return CommandUtils.stateChange(this, new GateOpen());
     	}
     	if(OI.btnWaitForGear.get()) {
     		return CommandUtils.stateChange(this, new WaitingForGear());
     	}
-    	if(OI.btnOpenGate.get()) {
+    	if(OI.btnWaitForBalls.get()) {
     		return CommandUtils.stateChange(this, new WaitingForBalls());
     	}
         return false;
