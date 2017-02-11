@@ -81,20 +81,32 @@ public class OI {
 
 	// If your Command doesn't require edge detect on the button,
 	// then you can look at one of these directly,
-	// in isFinished(): OI.btnShoot.get().
+	// in isFinished(): OI.btnShoot.get()
+	
 	// TODO complete this list, using the meaningful logical names.
-	public static LogicalButton btnActivateDrive;
+
 	public static LogicalButton btnLowSensitiveDrive;
+	public static LogicalButton btnToggleFrontCameraView;
+	
 	public static LogicalButton btnAlignLock;
+	public static LogicalButton btnDriveLock;
+	
+	public static LogicalButton btnAlignAssist;
 	
 	public static LogicalButton btnClimbControl;
+	
+	// Gear/ball-loading functions
 	public static LogicalButton btnWaitForGear;
 	public static LogicalButton btnWaitForBalls;
-	public static LogicalButton btnGearIdle;
 	public static LogicalButton btnOpenGate;
+	
+	// Ball handling functions
 	public static LogicalButton btnIntakeOn;
 	public static LogicalButton btnShooterStart;
-	public static LogicalButton btnBallIdle;
+	public static LogicalButton btnShoot;
+	
+	public static LogicalButton btnIdle;
+	
 	// etc for up to 14 buttons on each controller (might be fewer)
 
 
@@ -143,18 +155,25 @@ public class OI {
 	private void doAutonomousMapping() {
 		
 		// Assign to EVERY logical button a soft button
-		btnActivateDrive = new SoftButton();
 		btnLowSensitiveDrive = new SoftButton();
+		btnToggleFrontCameraView = new SoftButton();
+
+		btnAlignAssist = new SoftButton();
+				
 		btnAlignLock = new SoftButton();
+		btnDriveLock = new SoftButton();
 		
 		btnClimbControl = new SoftButton();
+		
 		btnWaitForGear = new SoftButton();
 		btnWaitForBalls = new SoftButton();
-		btnGearIdle = new SoftButton();
 		btnOpenGate = new SoftButton();
+		
 		btnIntakeOn = new SoftButton();
 		btnShooterStart = new SoftButton();
-		btnBallIdle = new SoftButton();		
+		btnShoot = new SoftButton();
+		
+		btnIdle = new SoftButton();		
 		
 		
 		// Assign to EVERY logical axis a soft axis
@@ -167,18 +186,26 @@ public class OI {
 		
 		// Assign to EVERY logical button a physical button
 		// TODO finish this list w/real logical button names & real default mapping
-		btnActivateDrive = driverController.bCircle;
+
 		btnLowSensitiveDrive = driverController.bR1;
+		btnToggleFrontCameraView = driverController.bR2;
+		
+		btnAlignAssist = driverController.bTriangle;
+		
 		btnAlignLock = driverController.bL1;
+		btnDriveLock = driverController.bL2;
 				
 		btnClimbControl = operatorController.bShare;
+		
 		btnWaitForGear = operatorController.bCross;
 		btnWaitForBalls = operatorController.bCircle;
-		btnGearIdle = operatorController.bSquare;
 		btnOpenGate = operatorController.bTriangle;
+		
 		btnIntakeOn = operatorController.bL1;
 		btnShooterStart = operatorController.bR1;
-		btnBallIdle = operatorController.bTrackpad;
+		btnShoot = operatorController.bR2;
+		
+		btnIdle = operatorController.bTrackpad;		// Big easy button to make selected operator subs idle
 				
 		// Assign to EVERY logical axis a physical axis
 		// TODO finish this list w/real logical axis names & real mapping
@@ -293,7 +320,6 @@ public class OI {
 		public boolean get() { return physAxis.get() > 0.5; }
 	}
 	
-	@SuppressWarnings("unused")
 	private static class PhysicalPovButton implements LogicalButton {		
 		private Joystick controller;
 		private POV_BUTTON whichPov;

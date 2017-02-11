@@ -22,7 +22,6 @@ public class ClimbForward extends Command {
 					              LightingControl.FUNCTION_FORWARD, 
 					              LightingControl.COLOR_GREEN,
 					              3,
-					              100,
 					              300);
     	}
 

@@ -24,7 +24,6 @@ public class ClimbFinish extends Command {
 					              LightingControl.FUNCTION_BLINK, 
 					              LightingControl.COLOR_RED,
 					              0,
-					              100,
 					              500);
     }
 
