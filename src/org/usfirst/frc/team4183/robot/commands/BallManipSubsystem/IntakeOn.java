@@ -31,7 +31,7 @@ public class IntakeOn extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        if(OI.btnBallIdle.get()){
+        if(OI.btnIdle.get()){
         	return CommandUtils.stateChange(this, new Idle());
         }
         if(OI.btnShooterStart.get()){
