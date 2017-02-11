@@ -5,7 +5,8 @@ import edu.wpi.first.wpilibj.SPI;
 
 public class NavxIMU {
 	
-	AHRS ahrs;
+	private AHRS ahrs;
+	private final boolean DEBUG_THREAD = false;
 	
 	NavxIMU() {
 		
@@ -15,10 +16,29 @@ public class NavxIMU {
 		catch (RuntimeException ex ) {
 			ex.printStackTrace();
 		}
+		
+		// Start thread to print out something at a reasonable rate (testing)
+		if( DEBUG_THREAD) {
+			new Thread() { 
+				public void run() {
+					while(true) {
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException e) {}	
+						System.out.format("Yaw %.2f\n", getYawDeg());						
+					}
+				}
+			}.start();
+		}		
+		
 	}
 	
 	public double getYawDeg() {
-		return ahrs.getAngle();
+		// Define yaw angle according to right-hand-rule with z-axis up;
+		// that is, +yaw is CCW looking down on robot.
+		// Need the - sign to get the Navx to agree with this definition.
+		return -ahrs.getAngle();
 	}
+
 
 }
