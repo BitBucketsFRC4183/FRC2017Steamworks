@@ -11,15 +11,18 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class AlignLock extends Command {
+public class AlignLock extends Command 
+{
 
-    public AlignLock() {
+    public AlignLock() 
+    {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.driveSubsystem);
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
+    protected void initialize() 
+    {
     	Robot.lightingControl.set(LightingObjects.DRIVE_SUBSYSTEM,
                                   LightingControl.FUNCTION_BLINK,
                                   LightingControl.COLOR_GREEN,
@@ -30,26 +33,31 @@ public class AlignLock extends Command {
     }
 
     // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    protected void execute() 
+    {
     	Robot.driveSubsystem.alignDrive(OI.axisForward.get());
     }
 
     // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
-    	if(!OI.btnAlignLock.get()) {
+    protected boolean isFinished() 
+    {
+    	if(!OI.btnAlignLock.get()) 
+    	{
     		return CommandUtils.stateChange(this, new DriverControl());
     	}
         return false;
     }
 
     // Called once after isFinished returns true
-    protected void end() {
+    protected void end() 
+    {
         Robot.driveSubsystem.driveStraight(false);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
-    protected void interrupted() {
+    protected void interrupted() 
+    {
     	end();
     }
 }
