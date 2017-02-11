@@ -59,12 +59,19 @@ public class DriveSubsystem extends Subsystem {
 		
 		public void alignDrive(double speed, double turn) {
 			
+			/* No requirement for this but might be nice to have?
+			 * Allows a bit of driver yaw adjust while in this mode.
+			 * The 0.2 is chosen to give a max of 10 deg/sec setpoint change
+			 * at full stick (a modest amount).
+			 * 
 			// Turn stick is + to the right,
 			// +yaw is CCW looking down,
 			// so + stick lowers the setpoint. 
 			yawSetPoint += -0.2*turn;
+			*/
 			
 			double error = ALIGN_LOOP_GAIN * (yawSetPoint - Robot.imu.getYawDeg());
+			
 			
 			if(OI.btnLowSensitiveDrive.get())
 				speed *= lowSensitivityGain;
