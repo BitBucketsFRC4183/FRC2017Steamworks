@@ -41,7 +41,6 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 	
 	public static LightingControl lightingControl;	
-	//public static TeensyIMU IMU;
 	public static NavxIMU imu;
 	
 	private Compressor compressor;
@@ -77,9 +76,8 @@ public class Robot extends IterativeRobot {
 		// Construct Compressor
 		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);		
 		
-		// Construct LightingControl, Teensy
+		// Construct LightingControl, IMU
 		lightingControl = new LightingControl(); 		
-		//IMU = new TeensyIMU();
 		imu = new NavxIMU();
 		
 		

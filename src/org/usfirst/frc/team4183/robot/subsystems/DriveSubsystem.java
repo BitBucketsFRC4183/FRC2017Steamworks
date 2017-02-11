@@ -58,6 +58,7 @@ public class DriveSubsystem extends Subsystem {
 		}
 		
 		public void alignDrive(double speed) {
+			
 			double turn = ALIGN_LOOP_GAIN * (yawSetPoint - Robot.imu.getYawDeg());
 			
 			if(OI.btnLowSensitiveDrive.get())
@@ -67,15 +68,17 @@ public class DriveSubsystem extends Subsystem {
 		}
 		
 		public void arcadeDrive(double speed, double turn) {
+			
 			if(OI.btnLowSensitiveDrive.get()) {
 				speed *= lowSensitivityGain;
 				turn *= lowSensitivityGain;
 			}
+			
 			// Turn stick is + to the right;
 			// but arcadeDrive 2nd arg + produces left turn
 			// (this is +yaw when yaw is defined according to right-hand-rule
 			// with z-axis up, so arguably correct).
-			// Anyhow need the - sign to make it work correctly.
+			// Anyhow need the - sign to make it turn correctly.
 			robotDrive.arcadeDrive(speed, -turn);
 		}
 		

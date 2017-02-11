@@ -33,10 +33,10 @@ public class NavxIMU {
 		
 	}
 	
+	// Return yaw angle according to right-hand-rule with z-axis up;
+	// that is, +yaw is CCW looking down on robot.	
 	public double getYawDeg() {
-		// Define yaw angle according to right-hand-rule with z-axis up;
-		// that is, +yaw is CCW looking down on robot.
-		// Need the - sign to get the Navx to agree with this definition.
+		// Need the - sign to get the Navx to agree with the above
 		return -ahrs.getAngle();
 	}
 
