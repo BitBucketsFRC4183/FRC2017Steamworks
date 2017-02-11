@@ -20,6 +20,7 @@ import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
 
+
 // Non-subsystem (i.e., non-commandable) controls
 import org.usfirst.frc.team4183.robot.LightingControl;
 import org.usfirst.frc.team4183.robot.TeensyIMU;
@@ -40,7 +41,8 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 	
 	public static LightingControl lightingControl;	
-	public static TeensyIMU IMU;
+	//public static TeensyIMU IMU;
+	public static NavxIMU imu;
 	
 	private Compressor compressor;
 
@@ -77,7 +79,8 @@ public class Robot extends IterativeRobot {
 		
 		// Construct LightingControl, Teensy
 		lightingControl = new LightingControl(); 		
-		IMU = new TeensyIMU();
+		//IMU = new TeensyIMU();
+		imu = new NavxIMU();
 		
 		
 		// Construction is complete

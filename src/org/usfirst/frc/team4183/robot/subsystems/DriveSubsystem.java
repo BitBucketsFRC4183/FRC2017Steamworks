@@ -53,12 +53,13 @@ public class DriveSubsystem extends Subsystem {
 		
 		public void driveStraight(boolean start) {
 			if(start) {
-				yawSetPoint = Robot.IMU.getYawDeg();
+				//yawSetPoint = Robot.IMU.getYawDeg();
+				yawSetPoint = Robot.imu.getYawDeg();
 			} 
 		}
 		
 		public void alignDrive(double speed) {
-			double turn = ALIGN_LOOP_GAIN * (yawSetPoint - Robot.IMU.getYawDeg());
+			double turn = ALIGN_LOOP_GAIN * (yawSetPoint - Robot.imu.getYawDeg());
 			
 			if(OI.btnLowSensitiveDrive.get())
 				speed *= lowSensitivityGain;
