@@ -20,13 +20,7 @@ public class Idle extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.lightingControl.set(LightingObjects.DRIVE_SUBSYSTEM, 
-                                  LightingControl.FUNCTION_SNORE, 
-                                  LightingControl.COLOR_VIOLET,
-				                  0,
-				                  32,
-				                  0);
-    	OI.ButtonEvent be = OI.getBtnEvt(OI.btnActivateDrive);
+    	Robot.lightingControl.setSleeping(LightingObjects.DRIVE_SUBSYSTEM);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -36,7 +30,7 @@ public class Idle extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(OI.btnActivateDrive.get()) {
+    	if(OI.btnActivateDrive.get()) {		// TODO: remove button and use robot state (autonomous or teleop) to transition
     		return CommandUtils.stateChange(this, new DriverControl());
     	}
     	return false;

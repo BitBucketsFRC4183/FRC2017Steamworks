@@ -86,6 +86,7 @@ public class OI {
 	public static LogicalButton btnActivateDrive;
 	public static LogicalButton btnLowSensitiveDrive;
 	public static LogicalButton btnAlignLock;
+	public static LogicalButton btnDriveLock;
 	
 	public static LogicalButton btnClimbControl;
 	public static LogicalButton btnWaitForGear;
@@ -167,9 +168,10 @@ public class OI {
 		
 		// Assign to EVERY logical button a physical button
 		// TODO finish this list w/real logical button names & real default mapping
-		btnActivateDrive = driverController.bCircle;
+		btnActivateDrive = driverController.bCircle;	// TODO: remove activate after initial testing complete
 		btnLowSensitiveDrive = driverController.bR1;
 		btnAlignLock = driverController.bL1;
+		btnDriveLock = driverController.bL2;
 				
 		btnClimbControl = operatorController.bShare;
 		btnWaitForGear = operatorController.bCross;
@@ -293,7 +295,6 @@ public class OI {
 		public boolean get() { return physAxis.get() > 0.5; }
 	}
 	
-	@SuppressWarnings("unused")
 	private static class PhysicalPovButton implements LogicalButton {		
 		private Joystick controller;
 		private POV_BUTTON whichPov;

@@ -1,12 +1,17 @@
 package org.usfirst.frc.team4183.robot.commands.DriveSubsystem;
 
+import org.usfirst.frc.team4183.robot.LightingControl;
 import org.usfirst.frc.team4183.robot.Robot;
+import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
+
+// TODO: This entire state may be unnecessary if autonomy simply controls via logical axis and logical buttons
+
 public class AutonomousControl extends Command {
 
     public AutonomousControl() {
@@ -16,6 +21,11 @@ public class AutonomousControl extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	Robot.lightingControl.set(LightingObjects.DRIVE_SUBSYSTEM,
+                LightingControl.FUNCTION_FORWARD,
+                LightingControl.COLOR_GREEN,
+                4,		// nspace - good for either 8 or 16 pixel strips
+                200);	// period_msec    	
     }
 
     // Called repeatedly when this Command is scheduled to run
