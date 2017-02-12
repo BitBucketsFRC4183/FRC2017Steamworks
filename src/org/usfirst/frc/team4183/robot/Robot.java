@@ -47,7 +47,7 @@ public class Robot extends IterativeRobot {
 	public static AutonomousSubsystem autonomousSubsystem;
 	
 	public static OI oi;
-	public static SendableChooser Alliances;
+	public static SendableChooser<String> Alliances;
 	
 	public static LightingControl lightingControl;	
 	public static NavxIMU imu;
@@ -96,7 +96,7 @@ public class Robot extends IterativeRobot {
 		imu = new NavxIMU();
 		
 		bvtable = NetworkTable.getTable("BucketVision");
-		Alliances = new SendableChooser();
+		Alliances = new SendableChooser<String>();
 		Alliances.addDefault("Red", lowerCaseRed);
 		Alliances.addObject("Blue", lowerCaseBlue);
 		SmartDashboard.putData("Alliances", Alliances);
@@ -309,7 +309,7 @@ public class Robot extends IterativeRobot {
 
 	public void stateChange( Command fromState, Command toState) {
 		
-		if( !isTest()) {
+		if( !(runMode == RunMode.TEST)) {
 			// Normal operation, just do the transition as ordered
 			toState.start();
 			return;
