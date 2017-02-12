@@ -30,7 +30,6 @@ public class Idle extends Command {
     	if( Robot.instance().isAutonomous() ) {
     		// TODO go to 1st state here
     		// and return true, of course!
-    		Robot.instance().
     	}
         return false;
     }
