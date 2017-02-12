@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.usfirst.frc.team4183.robot.subsystems.AutonomousSubsystem;
 // Subsystems
 import org.usfirst.frc.team4183.robot.subsystems.BallManipSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
@@ -38,6 +39,8 @@ public class Robot extends IterativeRobot {
 	public static ClimbSubsystem climbSubsystem;
 	public static DriveSubsystem driveSubsystem;
 	public static GearHandlerSubsystem gearHandlerSubsystem;
+	public static AutonomousSubsystem autonomousSubsystem;
+	
 	public static OI oi;
 	
 	public static LightingControl lightingControl;	
@@ -72,6 +75,7 @@ public class Robot extends IterativeRobot {
 		climbSubsystem = new ClimbSubsystem();
 		driveSubsystem = new DriveSubsystem();
 		gearHandlerSubsystem = new GearHandlerSubsystem();
+		autonomousSubsystem = new AutonomousSubsystem();
 		
 		// Construct Compressor
 		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);		
@@ -92,7 +96,8 @@ public class Robot extends IterativeRobot {
 		addSubsystemToDebug(ballManipSubsystem);
 		addSubsystemToDebug(climbSubsystem);
 		addSubsystemToDebug(driveSubsystem);
-		addSubsystemToDebug(gearHandlerSubsystem);		
+		addSubsystemToDebug(gearHandlerSubsystem);
+		addSubsystemToDebug(autonomousSubsystem);		
 		showDebugInfo();
 	}
 

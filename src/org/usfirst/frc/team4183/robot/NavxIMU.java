@@ -59,6 +59,10 @@ public class NavxIMU {
 		return -ahrs.getAngle();
 	}
 
+	public double getRateDeg() {
+		return ahrs.getRate();
+	}
+	
 	public boolean isConnected() {
 		return ahrs.isConnected();
 	}
