@@ -1,6 +1,8 @@
 package org.usfirst.frc.team4183.robot.commands.ClimbSubsystem;
 
+import org.usfirst.frc.team4183.robot.LightingControl;
 import org.usfirst.frc.team4183.robot.Robot;
+import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -18,6 +20,11 @@ public class ClimbFinish extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.climbSubsystem.disable();
+    	Robot.lightingControl.set(LightingObjects.CLIMB_SUBSYSTEM, 
+					              LightingControl.FUNCTION_BLINK, 
+					              LightingControl.COLOR_RED,
+					              0,
+					              500);
     }
 
     // Called repeatedly when this Command is scheduled to run

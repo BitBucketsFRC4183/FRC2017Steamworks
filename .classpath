@@ -10,5 +10,6 @@
 	<classpathentry kind="var" path="USERLIBS_DIR/TalonSRXLibJava.jar"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/CTRLib-javadoc.jar"/>
 	<classpathentry kind="lib" path="lib/jssc.jar"/>
+	<classpathentry kind="lib" path="lib/navx_frc.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
