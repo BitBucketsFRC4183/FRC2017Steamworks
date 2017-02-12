@@ -18,8 +18,17 @@ public class NavxIMU {
 		catch (RuntimeException ex ) {
 			ex.printStackTrace();
 		}
-				
 		
+		// Wait a bit in background, the print connected & firmware info
+		new Thread() {
+			public void run() {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {}
+				System.out.format("NavX isConnected=%b, firmware=%s\n", 
+						ahrs.isConnected(), ahrs.getFirmwareVersion())
+			}
+		}.start();
 		
 		// Start thread to print out something at a reasonable rate (testing)
 		if( DEBUG_THREAD) {
