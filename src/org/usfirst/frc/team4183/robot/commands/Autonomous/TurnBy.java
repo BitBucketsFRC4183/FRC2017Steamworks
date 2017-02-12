@@ -135,12 +135,13 @@ public class TurnBy extends Command {
 				if( absDrv > MAX_DRIVE) absDrv = MAX_DRIVE;
 				if( absDrv < MIN_DRIVE) absDrv = MIN_DRIVE;
 				if( Math.abs(getError()) < DEAD_ZONE_DEG) absDrv = 0.0;
+				drive = Math.signum(drive)*absDrv;
 				
 				// Set the output
 				// - sign required because + stick produces right turn,
 				// but right turn is actually a negative yaw angle
 				// (using our yaw angle convention: right-hand-rule w/z-axis up)
-				OI.axisTurn.set( -Math.signum(drive)*absDrv);				
+				OI.axisTurn.set( -drive);				
 					
 				// Delay
 				try {
