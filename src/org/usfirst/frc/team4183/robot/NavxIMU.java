@@ -10,7 +10,7 @@ public class NavxIMU {
 	
 	NavxIMU() {
 		
-		System.out.print( "NavX AHRS startup...");
+		System.out.println( "Starting NavX AHRS");
 		
 		try {
 			ahrs = new AHRS(SPI.Port.kMXP);
@@ -19,11 +19,16 @@ public class NavxIMU {
 			ex.printStackTrace();
 		}
 		
-		if( isConnected() ) 
-			System.out.format( "success; firmware=%s\n", ahrs.getFirmwareVersion());
-		else
-			System.out.println( "failed");
-		
+		// Wait a bit in background, the print connected & firmware info
+		new Thread() {
+			public void run() {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {}
+				System.out.format("NavX isConnected=%b firmware=%s\n", 
+						ahrs.isConnected(), ahrs.getFirmwareVersion());
+			}
+		}.start();
 		
 		// Start thread to print out something at a reasonable rate (testing)
 		if( DEBUG_THREAD) {
@@ -33,8 +38,8 @@ public class NavxIMU {
 						try {
 							Thread.sleep(500);
 						} catch (InterruptedException e) {}	
-						System.out.format("isConnected=%b isCalibrating=%b Yaw=%.2f\n", 
-								isConnected(), isCalibrating(), getYawDeg());						
+						System.out.format("isConnected=%b isCalibrating=%b Yaw=%.2f Rate=%.2f\n", 
+								isConnected(), isCalibrating(), getYawDeg(), getRateDeg());						
 					}
 				}
 			}.start();
@@ -59,6 +64,20 @@ public class NavxIMU {
 		return -ahrs.getAngle();
 	}
 
+	public double getRateDeg() {
+		
+		if( !isConnected()) {
+			System.err.println( "Error, Rate requested but NavX not connected");
+			return 0.0;
+		}
+		
+		if( isCalibrating()) {
+			System.err.println( "Warning, Rate requested but NavX is calibrating");
+		}
+		
+		return -ahrs.getRate();
+	}
+	
 	public boolean isConnected() {
 		return ahrs.isConnected();
 	}
