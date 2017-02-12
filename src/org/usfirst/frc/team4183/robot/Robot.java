@@ -89,6 +89,7 @@ public class Robot extends IterativeRobot {
 		Alliances = new SendableChooser();
 		Alliances.addDefault("Red", lowerCaseRed);
 		Alliances.addObject("Blue", lowerCaseBlue);
+		SmartDashboard.putData("Alliances", Alliances);
 		// Construction is complete
 		
 		
