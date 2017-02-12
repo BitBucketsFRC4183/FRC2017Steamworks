@@ -110,7 +110,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Alliances", Alliances);
 		
 		bvtable = NetworkTable.getTable("BucketVision");
-		bvtable.putString("Camera Mode", GEAR_MODE);
+		bvtable.putString("FrontCamMode", GEAR_MODE);
 		currentCamMode = GEAR_MODE;
 		
 				
