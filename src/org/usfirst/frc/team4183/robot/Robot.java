@@ -24,7 +24,6 @@ import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
 
 // Non-subsystem (i.e., non-commandable) controls
 import org.usfirst.frc.team4183.robot.LightingControl;
-import org.usfirst.frc.team4183.robot.TeensyIMU;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -35,6 +34,10 @@ import org.usfirst.frc.team4183.robot.TeensyIMU;
  */
 public class Robot extends IterativeRobot {
 
+	public enum RunMode { DISABLED, AUTO, TELEOP, TEST };
+	public static RunMode runMode = RunMode.DISABLED;
+	
+	
 	public static BallManipSubsystem ballManipSubsystem;
 	public static ClimbSubsystem climbSubsystem;
 	public static DriveSubsystem driveSubsystem;
@@ -58,6 +61,7 @@ public class Robot extends IterativeRobot {
 	public Robot() {
 		robotInstance = this;
 	}
+	
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -108,7 +112,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void disabledInit() {
+		runMode = RunMode.DISABLED;
+		
 		// Clear out the scheduler
+		// Will result in only Default Commands (Idle-s) running.
+		// Do this last to be sure that Idle-s see correct info when starting.
 		Scheduler.getInstance().removeAll();
 	}
 
@@ -130,15 +138,17 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		runMode = RunMode.AUTO;
 		
 		// Set up OI for autonomous mode
 		// NOTE: Must do this BEFORE clearing out scheduler!
 		// Clearing out scheduler causes Default Commands (Idle-s)
 		// to start, and we want those to see the new OI mappings.
 		oi.autonomousInit();
-		
+				
 		// Clear out the scheduler
 		// Will result in only Default Commands (Idle-s) running.
+		// Do this last to be sure that Idle-s see correct info when starting.
 		Scheduler.getInstance().removeAll();		
 	}
 
@@ -152,6 +162,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
+		runMode = RunMode.TELEOP;
 		
 		// Set up OI with specific driver & operator mappings.
 		// Must do this before clearing out scheduler, see note in autonomousInit().
@@ -160,6 +171,8 @@ public class Robot extends IterativeRobot {
 		oi.teleopInit( OI.Driver.JOE, OI.Operator.BILL);
 
 		// Clear out the scheduler
+		// Will result in only Default Commands (Idle-s) running.
+		// Do this last to be sure that Idle-s see correct info when starting.
 		Scheduler.getInstance().removeAll();		
 	}
 
@@ -179,6 +192,7 @@ public class Robot extends IterativeRobot {
 	public void testInit() {
 		// Disable LiveWindow & re-enable Scheduler
 		LiveWindow.setEnabled(false);
+		runMode = RunMode.TEST;
 		
 		// Set up OI mode for this test
 		// (as always, do this before clearing out Scheduler!)
