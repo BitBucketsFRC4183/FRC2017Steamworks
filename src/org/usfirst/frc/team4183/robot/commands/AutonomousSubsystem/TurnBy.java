@@ -125,6 +125,7 @@ public class TurnBy extends Command {
 		@Override
 		public void run() {
 			
+			@SuppressWarnings("unused")
 			int loopcnt = 0;
 						
 			// Loop until signaled to quit
@@ -132,7 +133,6 @@ public class TurnBy extends Command {
 
 				double inDrive = Kp * getError();
 				
-
 				
 				// Apply drive non-linearities
 				double absDrv = Math.abs(inDrive);						
@@ -148,10 +148,12 @@ public class TurnBy extends Command {
 				// (using our yaw angle convention: right-hand-rule w/z-axis up)
 				OI.axisTurn.set( -outDrive);				
 
+				
 				if( loopcnt++ > 20) {
 					loopcnt = 0;
 					System.out.format( "Err=%f inDrive=%f outDrive=%f\n", getError(), inDrive, outDrive);
 				}
+				
 				
 				// Delay
 				try {
