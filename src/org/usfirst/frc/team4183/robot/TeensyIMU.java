@@ -3,9 +3,11 @@ package org.usfirst.frc.team4183.robot;
 
 import java.io.PrintWriter;
 
+import org.usfirst.frc.team4183.utils.SerialPortManager;
+import org.usfirst.frc.team4183.utils.SerialPortManager.PortTester;
+
 import jssc.SerialPort;
 import jssc.SerialPortException;
-import jssc.SerialPortList;
 
 public class TeensyIMU {
 	
@@ -31,7 +33,7 @@ public class TeensyIMU {
 			e.printStackTrace();
 		}
 
-		serialPort = findTeensy();
+		serialPort = SerialPortManager.findPort( new Tester(), SerialPort.BAUDRATE_115200);
 		if( serialPort == null) {
 			System.out.println("No Teensy found");
 			return;
@@ -55,72 +57,35 @@ public class TeensyIMU {
 		}
 	}
 	
-	private SerialPort findTeensy() {
+	private class Tester implements PortTester {
 		
-		String[] portNames = SerialPortList.getPortNames();
+		@Override
+		public boolean test( String input) {
 
-		System.out.print("Port list:");
-		for(String portName : portNames)
-			System.out.print(" " + portName);
-		System.out.println();		
-		
-		for( String portName : portNames) {
-			
-			try {				
-				System.out.println("Trying port:" + portName);
-				SerialPort port = new SerialPort(portName);
-				port.openPort();
+			// Spotting Teensy is a bit tricky.
+			// Opening the port doesn't cause a reboot (like it does with Arduino).
+			// If the Teensy has just been powered up, then it waits in bootloader;
+			// opening the port will cause the user code to start.
+			// BUT if it hasn't just been powered up (maybe the RoboRIO restarted,
+			// but the Teensy remained powered), then the Teensy will just continue to run
+			// the user program, which means it'll be streaming its messages.
+			// So we have to look for either of 2 things:
+			// 1) The "TeensyIMU" ident which is sent at the beginning of program
+			// 2) A legitimate-looking TeensyIMU message
+			// If we see either of those within 1 second, then we've found it.
 
-				// Set params
-				// (Baud rate doesn't matter with Teensy,
-				// because it's USB all the way thru)
-				port.setParams(SerialPort.BAUDRATE_115200,
-						SerialPort.DATABITS_8, 
-						SerialPort.STOPBITS_1, 
-						SerialPort.PARITY_NONE);
-				
-				// Spotting Teensy is a bit tricky.
-				// Opening the port doesn't cause a reboot (like it does with Arduino).
-				// If the Teensy has just been powered up, then it waits in bootloader;
-				// opening the port will cause the user code to start.
-				// BUT if it hasn't just been powered up (maybe the RoboRIO restarted,
-				// but the Teensy remained powered), then the Teensy will just continue to run
-				// the user program, which means it'll be streaming its messages.
-				// So we have to look for either of 2 things:
-				// 1) The "TeensyIMU" ident which is sent at the beginning of program
-				// 2) A legitimate-looking TeensyIMU message
-				// If we see either of those within 1 second, then we've found it.
-				String inBuff = "", inStr;				
-				long tQuit = System.currentTimeMillis() + 1000;
-				while( System.currentTimeMillis() < tQuit) {
-					
-					// Get input & append to inBuff
-					if( (inStr = port.readString()) != null) {
-						inBuff += inStr;
-					}
-					
-					if(inBuff.contains("TeensyIMU")) {
-						System.out.format("Found TeensyIMU ident on port %s\n", portName);
-						return port;
-					}
-					String[] lines = inBuff.split("\n");
-					for( String line : lines) 
-						if( line.endsWith("\r") && (line.length() == IMUMESSAGELEN+1) ) {
-							System.out.format("Found TeensyIMU message on port %s\n", portName);
-							return port;
-						}
-				}
-				
-				port.closePort();
-				
+			if(input.contains("TeensyIMU")) {
+				return true;
 			}
-			catch( SerialPortException ex) {}			
+			String[] lines = input.split("\n");
+			for( String line : lines) 
+				if( line.endsWith("\r") && (line.length() == IMUMESSAGELEN+1) ) {
+					return true;
+				}
+			
+			return false;
 		}
-		
-		// Not found
-		return null;
 	}
-	
 	
 	private float hexToDouble(String str){		
 		//Parses string as decimal
@@ -208,7 +173,11 @@ public class TeensyIMU {
 				return;
 
 			long imutime = hexToLong(poseData[0]);
-			double wrappedYaw = hexToDouble(poseData[4])*(180.0/Math.PI);
+			
+			// Yaw angle delivered by Teensy is backwards from the usual
+			// convention (right-hand-rule with z-axis pointing up).
+			// So we'll fix that here (not tempted to change the Teensy code!)
+			double wrappedYaw = -hexToDouble(poseData[4])*(180.0/Math.PI);
 
 			// Run the yaw angle unwrapper
 			if( !Double.isNaN(prevWrappedYaw)) {

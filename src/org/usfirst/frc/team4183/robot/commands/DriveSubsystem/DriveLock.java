@@ -1,39 +1,54 @@
 package org.usfirst.frc.team4183.robot.commands.DriveSubsystem;
 
+import org.usfirst.frc.team4183.robot.LightingControl;
 import org.usfirst.frc.team4183.robot.Robot;
+import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class DriveLock extends Command {
+public class DriveLock extends Command 
+{
 
-    public DriveLock() {
+    public DriveLock() 
+    {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.driveSubsystem);
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
+    protected void initialize() 
+    {
+    	Robot.lightingControl.set(LightingObjects.DRIVE_SUBSYSTEM,
+                                  LightingControl.FUNCTION_ON,
+                                  LightingControl.COLOR_GREEN,
+                                  0,	// nspace - don't care
+                                  0);	// period_msec - don't care    	
     }
 
     // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    protected void execute() 
+    {
+    	// TODO: close the loop on the position encoders to keep wheels from moving
     }
 
     // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
+    protected boolean isFinished() 
+    {
         return false;
     }
 
     // Called once after isFinished returns true
-    protected void end() {
+    protected void end() 
+    {
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
-    protected void interrupted() {
+    protected void interrupted() 
+    {
     	end();
     }
 }
