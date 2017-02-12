@@ -66,7 +66,7 @@ public class NavxIMU {
 			System.err.println( "Warning, Rate requested but NavX is calibrating");
 		}
 		
-		return ahrs.getRate();
+		return -ahrs.getRate();
 	}
 	
 	public boolean isConnected() {
