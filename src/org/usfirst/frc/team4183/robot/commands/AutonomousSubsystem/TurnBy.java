@@ -15,25 +15,28 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class TurnBy extends Command {
 	
+	// TODO the loop gain constants & NL params work
+	// but need further tuning.
+	
 	// Proportional gain
-	private final static double Kp = 0.03; // purposely low for 1st pass
+	private final static double Kp = 0.02; // purposely low for 1st pass
 
 	// Largest drive that will be applied
-	private final double MAX_DRIVE = 0.8;
+	private final double MAX_DRIVE = 0.7;
 	// Smallest drive that will be applied 
 	// (unless error falls within dead zone, then drive goes to 0)
 	private final double MIN_DRIVE = 0.4;
 	// Size of dead zone in degrees
-	private final double DEAD_ZONE_DEG = 3.0;
+	private final double DEAD_ZONE_DEG = 2.0;  // can be smaller?
 	
 	// Used (along with dead zone) to determine when turn is complete.
 	// If angular velocity (Degrees/sec) is greater than this,
 	// we're not done yet.
-	private final double ALLOWED_RATE_DPS = 3.0;
+	private final double ALLOWED_RATE_DPS = 1.0;
+	
 	
 	// Delay between iterations of control loop
-	private final long LOOP_MSECS = 40;
-	
+	private final long LOOP_MSECS = 40;	
 	
 	private final Command nextState;
 	private final double degreesToTurn;
@@ -149,7 +152,7 @@ public class TurnBy extends Command {
 				OI.axisTurn.set( -outDrive);				
 
 				
-				if( loopcnt++ > 20) {
+				if( loopcnt++ > 10) {
 					loopcnt = 0;
 					System.out.format( "Err=%f inDrive=%f outDrive=%f\n", getError(), inDrive, outDrive);
 				}

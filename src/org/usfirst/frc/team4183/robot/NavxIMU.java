@@ -23,7 +23,7 @@ public class NavxIMU {
 		new Thread() {
 			public void run() {
 				try {
-					Thread.sleep(500);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {}
 				System.out.format("NavX isConnected=%b firmware=%s\n", 
 						ahrs.isConnected(), ahrs.getFirmwareVersion());

@@ -100,6 +100,8 @@ public class Robot extends IterativeRobot {
 		Alliances.addDefault("Red", lowerCaseRed);
 		Alliances.addObject("Blue", lowerCaseBlue);
 		SmartDashboard.putData("Alliances", Alliances);
+		
+		
 		// Construction is complete
 		
 		
@@ -266,8 +268,9 @@ public class Robot extends IterativeRobot {
 	
 	
 	
-	// State-testing-mode code follows
-	// This is work-in-progress - twilson
+	// State-testing-mode code follows.
+	// It works but so far hasn't been all that useful.
+	// The Subsystem and Scheduler displays are very handy though.
 	
 	private Set<Subsystem> subSystems = new HashSet<>();
 	private SendableChooser<Subsystem> dbgSubsysChooser;
