@@ -52,9 +52,15 @@ public class Robot extends IterativeRobot {
 	public static LightingControl lightingControl;	
 	public static NavxIMU imu;
 	
-	NetworkTable bvtable;
+	public static NetworkTable bvtable;
 	
 	private Compressor compressor;
+	private static final String LOWER_CASE_RED = "red";
+	private static final String LOWER_CASE_BLUE = "blue";
+	public static final String GEAR_MODE = "gear";
+	public static final String BOILER_MODE = "boiler";
+	
+	public static String currentCamMode;
 
 	
 	// Anybody needing the (singleton) Robot instance 
@@ -93,7 +99,14 @@ public class Robot extends IterativeRobot {
 		lightingControl = new LightingControl(); 		
 		imu = new NavxIMU();
 		
-		
+		//Initialize Network Tables and Sendable Chooser
+		bvtable = NetworkTable.getTable("BucketVision");
+		Alliances = new SendableChooser();
+		Alliances.addDefault("Red", LOWER_CASE_RED);
+		Alliances.addObject("Blue", LOWER_CASE_BLUE);
+		SmartDashboard.putData("Alliances", Alliances);
+		bvtable.putString("Camera Mode", GEAR_MODE);
+		currentCamMode = GEAR_MODE;
 		// Construction is complete
 				
 		// Start pressurizing the tanks

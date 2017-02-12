@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.command.Command;
 public class DriverControl extends Command 
 {
 
+	OI.ButtonEvent btnToggleCamMode;
+	
     public DriverControl() 
     {
         // Use requires() here to declare subsystem dependencies
@@ -30,12 +32,23 @@ public class DriverControl extends Command
     		                      LightingControl.COLOR_ORANGE,
     		                      0,	// nspace - don't care
     		                      0);	// period_msec - don't care
+    	btnToggleCamMode = OI.getBtnEvt(OI.btnToggleFrontCameraView);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() 
     {
     	Robot.driveSubsystem.arcadeDrive(OI.axisForward.get(), OI.axisTurn.get());
+    	if(btnToggleCamMode.onPressed()) {
+    		if(Robot.currentCamMode.equalsIgnoreCase(Robot.BOILER_MODE)) {
+    			Robot.bvtable.putString("Camera Mode", Robot.GEAR_MODE);
+    			Robot.currentCamMode = Robot.GEAR_MODE;
+    		}
+    		else if(Robot.currentCamMode.equalsIgnoreCase(Robot.GEAR_MODE)) {
+    			Robot.bvtable.putString("Camera Mode", Robot.BOILER_MODE);
+    			Robot.currentCamMode = Robot.BOILER_MODE;
+    		}
+    	}
     }
 
     // Make this return true when this Command no longer needs to run execute()
