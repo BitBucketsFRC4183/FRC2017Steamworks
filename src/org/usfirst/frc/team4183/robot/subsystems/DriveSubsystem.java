@@ -22,7 +22,7 @@ public class DriveSubsystem extends Subsystem {
 	    
 		private final RobotDrive robotDrive;
 		
-		private double lowSensitivityGain = 0.2;
+		private double lowSensitivityGain = 0.5;		// Half-control seems nice
 		private final double ALIGN_LOOP_GAIN = 0.05;
 		
 		private double yawSetPoint;
