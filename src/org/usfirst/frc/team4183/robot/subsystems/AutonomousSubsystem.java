@@ -1,6 +1,6 @@
 package org.usfirst.frc.team4183.robot.subsystems;
 
-import org.usfirst.frc.team4183.robot.commands.Autonomous.Idle;
+import org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem.Idle;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 

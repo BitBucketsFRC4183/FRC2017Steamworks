@@ -10,7 +10,7 @@ public class NavxIMU {
 	
 	NavxIMU() {
 		
-		System.out.print( "Starting NavX AHRS");
+		System.out.println( "Starting NavX AHRS");
 		
 		try {
 			ahrs = new AHRS(SPI.Port.kMXP);
@@ -26,7 +26,7 @@ public class NavxIMU {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {}
 				System.out.format("NavX isConnected=%b firmware=%s\n", 
-						ahrs.isConnected(), ahrs.getFirmwareVersion())
+						ahrs.isConnected(), ahrs.getFirmwareVersion());
 			}
 		}.start();
 		

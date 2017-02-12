@@ -1,17 +1,16 @@
-package org.usfirst.frc.team4183.robot.commands.Autonomous;
+package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
-import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- *
+ * End state - for testing
  */
-public class Idle extends Command {
+public class End extends Command {
 
-    public Idle() {
+    public End() {
     	requires( Robot.autonomousSubsystem);
     }
 
@@ -28,11 +27,7 @@ public class Idle extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if( Robot.runMode == Robot.RunMode.AUTO ) {
-    		// TODO go to 1st state here
-    		// This transition is just for testing
-    		return CommandUtils.stateChange(this, new TurnBy(45.0, null));
-    	}
+    	// No exit from this state
         return false;
     }
 

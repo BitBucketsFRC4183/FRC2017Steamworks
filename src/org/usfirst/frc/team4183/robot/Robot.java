@@ -201,9 +201,11 @@ public class Robot extends IterativeRobot {
 		// (as always, do this before clearing out Scheduler!)
 		switch( dbgOImapChooser.getSelected()) {
 		case Auto:
+			System.out.println("Set OI Auto");
 			oi.autonomousInit();
 			break;
 		case Teleop:
+			System.out.println("Set OI Teleop");
 			oi.teleopInit();
 			break;
 		}
@@ -229,7 +231,7 @@ public class Robot extends IterativeRobot {
 				System.out.format("Attempt to test Command: %s...", fullName);
 
 				// Note, for this to work, the Command must have a 
-				// public no-arg constructor
+				// *public* no-arg constructor
 				try {
 					Command cmd = (Command) Class.forName(fullName).newInstance();
 					cmd.start();
@@ -238,7 +240,7 @@ public class Robot extends IterativeRobot {
 					
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 						| IllegalArgumentException e) {
-
+					e.printStackTrace();
 					System.out.println("Sorry, could not test that command");
 				}
 			}

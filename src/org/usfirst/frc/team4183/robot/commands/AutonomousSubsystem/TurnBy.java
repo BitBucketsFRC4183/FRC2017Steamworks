@@ -1,4 +1,4 @@
-package org.usfirst.frc.team4183.robot.commands.Autonomous;
+package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
@@ -16,13 +16,13 @@ import edu.wpi.first.wpilibj.command.Command;
 public class TurnBy extends Command {
 	
 	// Proportional gain
-	private final static double Kp = 0.02; // purposely low for 1st pass
+	private final static double Kp = 0.03; // purposely low for 1st pass
 
 	// Largest drive that will be applied
-	private final double MAX_DRIVE = 0.6;
+	private final double MAX_DRIVE = 0.8;
 	// Smallest drive that will be applied 
 	// (unless error falls within dead zone, then drive goes to 0)
-	private final double MIN_DRIVE = 0.2;
+	private final double MIN_DRIVE = 0.4;
 	// Size of dead zone in degrees
 	private final double DEAD_ZONE_DEG = 3.0;
 	
@@ -32,7 +32,7 @@ public class TurnBy extends Command {
 	private final double ALLOWED_RATE_DPS = 3.0;
 	
 	// Delay between iterations of control loop
-	private final long LOOP_MSECS = 50;
+	private final long LOOP_MSECS = 40;
 	
 	
 	private final Command nextState;
@@ -42,11 +42,11 @@ public class TurnBy extends Command {
 	private LoopThread loopThread;
 	
 	// Require a no-arg constructor for use in state-testing mode
-	TurnBy() {
-		this( 90.0, null);
+	public TurnBy() {
+		this( 10.0, null);
 	}
 	
-	TurnBy( double degreesToTurn, Command nextState) {		
+	public TurnBy( double degreesToTurn, Command nextState) {		
 		requires( Robot.autonomousSubsystem);
 		
 		this.degreesToTurn = degreesToTurn;
@@ -124,25 +124,35 @@ public class TurnBy extends Command {
 		
 		@Override
 		public void run() {
+			
+			int loopcnt = 0;
 						
 			// Loop until signaled to quit
 			while( !isInterrupted()) {
 
-				double drive = Kp * getError();
+				double inDrive = Kp * getError();
+				
+
 				
 				// Apply drive non-linearities
-				double absDrv = Math.abs(drive);						
+				double absDrv = Math.abs(inDrive);						
 				if( absDrv > MAX_DRIVE) absDrv = MAX_DRIVE;
+		
 				if( absDrv < MIN_DRIVE) absDrv = MIN_DRIVE;
 				if( Math.abs(getError()) < DEAD_ZONE_DEG) absDrv = 0.0;
-				drive = Math.signum(drive)*absDrv;
+				double outDrive = Math.signum(inDrive)*absDrv;
 				
 				// Set the output
 				// - sign required because + stick produces right turn,
 				// but right turn is actually a negative yaw angle
 				// (using our yaw angle convention: right-hand-rule w/z-axis up)
-				OI.axisTurn.set( -drive);				
-					
+				OI.axisTurn.set( -outDrive);				
+
+				if( loopcnt++ > 20) {
+					loopcnt = 0;
+					System.out.format( "Err=%f inDrive=%f outDrive=%f\n", getError(), inDrive, outDrive);
+				}
+				
 				// Delay
 				try {
 					Thread.sleep(LOOP_MSECS);
