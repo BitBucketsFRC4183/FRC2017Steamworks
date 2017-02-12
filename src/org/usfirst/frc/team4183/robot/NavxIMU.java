@@ -10,7 +10,7 @@ public class NavxIMU {
 	
 	NavxIMU() {
 		
-		System.out.print( "NavX AHRS startup");
+		System.out.print( "Starting NavX AHRS");
 		
 		try {
 			ahrs = new AHRS(SPI.Port.kMXP);
@@ -55,6 +55,16 @@ public class NavxIMU {
 	}
 
 	public double getRateDeg() {
+		
+		if( !isConnected()) {
+			System.err.println( "Error, Rate requested but NavX not connected");
+			return 0.0;
+		}
+		
+		if( isCalibrating()) {
+			System.err.println( "Warning, Rate requested but NavX is calibrating");
+		}
+		
 		return ahrs.getRate();
 	}
 	
