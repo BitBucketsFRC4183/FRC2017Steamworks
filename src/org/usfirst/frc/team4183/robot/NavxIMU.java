@@ -20,6 +20,7 @@ public class NavxIMU {
 		}
 				
 		
+		
 		// Start thread to print out something at a reasonable rate (testing)
 		if( DEBUG_THREAD) {
 			new Thread() { 
@@ -54,6 +55,20 @@ public class NavxIMU {
 		return -ahrs.getAngle();
 	}
 
+	public double getRateDeg() {
+		
+		if( !isConnected()) {
+			System.err.println( "Error, Rate requested but NavX not connected");
+			return 0.0;
+		}
+		
+		if( isCalibrating()) {
+			System.err.println( "Warning, Rate requested but NavX is calibrating");
+		}
+		
+		return ahrs.getRate();
+	}
+	
 	public boolean isConnected() {
 		return ahrs.isConnected();
 	}
