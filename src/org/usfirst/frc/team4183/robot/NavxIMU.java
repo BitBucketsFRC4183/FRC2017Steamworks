@@ -25,7 +25,7 @@ public class NavxIMU {
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {}
-				System.out.format("NavX isConnected=%b, firmware=%s\n", 
+				System.out.format("NavX isConnected=%b firmware=%s\n", 
 						ahrs.isConnected(), ahrs.getFirmwareVersion())
 			}
 		}.start();
@@ -38,8 +38,8 @@ public class NavxIMU {
 						try {
 							Thread.sleep(500);
 						} catch (InterruptedException e) {}	
-						System.out.format("isConnected=%b isCalibrating=%b Yaw=%.2f\n", 
-								isConnected(), isCalibrating(), getYawDeg());						
+						System.out.format("isConnected=%b isCalibrating=%b Yaw=%.2f Rate=%.2f\n", 
+								isConnected(), isCalibrating(), getYawDeg(), getRateDeg());						
 					}
 				}
 			}.start();
