@@ -2,6 +2,7 @@ package org.usfirst.frc.team4183.robot.commands.Autonomous;
 
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
+import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -29,8 +30,8 @@ public class Idle extends Command {
     protected boolean isFinished() {
     	if( Robot.runMode == Robot.RunMode.AUTO ) {
     		// TODO go to 1st state here
-    		// (might need additional logic to figure out *which* 1st state)
-    		// and return true, of course!
+    		// This transition is just for testing
+    		return CommandUtils.stateChange(this, new TurnBy(45.0, null));
     	}
         return false;
     }
