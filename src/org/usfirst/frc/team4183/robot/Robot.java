@@ -34,6 +34,8 @@ import org.usfirst.frc.team4183.robot.LightingControl;
  */
 public class Robot extends IterativeRobot {
 
+	// Commands should use the runMode variable
+	// to determine the current running mode of the Robot.
 	public enum RunMode { DISABLED, AUTO, TELEOP, TEST };
 	public static RunMode runMode = RunMode.DISABLED;
 	
@@ -190,9 +192,10 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void testInit() {
+		runMode = RunMode.TEST;
+
 		// Disable LiveWindow & re-enable Scheduler
 		LiveWindow.setEnabled(false);
-		runMode = RunMode.TEST;
 		
 		// Set up OI mode for this test
 		// (as always, do this before clearing out Scheduler!)
