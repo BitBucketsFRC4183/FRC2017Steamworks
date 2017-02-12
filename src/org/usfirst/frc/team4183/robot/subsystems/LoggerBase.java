@@ -24,7 +24,6 @@ public abstract class LoggerBase {
 		private long interval;
 		private double duration;
 		private long startMillis;
-		private volatile boolean quitFlag = false;
 
 		WriterThread( PrintWriter _writer, long _interval, double _duration) {			
 			writer = _writer;
@@ -34,25 +33,26 @@ public abstract class LoggerBase {
 		}
 
 		public void quit() {
-			quitFlag = true;
 			interrupt();
 		}
 		
 		public void run() {
 			
-			while(!quitFlag) {
+			while(!isInterrupted()) {
 				long millis = System.currentTimeMillis() - startMillis;
-				if( millis > 1000.0 * duration) {
-					writer.close();
-					return;					
-				}
-
+				if( millis > 1000.0 * duration) 
+					break;
+				
 				writeLine( writer, millis);
 				
 				try {
 					sleep(interval);
-				} catch (InterruptedException e) {}
+				} catch (InterruptedException e) {
+					interrupt();
+				}
 			}
+			
+			writer.close();
 		}
 	}
 
