@@ -55,8 +55,6 @@ public class Robot extends IterativeRobot {
 	NetworkTable bvtable;
 	
 	private Compressor compressor;
-	private static String lowerCaseRed = "red";
-	private static String lowerCaseBlue = "blue";
 
 	
 	// Anybody needing the (singleton) Robot instance 
@@ -95,20 +93,21 @@ public class Robot extends IterativeRobot {
 		lightingControl = new LightingControl(); 		
 		imu = new NavxIMU();
 		
-		bvtable = NetworkTable.getTable("BucketVision");
-		Alliances = new SendableChooser<String>();
-		Alliances.addDefault("Red", lowerCaseRed);
-		Alliances.addObject("Blue", lowerCaseBlue);
-		SmartDashboard.putData("Alliances", Alliances);
-		
 		
 		// Construction is complete
-		
-		
+				
 		// Start pressurizing the tanks
 		compressor.setClosedLoopControl(true);
 		
+		// Table for camera communications
+		bvtable = NetworkTable.getTable("BucketVision");
 		
+		// Add camera selection chooser to SD
+		Alliances = new SendableChooser<String>();
+		Alliances.addDefault("Red", "red");
+		Alliances.addObject("Blue", "blue");
+		SmartDashboard.putData("Alliances", Alliances);
+				
 		// Add all subsystems for debugging
 		addSubsystemToDebug(ballManipSubsystem);
 		addSubsystemToDebug(climbSubsystem);

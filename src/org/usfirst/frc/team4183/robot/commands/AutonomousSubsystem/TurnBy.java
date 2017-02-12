@@ -25,9 +25,9 @@ public class TurnBy extends Command {
 	private final double MAX_DRIVE = 0.7;
 	// Smallest drive that will be applied 
 	// (unless error falls within dead zone, then drive goes to 0)
-	private final double MIN_DRIVE = 0.4;
+	private final double MIN_DRIVE = 0.4; // Yeah this does seem high
 	// Size of dead zone in degrees
-	private final double DEAD_ZONE_DEG = 2.0;  // can be smaller?
+	private final double DEAD_ZONE_DEG = 1.0;
 	
 	// Used (along with dead zone) to determine when turn is complete.
 	// If angular velocity (Degrees/sec) is greater than this,
