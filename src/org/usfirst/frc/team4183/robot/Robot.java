@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,11 +39,16 @@ public class Robot extends IterativeRobot {
 	public static DriveSubsystem driveSubsystem;
 	public static GearHandlerSubsystem gearHandlerSubsystem;
 	public static OI oi;
+	public static SendableChooser Alliances;
 	
 	public static LightingControl lightingControl;	
 	public static NavxIMU imu;
 	
+	NetworkTable bvtable;
+	
 	private Compressor compressor;
+	private static String lowerCaseRed = "red";
+	private static String lowerCaseBlue = "blue";
 
 	
 	// Anybody needing the (singleton) Robot instance 
@@ -80,7 +85,10 @@ public class Robot extends IterativeRobot {
 		lightingControl = new LightingControl(); 		
 		imu = new NavxIMU();
 		
-		
+		bvtable = NetworkTable.getTable("BucketVision");
+		Alliances = new SendableChooser();
+		Alliances.addDefault("Red", lowerCaseRed);
+		Alliances.addObject("Blue", lowerCaseBlue);
 		// Construction is complete
 		
 		
