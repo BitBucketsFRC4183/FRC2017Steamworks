@@ -41,11 +41,11 @@ public class DriverControl extends Command
     	Robot.driveSubsystem.arcadeDrive(OI.axisForward.get(), OI.axisTurn.get());
     	if(btnToggleCamMode.onPressed()) {
     		if(Robot.currentCamMode.equalsIgnoreCase(Robot.BOILER_MODE)) {
-    			Robot.bvtable.putString("Camera Mode", Robot.GEAR_MODE);
+    			Robot.bvtable.putString("FrontCamMode", Robot.GEAR_MODE);
     			Robot.currentCamMode = Robot.GEAR_MODE;
     		}
     		else if(Robot.currentCamMode.equalsIgnoreCase(Robot.GEAR_MODE)) {
-    			Robot.bvtable.putString("Camera Mode", Robot.BOILER_MODE);
+    			Robot.bvtable.putString("FrontCamMode", Robot.BOILER_MODE);
     			Robot.currentCamMode = Robot.BOILER_MODE;
     		}
     	}
