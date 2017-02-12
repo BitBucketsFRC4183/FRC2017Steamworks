@@ -32,7 +32,9 @@ public class Idle extends Command
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if( ! Robot.instance().isDisabled()) 
+    	if( Robot.runMode == Robot.RunMode.TELEOP || 
+    		Robot.runMode == Robot.RunMode.AUTO
+    	) 
     	{
     		return CommandUtils.stateChange(this, new DriverControl());
     	}
