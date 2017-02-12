@@ -55,11 +55,9 @@ public class Robot extends IterativeRobot {
 	public static NetworkTable bvtable;
 	
 	private Compressor compressor;
-	private static final String LOWER_CASE_RED = "red";
-	private static final String LOWER_CASE_BLUE = "blue";
-	public static final String GEAR_MODE = "gear";
-	public static final String BOILER_MODE = "boiler";
 	
+	public static final String GEAR_MODE = "gear";
+	public static final String BOILER_MODE = "boiler";	
 	public static String currentCamMode;
 
 	
@@ -99,27 +97,22 @@ public class Robot extends IterativeRobot {
 		lightingControl = new LightingControl(); 		
 		imu = new NavxIMU();
 		
-		//Initialize Network Tables and Sendable Chooser
-		bvtable = NetworkTable.getTable("BucketVision");
-		Alliances = new SendableChooser();
-		Alliances.addDefault("Red", LOWER_CASE_RED);
-		Alliances.addObject("Blue", LOWER_CASE_BLUE);
-		SmartDashboard.putData("Alliances", Alliances);
-		bvtable.putString("Camera Mode", GEAR_MODE);
-		currentCamMode = GEAR_MODE;
+
 		// Construction is complete
 				
 		// Start pressurizing the tanks
 		compressor.setClosedLoopControl(true);
 		
-		// Table for camera communications
-		bvtable = NetworkTable.getTable("BucketVision");
-		
-		// Add camera selection chooser to SD
+		// Initialize Network Tables and Sendable Chooser
 		Alliances = new SendableChooser<String>();
 		Alliances.addDefault("Red", "red");
-		Alliances.addObject("Blue", "blue");
+		Alliances.addObject("Blue", "blue");		
 		SmartDashboard.putData("Alliances", Alliances);
+		
+		bvtable = NetworkTable.getTable("BucketVision");
+		bvtable.putString("Camera Mode", GEAR_MODE);
+		currentCamMode = GEAR_MODE;
+		
 				
 		// Add all subsystems for debugging
 		addSubsystemToDebug(ballManipSubsystem);
