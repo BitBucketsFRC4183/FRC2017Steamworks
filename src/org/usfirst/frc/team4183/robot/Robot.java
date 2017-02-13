@@ -58,6 +58,9 @@ public class Robot extends IterativeRobot {
 	
 	public static final String GEAR_MODE = "gear";
 	public static final String BOILER_MODE = "boiler";	
+	public static final String FRONT_CAM= "frontcam";
+	public static final String BACK_CAM = "backcam";
+	
 	public static String currentCamMode;
 
 	
@@ -111,6 +114,7 @@ public class Robot extends IterativeRobot {
 		
 		bvtable = NetworkTable.getTable("BucketVision");
 		bvtable.putString("FrontCamMode", GEAR_MODE);
+		bvtable.putString("CamMode", FRONT_CAM);
 		currentCamMode = GEAR_MODE;
 		
 				
