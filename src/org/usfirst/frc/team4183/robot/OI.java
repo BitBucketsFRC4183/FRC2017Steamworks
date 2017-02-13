@@ -85,10 +85,12 @@ public class OI {
 	
 	// TODO complete this list, using the meaningful logical names.
 
-	public static LogicalButton btnLowSensitiveDrive;
-	public static LogicalButton btnToggleFrontCameraView;
-	public static LogicalButton btnInvertAxis;
-	
+  public static LogicalButton btnToggleFrontCameraView;
+	public static LogicalButton btnToggleFrontCam;
+	public static LogicalButton btnToggleBackCam;
+  
+	public static LogicalButton btnLowSensitiveDrive;  
+  public static LogicalButton btnInvertAxis;
 	public static LogicalButton btnAlignLock;
 	public static LogicalButton btnDriveLock;
 	
@@ -175,6 +177,7 @@ public class OI {
 		btnShoot = new SoftButton();
 		
 		btnIdle = new SoftButton();		
+		 
 		
 		
 		// Assign to EVERY logical axis a soft axis
@@ -188,10 +191,13 @@ public class OI {
 		// Assign to EVERY logical button a physical button
 		// TODO finish this list w/real logical button names & real default mapping
 
-		btnLowSensitiveDrive = driverController.bR1;
-		btnToggleFrontCameraView = driverController.bPovRight;
-		btnInvertAxis = driverController.bR2;
+    btnToggleFrontCameraView = driverController.bCross;
+		btnToggleFrontCam = driverController.bPovUp;
+		btnToggleBackCam = driverController.bPovDown;
 		
+		btnLowSensitiveDrive = driverController.bR1;
+		btnInvertAxis = driverController.bR2;
+
 		btnAlignAssist = driverController.bTriangle;
 		
 		btnAlignLock = driverController.bL1;
