@@ -16,6 +16,8 @@ public class DriverControl extends Command
 {
 
 	OI.ButtonEvent btnToggleCamMode;
+	OI.ButtonEvent btnFrontCamMode;
+	OI.ButtonEvent btnBackCamMode;
 	
     public DriverControl() 
     {
@@ -33,6 +35,8 @@ public class DriverControl extends Command
     		                      0,	// nspace - don't care
     		                      0);	// period_msec - don't care
     	btnToggleCamMode = OI.getBtnEvt(OI.btnToggleFrontCameraView);
+    	btnFrontCamMode = OI.getBtnEvt(OI.btnToggleFrontCam);
+    	btnBackCamMode = OI.getBtnEvt(OI.btnToggleBackCam);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -48,6 +52,12 @@ public class DriverControl extends Command
     			Robot.bvtable.putString("FrontCamMode", Robot.BOILER_MODE);
     			Robot.currentCamMode = Robot.BOILER_MODE;
     		}
+    	}
+    	if(btnFrontCamMode.onPressed()) {
+    		Robot.bvtable.putString("CamMode", Robot.FRONT_CAM);
+    	}
+    	if(btnBackCamMode.onPressed()) {
+    		Robot.bvtable.putString("CamMode", Robot.BACK_CAM);
     	}
     }
 
