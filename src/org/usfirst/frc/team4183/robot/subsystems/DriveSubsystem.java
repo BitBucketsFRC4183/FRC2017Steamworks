@@ -69,6 +69,9 @@ public class DriveSubsystem extends Subsystem {
 			// so + stick lowers the setpoint. 
 			yawSetPoint += -0.2*turn;
 			*/
+			if(OI.btnInvertAxis.get()) {
+				speed *= -1.0;
+			}
 			
 			double error = ALIGN_LOOP_GAIN * (yawSetPoint - Robot.imu.getYawDeg());
 			
@@ -84,6 +87,9 @@ public class DriveSubsystem extends Subsystem {
 			if(OI.btnLowSensitiveDrive.get()) {
 				speed *= lowSensitivityGain;
 				turn *= lowSensitivityGain;
+			}
+			if(OI.btnInvertAxis.get()) {
+				speed *= -1.0;
 			}
 			
 			// Turn stick is + to the right;

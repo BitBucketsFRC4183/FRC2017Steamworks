@@ -16,6 +16,8 @@ public class DriverControl extends Command
 {
 
 	OI.ButtonEvent btnToggleCamMode;
+	OI.ButtonEvent btnFrontCamMode;
+	OI.ButtonEvent btnRearCamMode;
 	
     public DriverControl() 
     {
@@ -33,21 +35,32 @@ public class DriverControl extends Command
     		                      0,	// nspace - don't care
     		                      0);	// period_msec - don't care
     	btnToggleCamMode = OI.getBtnEvt(OI.btnToggleFrontCameraView);
+    	btnFrontCamMode = OI.getBtnEvt(OI.btnToggleFrontCam);
+    	btnRearCamMode = OI.getBtnEvt(OI.btnToggleBackCam);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() 
     {
     	Robot.driveSubsystem.arcadeDrive(OI.axisForward.get(), OI.axisTurn.get());
-    	if(btnToggleCamMode.onPressed()) {
-    		if(Robot.currentCamMode.equalsIgnoreCase(Robot.BOILER_MODE)) {
-    			Robot.bvtable.putString("FrontCamMode", Robot.GEAR_MODE);
-    			Robot.currentCamMode = Robot.GEAR_MODE;
+    	if(btnToggleCamMode.onPressed()) 
+    	{
+    		if(Robot.vision.isBoilerMode()) 
+    		{
+    			Robot.vision.setGearMode();
     		}
-    		else if(Robot.currentCamMode.equalsIgnoreCase(Robot.GEAR_MODE)) {
-    			Robot.bvtable.putString("FrontCamMode", Robot.BOILER_MODE);
-    			Robot.currentCamMode = Robot.BOILER_MODE;
+    		else if(Robot.vision.isGearMode()) 
+    		{
+    			Robot.vision.setBoilerMode();
     		}
+    	}
+    	if(btnFrontCamMode.onPressed()) 
+    	{
+    		Robot.vision.setFrontCam();
+    	}
+    	if(btnRearCamMode.onPressed()) 
+    	{
+    		Robot.vision.setRearCam();
     	}
     }
 

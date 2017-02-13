@@ -24,6 +24,7 @@ import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
 
 // Non-subsystem (i.e., non-commandable) controls
 import org.usfirst.frc.team4183.robot.LightingControl;
+import org.usfirst.frc.team4183.robot.BucketVision;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -52,15 +53,10 @@ public class Robot extends IterativeRobot {
 	public static LightingControl lightingControl;	
 	public static NavxIMU imu;
 	
-	public static NetworkTable bvtable;
-	
+	public static BucketVision vision;
+		
 	private Compressor compressor;
-	
-	public static final String GEAR_MODE = "gear";
-	public static final String BOILER_MODE = "boiler";	
-	public static String currentCamMode;
-
-	
+		
 	// Anybody needing the (singleton) Robot instance 
 	// can get it by doing Robot.instance().
 	// Bit of a hack but WPILib leaves me no other way.
@@ -93,9 +89,10 @@ public class Robot extends IterativeRobot {
 		// Construct Compressor
 		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);		
 		
-		// Construct LightingControl, IMU
+		// Construct LightingControl, IMU, and vision
 		lightingControl = new LightingControl(); 		
 		imu = new NavxIMU();
+		vision  = new BucketVision();
 		
 
 		// Construction is complete
@@ -108,12 +105,7 @@ public class Robot extends IterativeRobot {
 		Alliances.addDefault("Red", "red");
 		Alliances.addObject("Blue", "blue");		
 		SmartDashboard.putData("Alliances", Alliances);
-		
-		bvtable = NetworkTable.getTable("BucketVision");
-		bvtable.putString("FrontCamMode", GEAR_MODE);
-		currentCamMode = GEAR_MODE;
-		
-				
+						
 		// Add all subsystems for debugging
 		addSubsystemToDebug(ballManipSubsystem);
 		addSubsystemToDebug(climbSubsystem);
