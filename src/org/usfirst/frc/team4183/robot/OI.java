@@ -87,6 +87,7 @@ public class OI {
 
 	public static LogicalButton btnLowSensitiveDrive;
 	public static LogicalButton btnToggleFrontCameraView;
+	public static LogicalButton btnInvertAxis;
 	
 	public static LogicalButton btnAlignLock;
 	public static LogicalButton btnDriveLock;
@@ -188,13 +189,15 @@ public class OI {
 		// TODO finish this list w/real logical button names & real default mapping
 
 		btnLowSensitiveDrive = driverController.bR1;
-		btnToggleFrontCameraView = driverController.bR2;
+		btnToggleFrontCameraView = driverController.bPovRight;
+		btnInvertAxis = driverController.bR2;
 		
 		btnAlignAssist = driverController.bTriangle;
 		
 		btnAlignLock = driverController.bL1;
 		btnDriveLock = driverController.bL2;
-				
+		
+		
 		btnClimbControl = operatorController.bShare;
 		
 		btnWaitForGear = operatorController.bCross;
