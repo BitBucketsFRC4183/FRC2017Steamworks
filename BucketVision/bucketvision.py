@@ -104,7 +104,8 @@ bvTable = NetworkTables.getTable("BucketVision")
 # A ChooserControl is also another option
 
 # Make the cameraMode an auto updating listener from the network table
-frontCamMode = bvTable.getAutoUpdateValue('FrontCamMode', 'boiler') # 'gear' or 'boiler'
+camMode = bvTable.getAutoUpdateValue('CurrentCam','frontCam') # 'frontcam' or 'rearcam'
+frontCamMode = bvTable.getAutoUpdateValue('FrontCamMode', 'gear') # 'gear' or 'boiler'
 alliance = 'red'    # default until chooser returns a value
 
 # Also make the alliance based on a chooser 
@@ -138,7 +139,7 @@ cc = ChooserControl('Alliances',
 
 redBoiler = RedBoiler()
 blueBoiler = BlueBoiler()
-gears = GearPeg()
+gear = GearPeg()
 
 rope = Faces()     # Temporary placeholder for rope processing
 
@@ -176,9 +177,9 @@ print("BucketCapture appears online!")
 
 frontPipes = {'redBoiler' : redBoiler,
               'blueBoiler' : blueBoiler,
-              'gears' : gears}
+              'gear' : gear}
 
-frontProcessor = BucketProcessor(frontCam,frontPipes,'gears').start()
+frontProcessor = BucketProcessor(frontCam,frontPipes,'gear').start()
 
 rearPipes = {'rope' : rope}
 
@@ -208,8 +209,12 @@ print("BucketProcessors appear online!")
 # LATER we will create display threads that stream the images as requested at their separate rates.
 #
 
+camera = {'frontCam' : frontCam,
+          'rearCam' : rearCam}
+processor = {'frontCam' : frontProcessor,
+             'rearCam' : rearProcessor}
 
-class FrontCamHTTPHandler(BaseHTTPRequestHandler):
+class CamHTTPHandler(BaseHTTPRequestHandler):
     _stop = False
     fps = FrameRate()
 
@@ -223,23 +228,36 @@ class FrontCamHTTPHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type','multipart/x-mixed-replace; boundary=--jpgboundary')
             self.end_headers()
+            
             while (frontProcessor.isStopped() == False):
                 try:
+
                     
-                    (img, count, isNew) = frontProcessor.read()
+                    try:
+                        camModeValue = camMode.value
+                        cameraSelection = camera[camModeValue]
+                        processorSelection = processor[camModeValue]
+                    except:
+                        camModeValue = 'frontCam'
+                        cameraSelection = camera[camModeValue]
+                        processorSelection = processor[camModeValue]
+                        
+                    
+                    (img, count, isNew) = processorSelection.read()
                     
                     if (isNew == False):
                             continue
-                    camFps = frontCam.fps.fps()
-                    procFps = frontProcessor.fps.fps()
-                    procDuration = frontProcessor.duration.duration()
+                    camFps = cameraSelection.fps.fps()
+                    procFps = processorSelection.fps.fps()
+                    procDuration = processorSelection.duration.duration()
 
                     cv2.putText(img,"{:.1f}".format(camFps),(0,20),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
                     if (procFps != 0.0):
                         cv2.putText(img,"{:.1f}".format(procFps) + " : {:.0f}".format(100 * procDuration * procFps) + "%",(0,40),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
                     cv2.putText(img,"{:.1f}".format(self.fps.fps()),(0,60),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
 
-                    cv2.putText(img,frontProcessor.ipselection,(0,80),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
+                    cv2.putText(img,camModeValue,(0, 80),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
+                    cv2.putText(img,frontProcessor.ipselection,(0,100),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
 
                     r, buf = cv2.imencode(".jpg",img)
                     self.wfile.write("--jpgboundary\r\n")
@@ -264,78 +282,19 @@ class FrontCamHTTPHandler(BaseHTTPRequestHandler):
             self.wfile.write('</body></html>')
             return
 
-class RearCamHTTPHandler(BaseHTTPRequestHandler):
-    _stop = False
-    fps = FrameRate()
-        
-    def stop(self):
-        self._self = True
-        
-    def do_GET(self):
-        print self.path
-        self.fps.start()
-        if self.path.endswith('.mjpg'):
-            self.send_response(200)
-            self.send_header('Content-type','multipart/x-mixed-replace; boundary=--jpgboundary')
-            self.end_headers()
-            while (rearProcessor.isStopped() == False):
-                try:
-                    (img, count, isNew) = rearProcessor.read()
-                    if (isNew == False):
-                            continue
-                    camFps = rearCam.fps.fps()
-                    procFps = rearProcessor.fps.fps()
-                    procDuration = rearProcessor.duration.duration()
-
-                    cv2.putText(img,"{:.1f}".format(camFps),(0,20),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
-                    if (procFps != 0.0):
-                        cv2.putText(img,"{:.1f}".format(procFps) + " : {:.0f}".format(100 * procDuration * procFps) + "%",(0,40),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
-                    cv2.putText(img,"{:.1f}".format(self.fps.fps()),(0,60),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
-
-                    r, buf = cv2.imencode(".jpg",img)
-                    self.wfile.write("--jpgboundary\r\n")
-                    self.send_header('Content-type','image/jpeg')
-                    self.send_header('Content-length',str(len(buf)))
-                    self.end_headers()
-                    self.wfile.write(bytearray(buf))
-                    self.wfile.write('\r\n')
-
-                    self.fps.update()
-                except KeyboardInterrupt:
-                    break
-            return
-
-        if self.path.endswith('.html') or self.path=="/":
-            self.send_response(200)
-            self.send_header('Content-type','text/html')
-            self.end_headers()
-            self.wfile.write('<html><head></head><body>')
-            self.wfile.write('<img src="http://127.0.0.1:9091/cam.mjpg"/>')
-            self.wfile.write('</body></html>')
-            return
-
 # Two steps to starting the HTTP service
 # first instantiate the sevice with a handler for the HTTP GET
 # then place the serve_forever call into a thread so we don't block here
-print("Waiting for FrontCamServer to start...")
+print("Waiting for CamServer to start...")
 
-frontCamHttpServer = HTTPServer(('',9090),FrontCamHTTPHandler)
-frontCamServer = BucketServer("FrontCamServer", frontCamHttpServer).start()
+camHttpServer = HTTPServer(('',9090),CamHTTPHandler)
+camServer = BucketServer("CamServer", camHttpServer).start()
 
-while (frontCamServer.isStopped() == True):
+while (camServer.isStopped() == True):
     time.sleep(0.001)
 
-print("FrontCamServer appears online!")
+print("CamServer appears online!")
 
-print("Waiting for RearCamServer to start...")
-
-rearCamHttpServer = HTTPServer(('',9091),RearCamHTTPHandler)
-rearCamServer = BucketServer("RearCamServer", rearCamHttpServer).start()
-
-while (rearCamServer.isStopped() == True):
-    time.sleep(0.001)
-
-print("RearCamServer appears online!")
 
 while (True):
 
