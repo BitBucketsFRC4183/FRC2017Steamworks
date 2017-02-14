@@ -79,11 +79,10 @@ public class OI {
 	 */
 	public static ButtonEvent getBtnEvt( LogicalButton btn) { return new ButtonEvent(btn); }
 
-	// If your Command doesn't require edge detect on the button,
-	// then you can look at one of these directly,
-	// in isFinished(): OI.btnShoot.get()
 	
-	// TODO complete this list, using the meaningful logical names.
+	//****************************
+	// LOGICAL BUTTON DEFINITIONS
+	//****************************
 
 	public static LogicalButton btnToggleFrontCameraView;
 	public static LogicalButton btnSelectFrontCam;
@@ -112,9 +111,10 @@ public class OI {
 	
 	public static LogicalButton btnIdle;
 	
-
-	// Access to Axis for Commands:
-	// In execute(), OI.axisForward.get(). 
+	
+	//****************************
+	// LOGICAL AXIS DEFINITIONS
+	//****************************
 	public static LogicalAxis axisForward;
 	public static LogicalAxis axisTurn;
 
@@ -152,7 +152,6 @@ public class OI {
 	
 	
 	// Mapping of Soft(ware) button/axis to Logical buttons & axis
-	// TODO complete this
 	private void doAutonomousMapping() {
 		
 		// Assign to EVERY logical button a soft button
@@ -189,10 +188,10 @@ public class OI {
 	private void doDefaultMapping() {
 		
 		// Assign to EVERY logical button a physical button
-		// TODO finish this list w/real logical button names & real default mapping
+		// Assign to EVERY logical axis a physical axis
 
 		// ****************
-		// DRIVER CONTROLS
+		// DRIVER CONTROLS Logical <- Physical
 		// ****************
 		btnToggleFrontCameraView = driverController.bCross;
 		btnSelectFrontCam = driverController.bPovUp;
@@ -206,8 +205,12 @@ public class OI {
 		btnAlignLock = driverController.bL1;
 		btnDriveLock = driverController.bL2;
 		
+		axisForward = driverController.aLeftY;
+		axisTurn = driverController.aRightX;	
+		
+		
 		// ****************
-		// OPERATOR CONTROLS
+		// OPERATOR CONTROLS Logical <- Physical
 		// ****************		
 		btnClimbControl = operatorController.bShare;
 		
@@ -223,10 +226,6 @@ public class OI {
 		
 		btnIdle = operatorController.bTrackpad;		// Big easy button to make selected operator subs idle
 				
-		// Assign to EVERY logical axis a physical axis
-		// TODO finish this list w/real logical axis names & real mapping
-		axisForward = driverController.aLeftY;
-		axisTurn = driverController.aRightX;	
 	}
 
 	// Represents the physical buttons & axis on one controller
@@ -336,6 +335,7 @@ public class OI {
 		public boolean get() { return physAxis.get() > 0.5; }
 	}
 	
+	// Allows you to use a POV button as a button
 	private static class PhysicalPovButton implements LogicalButton {		
 		private Joystick controller;
 		private POV_BUTTON whichPov;
