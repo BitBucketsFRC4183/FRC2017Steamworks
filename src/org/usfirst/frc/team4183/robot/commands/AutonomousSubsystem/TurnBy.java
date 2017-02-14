@@ -31,7 +31,9 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	// we're not done yet.
 	private final double ALLOWED_RATE_DPS = 1.0;
 	
-
+	// Limits ramp rate of drive 
+	private final double RATE_LIM_PER_SEC = 1.5;
+	
 	private final Command nextState;
 	private final double degreesToTurn;
 	
@@ -55,7 +57,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		// Compute setPoint
 		double setPoint = degreesToTurn + Robot.imu.getYawDeg();
 		
-		rateLimiter = new RateLimiter( 0.5);  // TODO testing
+		rateLimiter = new RateLimiter( RATE_LIM_PER_SEC);
 		
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);

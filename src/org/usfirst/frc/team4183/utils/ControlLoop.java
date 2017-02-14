@@ -23,6 +23,13 @@ package org.usfirst.frc.team4183.utils;
  */
 public class ControlLoop {
 
+	private final static long DEFAULT_MSECS = 20;
+	private final long msecs;
+	private volatile double setPoint;
+	
+	private final LoopThread loopThread;
+	private final ControlLoopUser user;
+	
 	/**
 	 * User of ControlLoop must provide an implementation of this interface
 	 * @author twilson
@@ -109,14 +116,6 @@ public class ControlLoop {
 		user.setError(0.0);
 	}
 	
-	
-	
-	private final static long DEFAULT_MSECS = 40;
-	private final long msecs;
-	private volatile double setPoint;
-	
-	private final LoopThread loopThread;
-	private final ControlLoopUser user;
 	
 	
 	// This Thread implements the control loop
