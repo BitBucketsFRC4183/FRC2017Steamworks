@@ -13,6 +13,7 @@ public class Idle extends Command {
 
     public Idle() {
     	requires( Robot.autonomousSubsystem);
+    	setRunWhenDisabled(true);  // Idle state needs this!
     }
 
     // Called just before this Command runs the first time
