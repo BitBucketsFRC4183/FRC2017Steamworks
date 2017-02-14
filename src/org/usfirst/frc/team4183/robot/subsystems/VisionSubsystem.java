@@ -1,8 +1,11 @@
-package org.usfirst.frc.team4183.robot;
+package org.usfirst.frc.team4183.robot.subsystems;
 
+import org.usfirst.frc.team4183.robot.commands.VisionSubsystem.Idle;
+
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
-public class BucketVision 
+public class VisionSubsystem extends Subsystem
 {
 	// Strings to place into BucketVision NetworkTable
 	public static final String GEAR_MODE = "gear";
@@ -18,7 +21,7 @@ public class BucketVision
 
 	public static NetworkTable bvtable;
 
-	BucketVision()
+	public VisionSubsystem()
 	{
 		// Set up defaults 
 		bvtable = NetworkTable.getTable("BucketVision");
@@ -59,6 +62,12 @@ public class BucketVision
 	public boolean isBoilerMode()
 	{
 		return (currentFrontCamMode.equals(BOILER_MODE));
+	}
+
+	@Override
+	protected void initDefaultCommand() 
+	{
+		setDefaultCommand( new Idle());
 	}
 
 }
