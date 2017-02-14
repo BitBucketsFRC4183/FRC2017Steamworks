@@ -91,8 +91,7 @@ public class OI {
 	public static LogicalButton btnLowSensitiveDrive;  
 	public static LogicalButton btnInvertAxis;
 	public static LogicalButton btnAlignLock;
-	public static LogicalButton btnDriveLock;
-	
+	public static LogicalButton btnDriveLock;	
 	public static LogicalButton btnAlignAssist;
 	
 	public static LogicalButton btnClimbControl;
@@ -155,13 +154,15 @@ public class OI {
 	private void doAutonomousMapping() {
 		
 		// Assign to EVERY logical button a soft button
-		btnLowSensitiveDrive = new SoftButton();
 		btnToggleFrontCameraView = new SoftButton();
+		btnSelectFrontCam = new SoftButton();
+		btnSelectRearCam = new SoftButton();
 
-		btnAlignAssist = new SoftButton();
-				
+		btnLowSensitiveDrive = new SoftButton();
+		btnInvertAxis = new SoftButton();
 		btnAlignLock = new SoftButton();
 		btnDriveLock = new SoftButton();
+		btnAlignAssist = new SoftButton();
 		
 		btnClimbControl = new SoftButton();
 		
@@ -170,14 +171,13 @@ public class OI {
 		btnSpitGearA = new SoftButton();
 		btnSpitGearB = new SoftButton();
 		
+		btnOpenCloseHopper = new SoftButton();
 		btnIntakeOn = new SoftButton();
 		btnShooterStart = new SoftButton();
 		btnShoot = new SoftButton();
-		btnOpenCloseHopper = new SoftButton();
 		
 		btnIdle = new SoftButton();		
-		 
-		
+		 		
 		
 		// Assign to EVERY logical axis a soft axis
 		axisForward = new SoftAxis();
@@ -198,16 +198,11 @@ public class OI {
 		btnSelectRearCam = driverController.bPovDown;
 		
 		btnLowSensitiveDrive = driverController.bR1;
-		btnInvertAxis = driverController.bR2;
-
-		btnAlignAssist = driverController.bTriangle;
-		
+		btnInvertAxis = driverController.bR2;	
 		btnAlignLock = driverController.bL1;
-		btnDriveLock = driverController.bL2;
-		
-		axisForward = driverController.aLeftY;
-		axisTurn = driverController.aRightX;	
-		
+		btnDriveLock = driverController.bL2;		
+		btnAlignAssist = driverController.bTriangle;
+
 		
 		// ****************
 		// OPERATOR CONTROLS Logical <- Physical
@@ -219,13 +214,16 @@ public class OI {
 		btnSpitGearA = operatorController.bL2;
 		btnSpitGearB = operatorController.bTriangle;
 		
+		btnOpenCloseHopper = operatorController.bPovLeft;
 		btnIntakeOn = operatorController.bL1;
 		btnShooterStart = operatorController.bR1;
 		btnShoot = operatorController.bR2;
-		btnOpenCloseHopper = operatorController.bPovLeft;
 		
 		btnIdle = operatorController.bTrackpad;		// Big easy button to make selected operator subs idle
 				
+		
+		axisForward = driverController.aLeftY;
+		axisTurn = driverController.aRightX;		
 	}
 
 	// Represents the physical buttons & axis on one controller
