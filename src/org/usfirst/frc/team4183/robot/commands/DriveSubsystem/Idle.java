@@ -22,6 +22,7 @@ public class Idle extends Command
     // Called just before this Command runs the first time
     protected void initialize() 
     {
+    	Robot.driveSubsystem.disable();
     	Robot.lightingControl.setSleeping(LightingObjects.DRIVE_SUBSYSTEM);
     }
 
@@ -45,6 +46,7 @@ public class Idle extends Command
     // Called once after isFinished returns true
     protected void end() 
     {
+    	Robot.driveSubsystem.enable();
     }
 
     // Called when another command which requires one or more of the same

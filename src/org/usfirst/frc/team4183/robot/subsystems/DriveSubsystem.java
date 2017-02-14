@@ -49,7 +49,9 @@ public class DriveSubsystem extends Subsystem {
 
 		public void enable() {}
 		
-		public void disable() {}
+		public void disable() {
+			robotDrive.arcadeDrive(0.0, 0.0);			
+		}
 		
 		public void driveStraight(boolean start) {
 			if(start) {
