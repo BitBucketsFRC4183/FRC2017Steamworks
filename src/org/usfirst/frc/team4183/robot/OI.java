@@ -85,12 +85,12 @@ public class OI {
 	
 	// TODO complete this list, using the meaningful logical names.
 
-  public static LogicalButton btnToggleFrontCameraView;
-	public static LogicalButton btnToggleFrontCam;
-	public static LogicalButton btnToggleBackCam;
+	public static LogicalButton btnToggleFrontCameraView;
+	public static LogicalButton btnSelectFrontCam;
+	public static LogicalButton btnSelectRearCam;
   
 	public static LogicalButton btnLowSensitiveDrive;  
-  public static LogicalButton btnInvertAxis;
+	public static LogicalButton btnInvertAxis;
 	public static LogicalButton btnAlignLock;
 	public static LogicalButton btnDriveLock;
 	
@@ -101,9 +101,11 @@ public class OI {
 	// Gear/ball-loading functions
 	public static LogicalButton btnWaitForGear;
 	public static LogicalButton btnWaitForBalls;
-	public static LogicalButton btnOpenGate;
+	public static LogicalButton btnSpitGearA;
+	public static LogicalButton btnSpitGearB;
 	
 	// Ball handling functions
+	public static LogicalButton btnOpenCloseHopper;
 	public static LogicalButton btnIntakeOn;
 	public static LogicalButton btnShooterStart;
 	public static LogicalButton btnShoot;
@@ -170,11 +172,13 @@ public class OI {
 		
 		btnWaitForGear = new SoftButton();
 		btnWaitForBalls = new SoftButton();
-		btnOpenGate = new SoftButton();
+		btnSpitGearA = new SoftButton();
+		btnSpitGearB = new SoftButton();
 		
 		btnIntakeOn = new SoftButton();
 		btnShooterStart = new SoftButton();
 		btnShoot = new SoftButton();
+		btnOpenCloseHopper = new SoftButton();
 		
 		btnIdle = new SoftButton();		
 		 
@@ -191,9 +195,12 @@ public class OI {
 		// Assign to EVERY logical button a physical button
 		// TODO finish this list w/real logical button names & real default mapping
 
-    btnToggleFrontCameraView = driverController.bCross;
-		btnToggleFrontCam = driverController.bPovUp;
-		btnToggleBackCam = driverController.bPovDown;
+		// ****************
+		// DRIVER CONTROLS
+		// ****************
+		btnToggleFrontCameraView = driverController.bCross;
+		btnSelectFrontCam = driverController.bPovUp;
+		btnSelectRearCam = driverController.bPovDown;
 		
 		btnLowSensitiveDrive = driverController.bR1;
 		btnInvertAxis = driverController.bR2;
@@ -203,16 +210,20 @@ public class OI {
 		btnAlignLock = driverController.bL1;
 		btnDriveLock = driverController.bL2;
 		
-		
+		// ****************
+		// OPERATOR CONTROLS
+		// ****************		
 		btnClimbControl = operatorController.bShare;
 		
 		btnWaitForGear = operatorController.bCross;
 		btnWaitForBalls = operatorController.bCircle;
-		btnOpenGate = operatorController.bTriangle;
+		btnSpitGearA = operatorController.bL2;
+		btnSpitGearB = operatorController.bTriangle;
 		
 		btnIntakeOn = operatorController.bL1;
 		btnShooterStart = operatorController.bR1;
 		btnShoot = operatorController.bR2;
+		btnOpenCloseHopper = operatorController.bPovLeft;
 		
 		btnIdle = operatorController.bTrackpad;		// Big easy button to make selected operator subs idle
 				
