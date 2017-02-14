@@ -1,40 +1,34 @@
-package org.usfirst.frc.team4183.robot.commands.BallManipSubsystem;
+package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
-import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- *
+ * End state - for testing
  */
-public class IntakeOn extends Command {
+public class End extends Command {
 
-    public IntakeOn() {
-        requires(Robot.ballManipSubsystem);
+    public End() {
+    	requires( Robot.autonomousSubsystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.ballManipSubsystem.setFlapModeIntake();
+    	OI.axisForward.set(0.0);
+    	OI.axisTurn.set(0.0);
+    	OI.btnIdle.push();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	// Subsystem actions must be called every cycle to keep
-    	// things running
-    	Robot.ballManipSubsystem.setTopRollerToIntakeSpeed();
-    	Robot.ballManipSubsystem.setConveyerOn();
-    	Robot.ballManipSubsystem.setSweeperOn();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        if(OI.btnIdle.get()){
-        	return CommandUtils.stateChange(this, new Idle());
-        }
-    	return false;
+    	// No exit from this state
+        return false;
     }
 
     // Called once after isFinished returns true

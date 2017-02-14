@@ -33,7 +33,7 @@ public class Idle extends Command {
         	return CommandUtils.stateChange(this, new IntakeOn());
         }
         if (OI.btnShooterStart.get()){
-        	return CommandUtils.stateChange(this, new ShooterOn());
+        	return CommandUtils.stateChange(this, new WaitingForShooterSpeed());
         }
     	return false;
         

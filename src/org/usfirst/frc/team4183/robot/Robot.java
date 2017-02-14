@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.usfirst.frc.team4183.robot.subsystems.AutonomousSubsystem;
 // Subsystems
 import org.usfirst.frc.team4183.robot.subsystems.BallManipSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
@@ -23,7 +24,7 @@ import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
 
 // Non-subsystem (i.e., non-commandable) controls
 import org.usfirst.frc.team4183.robot.LightingControl;
-import org.usfirst.frc.team4183.robot.TeensyIMU;
+import org.usfirst.frc.team4183.robot.BucketVision;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -34,23 +35,28 @@ import org.usfirst.frc.team4183.robot.TeensyIMU;
  */
 public class Robot extends IterativeRobot {
 
+	// Commands should use the runMode variable
+	// to determine the current running mode of the Robot.
+	public enum RunMode { DISABLED, AUTO, TELEOP, TEST };
+	public static RunMode runMode = RunMode.DISABLED;
+	
+	
 	public static BallManipSubsystem ballManipSubsystem;
 	public static ClimbSubsystem climbSubsystem;
 	public static DriveSubsystem driveSubsystem;
 	public static GearHandlerSubsystem gearHandlerSubsystem;
+	public static AutonomousSubsystem autonomousSubsystem;
+	
 	public static OI oi;
-	public static SendableChooser Alliances;
+	public static SendableChooser<String> Alliances;
 	
 	public static LightingControl lightingControl;	
 	public static NavxIMU imu;
 	
-	NetworkTable bvtable;
-	
+	public static BucketVision vision;
+		
 	private Compressor compressor;
-	private static String lowerCaseRed = "red";
-	private static String lowerCaseBlue = "blue";
-
-	
+		
 	// Anybody needing the (singleton) Robot instance 
 	// can get it by doing Robot.instance().
 	// Bit of a hack but WPILib leaves me no other way.
@@ -60,6 +66,7 @@ public class Robot extends IterativeRobot {
 	public Robot() {
 		robotInstance = this;
 	}
+	
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -77,31 +84,34 @@ public class Robot extends IterativeRobot {
 		climbSubsystem = new ClimbSubsystem();
 		driveSubsystem = new DriveSubsystem();
 		gearHandlerSubsystem = new GearHandlerSubsystem();
+		autonomousSubsystem = new AutonomousSubsystem();
 		
 		// Construct Compressor
 		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);		
 		
-		// Construct LightingControl, IMU
+		// Construct LightingControl, IMU, and vision
 		lightingControl = new LightingControl(); 		
 		imu = new NavxIMU();
+		vision  = new BucketVision();
 		
-		bvtable = NetworkTable.getTable("BucketVision");
-		Alliances = new SendableChooser();
-		Alliances.addDefault("Red", lowerCaseRed);
-		Alliances.addObject("Blue", lowerCaseBlue);
-		SmartDashboard.putData("Alliances", Alliances);
+
 		// Construction is complete
-		
-		
+				
 		// Start pressurizing the tanks
 		compressor.setClosedLoopControl(true);
 		
-		
+		// Initialize Network Tables and Sendable Chooser
+		Alliances = new SendableChooser<String>();
+		Alliances.addDefault("Red", "red");
+		Alliances.addObject("Blue", "blue");		
+		SmartDashboard.putData("Alliances", Alliances);
+						
 		// Add all subsystems for debugging
 		addSubsystemToDebug(ballManipSubsystem);
 		addSubsystemToDebug(climbSubsystem);
 		addSubsystemToDebug(driveSubsystem);
-		addSubsystemToDebug(gearHandlerSubsystem);		
+		addSubsystemToDebug(gearHandlerSubsystem);
+		addSubsystemToDebug(autonomousSubsystem);		
 		showDebugInfo();
 	}
 
@@ -112,7 +122,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void disabledInit() {
+		runMode = RunMode.DISABLED;
+		
 		// Clear out the scheduler
+		// Will result in only Default Commands (Idle-s) running.
+		// Do this last to be sure that Idle-s see correct info when starting.
 		Scheduler.getInstance().removeAll();
 	}
 
@@ -134,15 +148,17 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		runMode = RunMode.AUTO;
 		
 		// Set up OI for autonomous mode
 		// NOTE: Must do this BEFORE clearing out scheduler!
 		// Clearing out scheduler causes Default Commands (Idle-s)
 		// to start, and we want those to see the new OI mappings.
 		oi.autonomousInit();
-		
+				
 		// Clear out the scheduler
 		// Will result in only Default Commands (Idle-s) running.
+		// Do this last to be sure that Idle-s see correct info when starting.
 		Scheduler.getInstance().removeAll();		
 	}
 
@@ -156,6 +172,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
+		runMode = RunMode.TELEOP;
 		
 		// Set up OI with specific driver & operator mappings.
 		// Must do this before clearing out scheduler, see note in autonomousInit().
@@ -164,6 +181,8 @@ public class Robot extends IterativeRobot {
 		oi.teleopInit( OI.Driver.JOE, OI.Operator.BILL);
 
 		// Clear out the scheduler
+		// Will result in only Default Commands (Idle-s) running.
+		// Do this last to be sure that Idle-s see correct info when starting.
 		Scheduler.getInstance().removeAll();		
 	}
 
@@ -181,6 +200,8 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void testInit() {
+		runMode = RunMode.TEST;
+
 		// Disable LiveWindow & re-enable Scheduler
 		LiveWindow.setEnabled(false);
 		
@@ -216,7 +237,7 @@ public class Robot extends IterativeRobot {
 				System.out.format("Attempt to test Command: %s...", fullName);
 
 				// Note, for this to work, the Command must have a 
-				// public no-arg constructor
+				// *public* no-arg constructor
 				try {
 					Command cmd = (Command) Class.forName(fullName).newInstance();
 					cmd.start();
@@ -225,7 +246,6 @@ public class Robot extends IterativeRobot {
 					
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 						| IllegalArgumentException e) {
-
 					System.out.println("Sorry, could not test that command");
 				}
 			}
@@ -245,8 +265,9 @@ public class Robot extends IterativeRobot {
 	
 	
 	
-	// State-testing-mode code follows
-	// This is work-in-progress - twilson
+	// State-testing-mode code follows.
+	// It works but so far hasn't been all that useful.
+	// The Subsystem and Scheduler displays are very handy though.
 	
 	private Set<Subsystem> subSystems = new HashSet<>();
 	private SendableChooser<Subsystem> dbgSubsysChooser;
@@ -288,7 +309,7 @@ public class Robot extends IterativeRobot {
 
 	public void stateChange( Command fromState, Command toState) {
 		
-		if( !isTest()) {
+		if( !(runMode == RunMode.TEST)) {
 			// Normal operation, just do the transition as ordered
 			toState.start();
 			return;

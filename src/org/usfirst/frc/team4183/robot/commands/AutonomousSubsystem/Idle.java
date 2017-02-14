@@ -1,4 +1,4 @@
-package org.usfirst.frc.team4183.robot.commands.BallManipSubsystem;
+package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
@@ -9,35 +9,31 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class ShooterOn extends Command {
+public class Idle extends Command {
 
-    public ShooterOn() {
-        requires(Robot.ballManipSubsystem);
+    public Idle() {
+    	requires( Robot.autonomousSubsystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.ballManipSubsystem.setFlapModeShoot();
+    	OI.axisForward.set(0.0);
+    	OI.axisTurn.set(0.0);
+    	OI.btnIdle.push();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	// Subsystem actions must be called every cycle to keep
-    	// things running
-    	Robot.ballManipSubsystem.setTopRollerToShootingSpeed();
-    	Robot.ballManipSubsystem.setConveyerOn();
-    	Robot.ballManipSubsystem.setSweeperOff();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        if(OI.btnIdle.get()){
-        	return CommandUtils.stateChange(this, new Idle());  
-        }
-        if(OI.btnIntakeOn.get()){
-        	return CommandUtils.stateChange(this, new IntakeOn());
-        }
-    	return false;
+    	if( Robot.runMode == Robot.RunMode.AUTO ) {
+    		// TODO go to 1st state here
+    		// This transition is just for testing
+    		return CommandUtils.stateChange(this, new TurnBy(-10.0, new End()));
+    	}
+        return false;
     }
 
     // Called once after isFinished returns true
