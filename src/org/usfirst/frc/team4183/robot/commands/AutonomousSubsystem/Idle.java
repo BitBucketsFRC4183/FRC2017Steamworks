@@ -31,7 +31,7 @@ public class Idle extends Command {
     	if( Robot.runMode == Robot.RunMode.AUTO ) {
     		// TODO go to 1st state here
     		// This transition is just for testing
-    		return CommandUtils.stateChange(this, new TurnBy(-10.0, new End()));
+    		return CommandUtils.stateChange(this, new TurnBy(180.0, new End()));
     	}
         return false;
     }

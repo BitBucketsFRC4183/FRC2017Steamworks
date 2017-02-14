@@ -4,6 +4,7 @@ import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.utils.CommandUtils;
 import org.usfirst.frc.team4183.utils.ControlLoop;
+import org.usfirst.frc.team4183.utils.RateLimiter;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -35,6 +36,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private final double degreesToTurn;
 	
 	private ControlLoop cloop;
+	private RateLimiter rateLimiter;
 	
 	// Require a no-arg constructor for use in state-testing mode
 	public TurnBy() {
@@ -52,6 +54,8 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	protected void initialize() {
 		// Compute setPoint
 		double setPoint = degreesToTurn + Robot.imu.getYawDeg();
+		
+		rateLimiter = new RateLimiter( 0.5);  // TODO testing
 		
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
@@ -110,6 +114,10 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		if( absDrv < MIN_DRIVE) absDrv = MIN_DRIVE;
 		if( Math.abs(error) < DEAD_ZONE_DEG) absDrv = 0.0;
 		double outDrive = Math.signum(inDrive)*absDrv;
+		
+		outDrive = rateLimiter.limit(outDrive);
+		
+		System.out.format("Error=%f inDrive=%f outDrive=%f\n", error, inDrive, outDrive);
 		
 		// Set the output
 		// - sign required because + stick produces right turn,
