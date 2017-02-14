@@ -9,32 +9,36 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class IntakeOn extends Command {
+public class Shooting extends Command {
+	
+	OI.ButtonEvent btnWaitingForTrigger;
 
-    public IntakeOn() {
+    public Shooting() {
         requires(Robot.ballManipSubsystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.ballManipSubsystem.setFlapModeIntake();
+    	btnWaitingForTrigger = OI.getBtnEvt(OI.btnShoot);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	// Subsystem actions must be called every cycle to keep
-    	// things running
-    	Robot.ballManipSubsystem.setTopRollerToIntakeSpeed();
+    	//TODO LightingControl.setBallShooterAlightnmentIndicator_Vision.isShooterAligned
     	Robot.ballManipSubsystem.setConveyerOn();
-    	Robot.ballManipSubsystem.setSweeperOn();
+    	Robot.ballManipSubsystem.setTopRollerToShootingSpeed();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        if(OI.btnIdle.get()){
-        	return CommandUtils.stateChange(this, new Idle());
-        }
-    	return false;
+    	if(btnWaitingForTrigger.onReleased()) {
+    		Robot.ballManipSubsystem.setConveyerOff();
+    		return CommandUtils.stateChange(this, new WaitingForTrigger());
+    	}
+    	if(OI.btnIdle.get()) {
+    		return CommandUtils.stateChange(this, new Idle());
+    	}
+        return false;
     }
 
     // Called once after isFinished returns true

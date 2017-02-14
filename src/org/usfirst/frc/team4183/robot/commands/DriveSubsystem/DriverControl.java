@@ -58,7 +58,7 @@ public class DriverControl extends Command
     	{
     		Robot.vision.setFrontCam();
     	}
-    	if(btnRearCamMode.onPressed()) 
+    	else if(btnRearCamMode.onPressed()) 
     	{
     		Robot.vision.setRearCam();
     	}
@@ -67,7 +67,11 @@ public class DriverControl extends Command
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if(OI.btnAlignLock.get()) 
+    	if (OI.btnDriveLock.get())
+    	{
+    		return CommandUtils.stateChange(this, new DriveLock());
+    	}
+    	else if(OI.btnAlignLock.get()) 
     	{
     		return CommandUtils.stateChange(this, new AlignLock());
     	}

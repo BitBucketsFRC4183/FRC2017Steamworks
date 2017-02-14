@@ -33,14 +33,19 @@ public class AlignLock extends Command
     }
 
     // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    protected void execute() 
+    {
     	Robot.driveSubsystem.alignDrive(OI.axisForward.get(), OI.axisTurn.get());
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if(!OI.btnAlignLock.get()) 
+    	if (OI.btnDriveLock.get())
+    	{
+    		return CommandUtils.stateChange(this, new DriveLock());
+    	}
+    	else if( ! OI.btnAlignLock.get()) 
     	{
     		return CommandUtils.stateChange(this, new DriverControl());
     	}
