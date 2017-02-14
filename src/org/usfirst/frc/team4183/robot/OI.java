@@ -112,15 +112,11 @@ public class OI {
 	
 	public static LogicalButton btnIdle;
 	
-	// etc for up to 14 buttons on each controller (might be fewer)
-
 
 	// Access to Axis for Commands:
 	// In execute(), OI.axisForward.get(). 
-	// TODO complete this list, using actual meaningful logical names.
 	public static LogicalAxis axisForward;
 	public static LogicalAxis axisTurn;
-	// etc for up to 6 axis on each controller (might be fewer)
 
 
 	// End of public interface
@@ -291,7 +287,7 @@ public class OI {
 	
 	// A button that can be operated by software
 	private static class SoftButton implements LogicalButton {
-		boolean state;
+		volatile boolean state;
 		@Override
 		public boolean get() { return state; }
 		@Override
@@ -418,7 +414,7 @@ public class OI {
 	
 	// An Axis that can be operated by software
 	private static class SoftAxis implements LogicalAxis {
-		double value = 0;
+		volatile double value = 0;
 		@Override
 		public double get() { return value; }
 		@Override
@@ -442,8 +438,6 @@ public class OI {
 			return (invert ? -1.0 : 1.0 ) * controller.getRawAxis(axisNum);
 		}
 	}
-
-
 
 }
 
