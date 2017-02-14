@@ -35,8 +35,8 @@ public class DriverControl extends Command
     		                      0,	// nspace - don't care
     		                      0);	// period_msec - don't care
     	btnToggleCamMode = OI.getBtnEvt(OI.btnToggleFrontCameraView);
-    	btnFrontCamMode = OI.getBtnEvt(OI.btnToggleFrontCam);
-    	btnRearCamMode = OI.getBtnEvt(OI.btnToggleBackCam);
+    	btnFrontCamMode = OI.getBtnEvt(OI.btnSelectFrontCam);
+    	btnRearCamMode = OI.getBtnEvt(OI.btnSelectRearCam);
     }
 
     // Called repeatedly when this Command is scheduled to run
