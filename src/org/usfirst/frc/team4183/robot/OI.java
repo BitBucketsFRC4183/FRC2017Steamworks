@@ -121,7 +121,7 @@ public class OI {
 	//****************************
 	// Permanent Soft Buttons (for inter-State-Machine communication)
 	//****************************
-	public static LogicalButton sbtnDriveLock = new SoftButton();
+	public static LogicalButton softDriveLock = new SoftButton();
 	
 	
 	// End of public interface

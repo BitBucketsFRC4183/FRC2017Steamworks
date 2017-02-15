@@ -51,7 +51,7 @@ public class DriveLock extends Command
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if( OI.btnDriveLock.get() || OI.sbtnDriveLock.get() )
+    	if( OI.btnDriveLock.get() || OI.softDriveLock.get() )
     	{
     		// Stay in state
     		return false; 
