@@ -85,7 +85,7 @@ public class Robot extends IterativeRobot {
 		driveSubsystem = new DriveSubsystem();
 		gearHandlerSubsystem = new GearHandlerSubsystem();
 		autonomousSubsystem = new AutonomousSubsystem();
-		visionSubsystem  = new VisionSubsystem();
+//		visionSubsystem  = new VisionSubsystem();
 		
 		// Construct Compressor
 		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);		

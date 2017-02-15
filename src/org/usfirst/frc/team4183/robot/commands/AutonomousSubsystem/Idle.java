@@ -18,9 +18,6 @@ public class Idle extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	OI.axisForward.set(0.0);
-    	OI.axisTurn.set(0.0);
-    	OI.btnIdle.push();
     }
 
     // Called repeatedly when this Command is scheduled to run
