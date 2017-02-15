@@ -10,7 +10,7 @@ public class VisionSubsystem extends Subsystem
 	// Strings to place into BucketVision NetworkTable
 	public static final String GEAR_LIFT_MODE = "gearLift";
 	public static final String BOILER_MODE = "Boiler";	
-	public static final String FRONT_CAM= "frontCam";
+	public static final String FRONT_CAM = "frontCam";
 	public static final String REAR_CAM = "rearCam";
 	
 	public static final String FRONT_CAM_MODE = "FrontCamMode";

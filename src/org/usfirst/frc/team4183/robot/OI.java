@@ -21,8 +21,9 @@ public class OI {
 	
 	// Call on entry to Autonomous Mode to set up the Soft Buttons
 	public void autonomousInit() {
-		doAutonomousMapping();
+		mode = OIMode.SOFT;
 	}
+	
 	
 	public enum Driver {
 		DEFAULT, JOE, SAM;  // TODO Put in actual names, add more as needed
@@ -32,7 +33,11 @@ public class OI {
 		DEFAULT, BILL, MIKE;  // TODO Put in actual names, add more as needed
 	}
 	
-	public void teleopInit( Driver driver, Operator operator) {
+	public void teleopInit() {
+		mode = OIMode.HARD;
+	}
+
+	public void remapDriverOperator( Driver driver, Operator operator) {
 		
 		// Begin by setting defaults
 		doDefaultMapping();
@@ -61,12 +66,9 @@ public class OI {
 			break;
 		case DEFAULT:
 			break;
-		}		
+		}
 	}
 
-	public void teleopInit() {
-		teleopInit(Driver.DEFAULT, Operator.DEFAULT);
-	}
 	
 	/**
 	 * If your Command needs rising or falling edge detect on a button,
@@ -118,10 +120,6 @@ public class OI {
 	public static LogicalAxis axisTurn;
 
 
-	//****************************
-	// Permanent Soft Buttons (for inter-State-Machine communication)
-	//****************************
-	public static LogicalButton softDriveLock = new SoftButton();
 	
 	
 	// End of public interface
@@ -129,14 +127,17 @@ public class OI {
 	
 
 	private PhysicalController driverController, operatorController;
+	
+	private enum OIMode { HARD, SOFT }
+	private static OIMode mode = OIMode.HARD;
 
 	// Private so nobody can instantiate class OI directly - 
 	// forced to use instance().
 	private OI() {
 		driverController = new PhysicalController( new Joystick(0));
 		operatorController = new PhysicalController( new Joystick(1));
-		
-		// Set default mapping
+				
+		// Set default control mapping
 		doDefaultMapping();		
 	}
 	
@@ -155,40 +156,6 @@ public class OI {
 	private void mapOperator_Bill( PhysicalController controller) {
 	}
 	
-	
-	// Mapping of Soft(ware) button/axis to Logical buttons & axis
-	private void doAutonomousMapping() {
-		
-		// Assign to EVERY logical button a soft button
-		btnToggleFrontCameraView = new SoftButton();
-		btnSelectFrontCam = new SoftButton();
-		btnSelectRearCam = new SoftButton();
-
-		btnLowSensitiveDrive = new SoftButton();
-		btnInvertAxis = new SoftButton();
-		btnAlignLock = new SoftButton();
-		btnDriveLock = new SoftButton();
-		btnAlignAssist = new SoftButton();
-		
-		btnClimbControl = new SoftButton();
-		
-		btnWaitForGear = new SoftButton();
-		btnWaitForBalls = new SoftButton();
-		btnSpitGearA = new SoftButton();
-		btnSpitGearB = new SoftButton();
-		
-		btnOpenCloseHopper = new SoftButton();
-		btnIntakeOn = new SoftButton();
-		btnShooterStart = new SoftButton();
-		btnShoot = new SoftButton();
-		
-		btnIdle = new SoftButton();		
-		 		
-		
-		// Assign to EVERY logical axis a soft axis
-		axisForward = new SoftAxis();
-		axisTurn = new SoftAxis();
-	}
 	
 	// Default mapping of Physical to Logical button, axis
 	private void doDefaultMapping() {
@@ -236,68 +203,81 @@ public class OI {
 	private static class PhysicalController {
 
 		@SuppressWarnings("unused")
-		private final PhysicalButton 
+		private final LogicalButton 
 			bSquare, bCross, bCircle,  bTriangle, 
 			bL1, bR1, bL2, bR2,
 			bShare, bOptions, bLstick, bRstick,
 			bPS4, bTrackpad;
 		
 		@SuppressWarnings("unused")
-		private final PhysicalPovButton
+		private final LogicalButton
 			bPovUp, bPovRight, bPovDown, bPovLeft;
 
 		@SuppressWarnings("unused")
-		private final PhysicalAxis 
+		private final LogicalAxis 
 			aLeftX, aLeftY, aRightX, aRightY, aL2, aR2;
 		
 		private PhysicalController( Joystick controller) {
-			bSquare = new PhysicalButton(controller, PS4Constants.SQUARE.getValue());
-			bCross = new PhysicalButton(controller, PS4Constants.CROSS.getValue());
-			bCircle = new PhysicalButton(controller, PS4Constants.CIRCLE.getValue());
-			bTriangle = new PhysicalButton(controller, PS4Constants.TRIANGLE.getValue());
-			bL1 = new PhysicalButton(controller, PS4Constants.L1.getValue());
-			bR1 = new PhysicalButton(controller, PS4Constants.R1.getValue());
-			bL2 = new PhysicalButton(controller, PS4Constants.L2.getValue());
-			bR2 = new PhysicalButton(controller, PS4Constants.R2.getValue());
-			bShare = new PhysicalButton(controller, PS4Constants.SHARE.getValue());
-			bOptions = new PhysicalButton(controller, PS4Constants.OPTIONS.getValue());
-			bLstick = new PhysicalButton(controller, PS4Constants.L_STICK.getValue());
-			bRstick = new PhysicalButton(controller, PS4Constants.R_STICK.getValue());
-			bPS4 = new PhysicalButton(controller, PS4Constants.PS4.getValue());
-			bTrackpad = new PhysicalButton(controller, PS4Constants.TRACKPAD.getValue());
-			bPovUp = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.UP);
-			bPovRight = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.RIGHT);
-			bPovDown = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.DOWN);
-			bPovLeft = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.LEFT);
+			bSquare = new LogicalButton( new PhysicalButton(controller, PS4Constants.SQUARE.getValue()));
+			bCross = new LogicalButton( new PhysicalButton(controller, PS4Constants.CROSS.getValue()));
+			bCircle = new LogicalButton( new PhysicalButton(controller, PS4Constants.CIRCLE.getValue()));
+			bTriangle = new LogicalButton( new PhysicalButton(controller, PS4Constants.TRIANGLE.getValue()));
+			bL1 = new LogicalButton( new PhysicalButton(controller, PS4Constants.L1.getValue()));
+			bR1 = new LogicalButton( new PhysicalButton(controller, PS4Constants.R1.getValue()));
+			bL2 = new LogicalButton( new PhysicalButton(controller, PS4Constants.L2.getValue()));
+			bR2 = new LogicalButton( new PhysicalButton(controller, PS4Constants.R2.getValue()));
+			bShare = new LogicalButton( new PhysicalButton(controller, PS4Constants.SHARE.getValue()));
+			bOptions = new LogicalButton( new PhysicalButton(controller, PS4Constants.OPTIONS.getValue()));
+			bLstick = new LogicalButton( new PhysicalButton(controller, PS4Constants.L_STICK.getValue()));
+			bRstick = new LogicalButton( new PhysicalButton(controller, PS4Constants.R_STICK.getValue()));
+			bPS4 = new LogicalButton( new PhysicalButton(controller, PS4Constants.PS4.getValue()));
+			bTrackpad = new LogicalButton( new PhysicalButton(controller, PS4Constants.TRACKPAD.getValue()));
+			bPovUp = new LogicalButton( new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.UP));
+			bPovRight = new LogicalButton( new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.RIGHT));
+			bPovDown = new LogicalButton( new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.DOWN));
+			bPovLeft = new LogicalButton( new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.LEFT));
 
-			aLeftX = new PhysicalAxis( controller, PS4Constants.LEFT_STICK_X.getValue(), false);
-			aLeftY = new PhysicalAxis( controller, PS4Constants.LEFT_STICK_Y.getValue(), true);
-			aRightX = new PhysicalAxis( controller, PS4Constants.RIGHT_STICK_X.getValue(), false);
-			aRightY = new PhysicalAxis( controller, PS4Constants.RIGHT_STICK_Y.getValue(), true);
-			aL2 = new PhysicalAxis( controller, PS4Constants.L2_AXIS.getValue(), false);
-			aR2 = new PhysicalAxis( controller, PS4Constants.R2_AXIS.getValue(), false);
+			aLeftX = new LogicalAxis( new PhysicalAxis( controller, PS4Constants.LEFT_STICK_X.getValue(), false));
+			aLeftY = new LogicalAxis( new PhysicalAxis( controller, PS4Constants.LEFT_STICK_Y.getValue(), true));
+			aRightX = new LogicalAxis( new PhysicalAxis( controller, PS4Constants.RIGHT_STICK_X.getValue(), false));
+			aRightY = new LogicalAxis( new PhysicalAxis( controller, PS4Constants.RIGHT_STICK_Y.getValue(), true));
+			aL2 = new LogicalAxis( new PhysicalAxis( controller, PS4Constants.L2_AXIS.getValue(), false));
+			aR2 = new LogicalAxis( new PhysicalAxis( controller, PS4Constants.R2_AXIS.getValue(), false));
 		}
 	}
 
-	// Represents a generic button
-	public static interface LogicalButton {
-		public boolean get();
-		public default void push() { throw new UnsupportedOperationException();}
-		public default void release() { throw new UnsupportedOperationException();}
-		public default void hit() { hit(300); }
-		public default void hit( long msecs) { throw new UnsupportedOperationException();}
+	
+	public static class LogicalButton {
+		SoftButton sb;
+		IPhysicalButton pb;
+		
+		private LogicalButton( IPhysicalButton pb) {
+			this.pb = pb;
+			sb = new SoftButton();
+		}
+		private LogicalButton() {
+			this(null);
+		}
+		
+		public boolean get() { 			
+			if( pb != null)
+				return pb.get() || sb.get();
+			else
+				return sb.get();			
+		}
+		
+		public void push() { sb.push(); }
+		public void release() { sb.release(); }
+		public void hit() { sb.hit(300); }
+		public void hit(long msecs) { sb.hit(msecs); }		
 	}
 	
 	// A button that can be operated by software
-	private static class SoftButton implements LogicalButton {
+	private static class SoftButton {
 		volatile boolean state;
-		@Override
 		public boolean get() { return state; }
-		@Override
 		public void push() { state = true; }
-		@Override
 		public void release() { state = false; }
-		@Override
 		public void hit( long msecs) {
 			// push() this, 
 			// then start a thread to release() after a short while
@@ -313,8 +293,12 @@ public class OI {
 		}
 	}
 	
+	private static interface IPhysicalButton {
+		public boolean get();
+	}
+	
 	// A button on a controller
-	private static class PhysicalButton implements LogicalButton {
+	private static class PhysicalButton implements IPhysicalButton {
 		Button btn;
 		private PhysicalButton( Joystick controller, int btnNum) { 
 			btn = new JoystickButton( controller, btnNum); 
@@ -330,7 +314,7 @@ public class OI {
 	// Allows you to use a controller axis as a button
 	// Not used yet
 	@SuppressWarnings("unused")
-	private static class PhysicalAxisButton implements LogicalButton {
+	private static class PhysicalAxisButton implements IPhysicalButton {
 		private PhysicalAxis physAxis;
 		private PhysicalAxisButton( Joystick controller, int axisNum, boolean invert) {
 			physAxis = new PhysicalAxis( controller, axisNum, invert);
@@ -340,7 +324,7 @@ public class OI {
 	}
 	
 	// Allows you to use a POV button as a button
-	private static class PhysicalPovButton implements LogicalButton {		
+	private static class PhysicalPovButton implements IPhysicalButton {		
 		private Joystick controller;
 		private POV_BUTTON whichPov;
 		
@@ -411,23 +395,37 @@ public class OI {
 	
 	
 	// Represents a generic Axis
-	public static interface LogicalAxis {
-		public double get();
-		public default void set( double value) {}
+	public static class LogicalAxis {
+		private final SoftAxis sa;
+		private final PhysicalAxis pa;
+		
+		LogicalAxis( PhysicalAxis pa) {
+			this.pa = pa;
+			this.sa = new SoftAxis();
+		}
+		LogicalAxis() {
+			this(null);
+		}
+		
+		public double get() {
+			if( mode == OIMode.HARD && pa != null)
+				return pa.get();
+			else
+				return sa.get();
+		}
+		public void set( double value) { sa.set( value); }
 	}
 	
 	// An Axis that can be operated by software
-	private static class SoftAxis implements LogicalAxis {
+	private static class SoftAxis {
 		volatile double value = 0;
-		@Override
 		public double get() { return value; }
-		@Override
 		public void set( double value) { this.value = value; }
 	}
 	
 	
 	// An Axis on a controller
-	private static class PhysicalAxis implements LogicalAxis {
+	private static class PhysicalAxis {
 		Joystick controller;
 		int axisNum;
 		boolean invert;
@@ -437,12 +435,10 @@ public class OI {
 			this.invert = invert;
 		}
 
-		@Override
 		public double get() {
 			return (invert ? -1.0 : 1.0 ) * controller.getRawAxis(axisNum);
 		}
 	}
-
 }
 
 
