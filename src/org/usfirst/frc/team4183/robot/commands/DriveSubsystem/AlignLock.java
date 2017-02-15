@@ -29,13 +29,13 @@ public class AlignLock extends Command
                                   0,		// nspace - don't care
                                   300);	// period_msec - a nice blink rate
     	
-        Robot.driveSubsystem.driveStraight(true);
+        Robot.driveSubsystem.setAlignDrive(true);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() 
     {
-    	Robot.driveSubsystem.alignDrive(OI.axisForward.get(), OI.axisTurn.get());
+    	Robot.driveSubsystem.doAlignDrive(OI.axisForward.get(), OI.axisTurn.get());
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -55,7 +55,7 @@ public class AlignLock extends Command
     // Called once after isFinished returns true
     protected void end() 
     {
-        Robot.driveSubsystem.driveStraight(false);
+        Robot.driveSubsystem.setAlignDrive(false);
     }
 
     // Called when another command which requires one or more of the same
