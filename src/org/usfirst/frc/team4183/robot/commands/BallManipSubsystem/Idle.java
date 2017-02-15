@@ -1,6 +1,5 @@
 package org.usfirst.frc.team4183.robot.commands.BallManipSubsystem;
 
-import org.usfirst.frc.team4183.robot.LightingControl;
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;

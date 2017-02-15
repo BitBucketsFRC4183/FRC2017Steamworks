@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class Shooting extends Command {
 	
-	OI.ButtonEvent btnWaitingForTrigger;
+	OI.ButtonEvent btnShooting;
 
     public Shooting() {
         requires(Robot.ballManipSubsystem);
@@ -19,7 +19,7 @@ public class Shooting extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	btnWaitingForTrigger = OI.getBtnEvt(OI.btnShoot);
+    	btnShooting = OI.getBtnEvt(OI.btnShoot);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -31,7 +31,7 @@ public class Shooting extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(btnWaitingForTrigger.onReleased()) {
+    	if(btnShooting.onReleased()) {
     		Robot.ballManipSubsystem.setConveyerOff();
     		return CommandUtils.stateChange(this, new WaitingForTrigger());
     	}

@@ -42,11 +42,11 @@ public class DriveLock extends Command
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if (OI.btnAlignLock.get())
+    	if (OI.btnAlignLock.get() && !OI.btnDriveLock.get())
     	{
     		return CommandUtils.stateChange(this, new AlignLock());
     	}
-    	else if( ! OI.btnDriveLock.get()) 
+    	if( !OI.btnAlignLock.get() && !OI.btnDriveLock.get()) 
     	{
     		return CommandUtils.stateChange(this, new DriverControl());
     	}
