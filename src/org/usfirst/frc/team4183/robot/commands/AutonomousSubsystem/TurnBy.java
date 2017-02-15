@@ -4,7 +4,7 @@ import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.utils.CommandUtils;
 import org.usfirst.frc.team4183.utils.ControlLoop;
-import org.usfirst.frc.team4183.utils.DeadZone;
+import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
 import org.usfirst.frc.team4183.utils.RateLimit;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -17,10 +17,10 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	// but need further tuning.
 	
 	// Proportional gain
-	private final static double Kp = 0.02; // purposely low for 1st pass
+	private final static double Kp = 0.03; // purposely low for 1st pass
 
 	// Largest drive that will be applied
-	private final double MAX_DRIVE = 0.7;
+	private final double MAX_DRIVE = 0.8;
 	// Smallest drive that will be applied 
 	// (unless error falls within dead zone, then drive goes to 0)
 	private final double MIN_DRIVE = 0.4; // Yeah this does seem high
@@ -30,9 +30,9 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	// Used (along with dead zone) to determine when turn is complete.
 	// If angular velocity (Degrees/sec) is greater than this,
 	// we're not done yet.
-	private final double ALLOWED_RATE_DPS = 1.0;
+	private final double SETTLED_RATE_DPS = 0.5;
 	
-	// Limits ramp rate of drive 
+	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 1.5;
 	
 	private final Command nextState;
@@ -40,7 +40,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	
 	private ControlLoop cloop;
 	private RateLimit rateLimit;
-	private DeadZone deadZone;
+	private MinMaxDeadzone deadZone;
 	
 	// Require a no-arg constructor for use in state-testing mode
 	public TurnBy() {
@@ -60,7 +60,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		double setPoint = degreesToTurn + Robot.imu.getYawDeg();
 		
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
-		deadZone = new DeadZone( MIN_DRIVE, MAX_DRIVE, DEAD_ZONE_DEG);
+		deadZone = new MinMaxDeadzone( DEAD_ZONE_DEG, MIN_DRIVE, MAX_DRIVE);
 		
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
@@ -75,7 +75,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		// We are finished when loop error and angular velocity both small
 		if( ( Math.abs(cloop.getError()) < DEAD_ZONE_DEG )
 			&&
-			( Math.abs(Robot.imu.getRateDeg()) < ALLOWED_RATE_DPS )
+			( Math.abs(Robot.imu.getRateDeg()) < SETTLED_RATE_DPS )
 		) {
 			if( nextState != null)
 				return CommandUtils.stateChange(this, nextState);
@@ -115,7 +115,8 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		// Apply drive non-linearities
 		double x2 = rateLimit.f(x1);
 		double x3 = deadZone.f(x2, error);		
-				
+		
+		// Debug
 		System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
 		
 		// Set the output

@@ -7,7 +7,7 @@ public class RateLimit {
 	private double prevMsec;
 	
 	/**
-	 * 
+	 * Constructor
 	 * @param maxChangePerSecond units are per second
 	 */
 	public RateLimit( double maxChangePerSecond) {

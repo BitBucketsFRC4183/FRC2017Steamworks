@@ -10,6 +10,7 @@ import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.DriveSubsystem.Idle;
+import org.usfirst.frc.team4183.utils.Deadzone;
 
 /**
  *
@@ -68,19 +69,19 @@ public class DriveSubsystem extends Subsystem {
 			 * 
 			// Turn stick is + to the right,
 			// +yaw is CCW looking down,
-			// so + stick lowers the setpoint. 
-			yawSetPoint += -0.2*turn;
+			// so + stick should lower the setpoint. 
+			yawSetPoint += -0.2 * Deadzone.f(turn, .05);
 			*/
+
+			if(OI.btnLowSensitiveDrive.get())
+				speed *= lowSensitivityGain;
+			
 			if(OI.btnInvertAxis.get()) {
 				speed *= -1.0;
 			}
 			
 			double error = ALIGN_LOOP_GAIN * (yawSetPoint - Robot.imu.getYawDeg());
-			
-			
-			if(OI.btnLowSensitiveDrive.get())
-				speed *= lowSensitivityGain;
-				
+
 			robotDrive.arcadeDrive(speed, error);			
 		}
 		
