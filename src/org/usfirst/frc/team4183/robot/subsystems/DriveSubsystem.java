@@ -2,7 +2,6 @@ package org.usfirst.frc.team4183.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.CANTalon;
-import com.ctre.PigeonImu.CalibrationMode;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -11,7 +10,6 @@ import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.DriveSubsystem.Idle;
-import org.usfirst.frc.team4183.utils.Deadzone;
 
 /**
  *
@@ -29,8 +27,6 @@ public class DriveSubsystem extends Subsystem {
 		
 		private double yawSetPoint;
 		
-	// Put methods for controlling this subsystem
-    // here. Call these from Commands.
 		public DriveSubsystem() {
 			Preferences prefs = Preferences.getInstance();
 			leftFrontMotor = new CANTalon(RobotMap.LEFT_FRONT_MOTOR_ID);
