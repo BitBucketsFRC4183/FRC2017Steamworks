@@ -4,7 +4,8 @@ import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.utils.CommandUtils;
 import org.usfirst.frc.team4183.utils.ControlLoop;
-import org.usfirst.frc.team4183.utils.RateLimiter;
+import org.usfirst.frc.team4183.utils.DeadZone;
+import org.usfirst.frc.team4183.utils.RateLimit;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -38,7 +39,8 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private final double degreesToTurn;
 	
 	private ControlLoop cloop;
-	private RateLimiter rateLimiter;
+	private RateLimit rateLimit;
+	private DeadZone deadZone;
 	
 	// Require a no-arg constructor for use in state-testing mode
 	public TurnBy() {
@@ -57,7 +59,8 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		// Compute setPoint
 		double setPoint = degreesToTurn + Robot.imu.getYawDeg();
 		
-		rateLimiter = new RateLimiter( RATE_LIM_PER_SEC);
+		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
+		deadZone = new DeadZone( MIN_DRIVE, MAX_DRIVE, DEAD_ZONE_DEG);
 		
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
@@ -107,24 +110,19 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	@Override
 	public void setError( double error) {
 		
-		double inDrive = Kp * error;
+		double x1 = Kp * error;
 			
 		// Apply drive non-linearities
-		double absDrv = Math.abs(inDrive);						
-		if( absDrv > MAX_DRIVE) absDrv = MAX_DRIVE;
-
-		if( absDrv < MIN_DRIVE) absDrv = MIN_DRIVE;
-		if( Math.abs(error) < DEAD_ZONE_DEG) absDrv = 0.0;
-		double outDrive = Math.signum(inDrive)*absDrv;
-		
-		outDrive = rateLimiter.limit(outDrive);
-		
-		System.out.format("Error=%f inDrive=%f outDrive=%f\n", error, inDrive, outDrive);
+		double x2 = rateLimit.f(x1);
+		double x3 = deadZone.f(x2, error);		
+				
+		System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
 		
 		// Set the output
 		// - sign required because + stick produces right turn,
 		// but right turn is actually a negative yaw angle
 		// (using our yaw angle convention: right-hand-rule w/z-axis up)
-		OI.axisTurn.set( -outDrive);						
+		OI.axisTurn.set( -x3);						
 	}
+	
 }
