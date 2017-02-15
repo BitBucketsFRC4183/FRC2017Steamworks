@@ -1,4 +1,4 @@
-package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
+package org.usfirst.frc.team4183.robot.commands.VisionSubsystem;
 
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
@@ -9,18 +9,15 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class Idle extends Command {
+public class Template extends Command {
 
-    public Idle() {
-    	requires( Robot.autonomousSubsystem);
-    	setRunWhenDisabled(true);  // Idle state needs this!
+    public Template() 
+    {
+        requires(Robot.visionSubsystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	OI.axisForward.set(0.0);
-    	OI.axisTurn.set(0.0);
-    	OI.btnIdle.push();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -29,11 +26,6 @@ public class Idle extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if( Robot.runMode == Robot.RunMode.AUTO ) {
-    		// TODO go to 1st state here
-    		// This transition is just for testing
-    		return CommandUtils.stateChange(this, new TurnBy(180.0, new End()));
-    	}
         return false;
     }
 

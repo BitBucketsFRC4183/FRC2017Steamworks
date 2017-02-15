@@ -18,6 +18,7 @@ public class Idle extends Command {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.climbSubsystem);
+    	setRunWhenDisabled(true);  // Idle state needs this!
     }
 
     // Called just before this Command runs the first time
