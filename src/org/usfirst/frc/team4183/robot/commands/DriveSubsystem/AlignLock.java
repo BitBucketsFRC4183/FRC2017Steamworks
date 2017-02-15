@@ -41,7 +41,8 @@ public class AlignLock extends Command
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if (OI.btnDriveLock.get())
+    	
+    	if (OI.btnDriveLock.get() || OI.sbtnDriveLock.get())
     	{
     		return CommandUtils.stateChange(this, new DriveLock());
     	}
