@@ -2,6 +2,7 @@ package org.usfirst.frc.team4183.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.CANTalon;
+import com.ctre.PigeonImu.CalibrationMode;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -16,10 +17,10 @@ import org.usfirst.frc.team4183.utils.Deadzone;
  *
  */
 public class DriveSubsystem extends Subsystem {
-		private final CANTalon leftMotor0;
-		private final CANTalon leftMotor1; 
-		private final CANTalon rightMotor0;
-		private final CANTalon rightMotor1;
+		private final CANTalon leftFrontMotor;
+		private final CANTalon leftRearMotor; 
+		private final CANTalon rightFrontMotor;
+		private final CANTalon rightRearMotor;
 	    
 		private final RobotDrive robotDrive;
 		
@@ -32,20 +33,20 @@ public class DriveSubsystem extends Subsystem {
     // here. Call these from Commands.
 		public DriveSubsystem() {
 			Preferences prefs = Preferences.getInstance();
-			leftMotor0 = new CANTalon(RobotMap.LEFT_MOTOR0_ID);
-			leftMotor1 = new CANTalon(RobotMap.LEFT_MOTOR1_ID);
-			rightMotor0 = new CANTalon(RobotMap.RIGHT_MOTOR0_ID);
-			rightMotor1 = new CANTalon(RobotMap.RIGHT_MOTOR1_ID);
+			leftFrontMotor = new CANTalon(RobotMap.LEFT_FRONT_MOTOR_ID);
+			leftRearMotor = new CANTalon(RobotMap.LEFT_REAR_MOTOR_ID);
+			rightFrontMotor = new CANTalon(RobotMap.RIGHT_FRONT_MOTOR_ID);
+			rightRearMotor = new CANTalon(RobotMap.RIGHT_REAR_MOTOR_ID);
 			
 			lowSensitivityGain = prefs.getDouble("LowSensitivityGain", lowSensitivityGain);
 	
-			robotDrive = new RobotDrive(leftMotor0, leftMotor1, rightMotor0, rightMotor1);
+			robotDrive = new RobotDrive(leftFrontMotor, leftRearMotor, rightFrontMotor, rightRearMotor);
 			robotDrive.setSafetyEnabled(false);
 			
-			leftMotor0.setFeedbackDevice(RobotMap.DRIVE_ENCODER);
-			leftMotor0.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV); 
-			rightMotor0.setFeedbackDevice(RobotMap.DRIVE_ENCODER);
-			rightMotor0.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV);
+			leftFrontMotor.setFeedbackDevice(RobotMap.DRIVE_ENCODER);
+			leftFrontMotor.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV); 
+			rightFrontMotor.setFeedbackDevice(RobotMap.DRIVE_ENCODER);
+			rightFrontMotor.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV);
 		}	
 
 		public void enable() {}
@@ -54,13 +55,32 @@ public class DriveSubsystem extends Subsystem {
 			robotDrive.arcadeDrive(0.0, 0.0);			
 		}
 		
-		public void driveStraight(boolean start) {
+		public void arcadeDrive(double speed, double turn) {
+			
+			if(OI.btnLowSensitiveDrive.get()) {
+				speed *= lowSensitivityGain;
+				turn *= lowSensitivityGain;
+			}
+			if(OI.btnInvertAxis.get()) {
+				speed *= -1.0;
+			}
+			
+			// Turn stick is + to the right;
+			// but arcadeDrive 2nd arg + produces left turn
+			// (this is +yaw when yaw is defined according to right-hand-rule
+			// with z-axis up, so arguably correct).
+			// Anyhow need the - sign to make it turn correctly.
+			robotDrive.arcadeDrive(speed, -turn);
+		}
+		
+		
+		public void setAlignDrive(boolean start) {
 			if(start) {
 				yawSetPoint = Robot.imu.getYawDeg();
 			} 
 		}
 		
-		public void alignDrive(double speed, double turn) {
+		public void doAlignDrive(double speed, double turn) {
 			
 			/* No requirement for this but might be nice to have?
 			 * Allows a bit of driver yaw adjust while in this mode.
@@ -85,24 +105,57 @@ public class DriveSubsystem extends Subsystem {
 			robotDrive.arcadeDrive(speed, error);			
 		}
 		
-		public void arcadeDrive(double speed, double turn) {
-			
-			if(OI.btnLowSensitiveDrive.get()) {
-				speed *= lowSensitivityGain;
-				turn *= lowSensitivityGain;
+		
+		public void setLockDrive( boolean start) {
+
+			if( start) {
+				setupClosedLoopMaster(leftFrontMotor);
+				setupClosedLoopMaster(rightFrontMotor);
+
+				leftRearMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
+				leftRearMotor.reverseOutput(false); // Follow the front
+				rightRearMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
+				rightRearMotor.reverseOutput(false); // Follow the front
 			}
-			if(OI.btnInvertAxis.get()) {
-				speed *= -1.0;
+			else {
+				leftFrontMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+				leftRearMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+				rightFrontMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+				rightRearMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);							
 			}
-			
-			// Turn stick is + to the right;
-			// but arcadeDrive 2nd arg + produces left turn
-			// (this is +yaw when yaw is defined according to right-hand-rule
-			// with z-axis up, so arguably correct).
-			// Anyhow need the - sign to make it turn correctly.
-			robotDrive.arcadeDrive(speed, -turn);
 		}
 		
+		private void setupClosedLoopMaster( CANTalon m) {
+			
+			m.changeControlMode(CANTalon.TalonControlMode.Position);
+			m.setFeedbackDevice(RobotMap.DRIVE_ENCODER);
+			m.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV);
+			m.reverseSensor(false);  // TODO true or false? I think false...
+			m.setPosition(0.0);
+			
+			// TODO magic numbers
+			m.setPID(0.05, 0.0, 0.0);  // TODO Gain??
+			m.setF(0.0);
+			m.setIZone(0);
+			m.setCloseLoopRampRate(50.0);  // Smoothes a bit
+			m.setAllowableClosedLoopErr(100);
+			m.configNominalOutputVoltage(+4.0, -4.0);
+			m.configPeakOutputVoltage(+12.0, -12.0);			
+		}
+		
+		public void doLockDrive() {
+			leftFrontMotor.set(0.0);
+			leftRearMotor.set(leftFrontMotor.getDeviceID());
+			rightFrontMotor.set(0.0);
+			rightRearMotor.set(rightFrontMotor.getDeviceID());			
+		}
+		
+		
+		public double getPosition() {
+			// TODO: calibrate this & return meaningful units
+			// (currently returns rotations of the encoder, I believe)
+			return leftFrontMotor.getPosition();
+		}
 		
 		public void initDefaultCommand() {
 			setDefaultCommand(new Idle());

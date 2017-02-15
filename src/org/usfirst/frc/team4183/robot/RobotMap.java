@@ -12,10 +12,10 @@ import com.ctre.CANTalon;
 public class RobotMap {
 
 	// Drive Subsystem
-	public static final int LEFT_MOTOR0_ID = 1;
-	public static final int LEFT_MOTOR1_ID = 2;
-	public static final int RIGHT_MOTOR0_ID = 3;
-	public static final int RIGHT_MOTOR1_ID = 4; 
+	public static final int LEFT_FRONT_MOTOR_ID = 1;
+	public static final int LEFT_REAR_MOTOR_ID = 2;
+	public static final int RIGHT_FRONT_MOTOR_ID = 3;
+	public static final int RIGHT_REAR_MOTOR_ID = 4; 
 	
 	public static final CANTalon.FeedbackDevice DRIVE_ENCODER = CANTalon.FeedbackDevice.QuadEncoder;
 	public static final int DRIVE_PULSES_PER_REV = 2048; 
