@@ -1,6 +1,5 @@
 package org.usfirst.frc.team4183.robot.commands.BallManipSubsystem;
 
-import org.usfirst.frc.team4183.robot.LightingControl;
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
@@ -15,6 +14,7 @@ public class Idle extends Command {
 
     public Idle() {
         requires(Robot.ballManipSubsystem);
+    	setRunWhenDisabled(true);  // Idle state needs this!
     }
 
     // Called just before this Command runs the first time
