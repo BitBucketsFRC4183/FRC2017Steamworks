@@ -276,10 +276,10 @@ public class OI {
 	// Represents a generic button
 	public static interface LogicalButton {
 		public boolean get();
-		public default void push() {}
-		public default void release() {}
+		public default void push() { throw new UnsupportedOperationException();}
+		public default void release() { throw new UnsupportedOperationException();}
 		public default void hit() { hit(300); }
-		public default void hit( long msecs) {}
+		public default void hit( long msecs) { throw new UnsupportedOperationException();}
 	}
 	
 	// A button that can be operated by software
