@@ -9,13 +9,17 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.usfirst.frc.team4183.robot.subsystems.AutonomousSubsystem;
 // Subsystems
 import org.usfirst.frc.team4183.robot.subsystems.BallManipSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.VisionSubsystem;
+import org.usfirst.frc.team4183.utils.Stopwatch;
 import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
@@ -23,6 +27,7 @@ import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
 
 // Non-subsystem (i.e., non-commandable) controls
 import org.usfirst.frc.team4183.robot.LightingControl;
+import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -92,6 +97,23 @@ public class Robot extends IterativeRobot {
 		lightingControl = new LightingControl(); 		
 		imu = new NavxIMU();
 		
+		
+		// LIGHT TIMING DEBUGGING!! This kills the robot!!
+		/*
+		while(true) {
+			long tnow = System.nanoTime();
+			
+			for( int i = 0 ; i < 100 ; i++)
+				lightingControl.set(LightingObjects.BALL_SUBSYSTEM,
+		                LightingControl.FUNCTION_ON,
+		                LightingControl.COLOR_GREEN,
+		                0,		// Don't care
+		                0);		// Don't care 		
+			
+			System.out.format( "%f\n", (System.nanoTime() - tnow)/1.0e9);
+		}
+		*/
+		
 
 		// Construction is complete
 				
@@ -130,7 +152,9 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void disabledPeriodic() {
+		runWatch.start();
 		Scheduler.getInstance().run();
+		runWatch.stop();
 	}
 
 	/**
@@ -165,7 +189,9 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		runWatch.start();
 		Scheduler.getInstance().run();
+		runWatch.stop();
 	}
 
 	@Override
@@ -182,38 +208,32 @@ public class Robot extends IterativeRobot {
 		// Will result in only Default Commands (Idle-s) running.
 		// Do this last to be sure that Idle-s see correct info when starting.
 		Scheduler.getInstance().removeAll();
-		
-		tLoopLast = System.nanoTime();
 	}
 
 	/**
 	 * This function is called periodically during operator control
 	 */
-	
-	private long tLoopLast = 0;
-	private long tRunAccum = 0;
-	private long tLoopAccum = 0;
-	private int count = 0;
-	private int ITERS = 50;
+
+	List<Double> runTimeList = new ArrayList<>();
 	
 	@Override
 	public void teleopPeriodic() {
-		
-		tLoopAccum += (System.nanoTime() - tLoopLast);
-		tLoopLast = System.nanoTime();
-		
-		double tRunStart = System.nanoTime();
-		Scheduler.getInstance().run();
-		tRunAccum += (System.nanoTime() - tRunStart);
-		
-		if( ++count == ITERS) {
-			System.out.format("run:%f, loop:%f\n", 
-					(double)tRunAccum/1.0e6/ITERS, (double)tLoopAccum/1.0e6/ITERS);
 			
-			count = 0;
-			tRunAccum = 0;
-			tLoopAccum = 0;
-		}				
+		runWatch.start();
+		Scheduler.getInstance().run();
+		
+		/*
+		 * Try this - deliberately add delay
+		 * What is effect on loop timers and "trip time" in DS?
+		try {
+			Thread.sleep(5);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			Thread.currentThread().interrupt();
+		}
+		*/
+		
+		runWatch.stop();
 	}
 
 	/**
@@ -234,6 +254,23 @@ public class Robot extends IterativeRobot {
 		LiveWindow.run();		
 	}
 	
+	
+	// Called periodically in all modes
+	// I'm going to put some loop timing stats collection in here
+	
+	Stopwatch loopWatch = 
+			new Stopwatch( "Loop", 
+			(name, max, min, avg) -> System.out.format("%s %.1f %.1f %.1f\n", name, max, min, avg) );
+	Stopwatch runWatch = 
+			new Stopwatch( "Run", 
+			(name, max, min, avg) -> System.out.format("%s %.1f %.1f %.1f\n", name, max, min, avg) );
+	
+	@Override
+	public void robotPeriodic() {		
+		loopWatch.stop();
+		loopWatch.start();		
+	}
+
 	
 	private Set<Subsystem> subSystems = new HashSet<>();
 
