@@ -2,6 +2,7 @@ package org.usfirst.frc.team4183.robot.subsystems;
 
 import org.usfirst.frc.team4183.robot.commands.VisionSubsystem.Idle;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
@@ -19,10 +20,21 @@ public class VisionSubsystem extends Subsystem
 	public static final String GEAR_LIFT_DATA = "GearLiftData";
 	public static final String BOILER_DATA = "BoilerData";
 	
+	public static final String RED_ALLIANCE = "red";
+	public static final String BLUE_ALLIANCE = "blue";
+	
+	private static final String ALLIANCE_COLOR = "color";
+	private static final String ALLIANCE_NUMBER = "number";
+	
 	private static String currentCam = FRONT_CAM;
 	private static String currentFrontCamMode = GEAR_LIFT_MODE;
+	
+	public static String currentAlliance = "red";
+	public static int alliancePosition = 1;
 
 	private static NetworkTable bvtable;
+	
+	private static DriverStation driverStation;
 	
 	class TargetData
 	{
@@ -54,6 +66,8 @@ public class VisionSubsystem extends Subsystem
 		
 		boilerData = new TargetData();
 		//bvtable.putValue(BOILER_DATA, boilerData);
+		
+		driverStation = DriverStation.getInstance();
 		
 	}
 	
@@ -103,6 +117,39 @@ public class VisionSubsystem extends Subsystem
 		bvtable.getValue(BOILER_DATA, boilerData);
 		
 		return (boilerData.confidenceFactor >= 0.5);
+	}
+	
+	public boolean isRedAlliance() {
+		if(driverStation.getAlliance().equals(DriverStation.Alliance.Red)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public void setRedAlliance() {
+		currentAlliance = "red";
+		bvtable.putString(ALLIANCE_COLOR, RED_ALLIANCE);
+	}
+	
+	public void setBlueAlliance() {
+		currentAlliance = "blue";
+		bvtable.putString(ALLIANCE_COLOR, BLUE_ALLIANCE);
+	}
+	
+	public boolean isBlueAlliance() {
+		if(driverStation.getAlliance().equals(DriverStation.Alliance.Blue)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public void setAllianceNumber() {
+		alliancePosition = driverStation.getLocation();
+		bvtable.putNumber(ALLIANCE_NUMBER, alliancePosition);
+	}
+	
+	public int getAllianceNumber() {
+		return driverStation.getLocation();
 	}
 	
 	@Override
