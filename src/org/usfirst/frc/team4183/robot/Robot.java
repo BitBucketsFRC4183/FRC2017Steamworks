@@ -98,21 +98,7 @@ public class Robot extends IterativeRobot {
 		imu = new NavxIMU();
 		
 		
-		// LIGHT TIMING DEBUGGING!! This kills the robot!!
-		/*
-		while(true) {
-			long tnow = System.nanoTime();
-			
-			for( int i = 0 ; i < 100 ; i++)
-				lightingControl.set(LightingObjects.BALL_SUBSYSTEM,
-		                LightingControl.FUNCTION_ON,
-		                LightingControl.COLOR_GREEN,
-		                0,		// Don't care
-		                0);		// Don't care 		
-			
-			System.out.format( "%f\n", (System.nanoTime() - tnow)/1.0e9);
-		}
-		*/
+
 		
 
 		// Construction is complete
@@ -133,6 +119,22 @@ public class Robot extends IterativeRobot {
 		addSubsystemToDebug(gearHandlerSubsystem);
 		addSubsystemToDebug(autonomousSubsystem);		
 		showDebugInfo();
+
+		// LIGHT TIMING DEBUGGING!! This kills the robot!!
+/*		
+		while(true) {
+			long tnow = System.nanoTime();
+			
+			for( int i = 0 ; i < 100 ; i++)
+				lightingControl.set(LightingObjects.BALL_SUBSYSTEM,
+		                LightingControl.FUNCTION_ON,
+		                LightingControl.COLOR_GREEN,
+		                0,		// Don't care
+		                0);		// Don't care 		
+			
+			System.out.format( "%f\n", (System.nanoTime() - tnow)/1.0e9);
+		}
+*/		
 	}
 
 	/**
@@ -263,12 +265,12 @@ public class Robot extends IterativeRobot {
 			(name, max, min, avg) -> System.out.format("%s %.1f %.1f %.1f\n", name, max, min, avg) );
 	Stopwatch runWatch = 
 			new Stopwatch( "Run", 
-			(name, max, min, avg) -> System.out.format("%s %.1f %.1f %.1f\n", name, max, min, avg) );
+			(name, max, min, avg) -> SmartDashboard.putNumber( "MaxRun", max) );
 	
 	@Override
 	public void robotPeriodic() {		
-		loopWatch.stop();
-		loopWatch.start();		
+		//loopWatch.stop();
+		//loopWatch.start();		
 	}
 
 	

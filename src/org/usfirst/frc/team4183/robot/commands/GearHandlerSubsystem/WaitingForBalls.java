@@ -33,14 +33,14 @@ public class WaitingForBalls extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	
-    	/*
+    	
     	// TIMING DEBUG! Don't do this normally!
        	Robot.lightingControl.set(LightingObjects.GEAR_SUBSYSTEM,
                 LightingControl.FUNCTION_REVERSE,
                 LightingControl.COLOR_GREEN,
                 4,		// nspace - good for either 8 or 16 pixel strips
                 200);		// period_msec 
-       	*/
+       	
     	
     	Robot.gearHandlerSubsystem.spinRollerBalls();   		
    }
