@@ -22,6 +22,7 @@ public class WaitingForGear extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.gearHandlerSubsystem.closeGate();
+    	OI.sbtnDriveLock.push();
    }
 
     // Called repeatedly when this Command is scheduled to run
@@ -29,7 +30,7 @@ public class WaitingForGear extends Command {
     	Robot.gearHandlerSubsystem.spinRollerGear();
     	Robot.lightingControl.set(LightingObjects.GEAR_SUBSYSTEM,
                                   LightingControl.FUNCTION_REVERSE,
-                                  OI.btnDriveLock.get()? LightingControl.COLOR_GREEN : LightingControl.COLOR_ORANGE,
+                                  LightingControl.COLOR_GREEN,
                                   4,		// nspace - good for either 8 or 16 pixel strips
                                   200);		// period_msec    		
     	
@@ -49,6 +50,7 @@ public class WaitingForGear extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+    	OI.sbtnDriveLock.release();
     }
 
     // Called when another command which requires one or more of the same

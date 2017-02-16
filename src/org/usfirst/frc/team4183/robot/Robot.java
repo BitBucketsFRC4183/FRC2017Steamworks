@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -174,11 +173,7 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		runMode = RunMode.TELEOP;
 		
-		// Set up OI with specific driver & operator mappings.
-		// Must do this before clearing out scheduler, see note in autonomousInit().
-		// TODO use real names
-		// TODO get this info from SmartDashboard
-		oi.teleopInit( OI.Driver.JOE, OI.Operator.BILL);
+		oi.teleopInit();
 
 		// Clear out the scheduler
 		// Will result in only Default Commands (Idle-s) running.

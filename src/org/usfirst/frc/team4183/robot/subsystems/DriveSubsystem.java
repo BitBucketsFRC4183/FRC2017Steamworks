@@ -10,6 +10,7 @@ import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.DriveSubsystem.Idle;
+import org.usfirst.frc.team4183.utils.Deadzone;
 
 /**
  *
@@ -78,16 +79,10 @@ public class DriveSubsystem extends Subsystem {
 		
 		public void doAlignDrive(double speed, double turn) {
 			
-			/* No requirement for this but might be nice to have?
-			 * Allows a bit of driver yaw adjust while in this mode.
-			 * The 0.2 is chosen to give a max of 10 deg/sec setpoint change
-			 * at full stick (a modest amount).
-			 * 
 			// Turn stick is + to the right,
 			// +yaw is CCW looking down,
 			// so + stick should lower the setpoint. 
 			yawSetPoint += -0.2 * Deadzone.f(turn, .05);
-			*/
 
 			if(OI.btnLowSensitiveDrive.get())
 				speed *= lowSensitivityGain;
