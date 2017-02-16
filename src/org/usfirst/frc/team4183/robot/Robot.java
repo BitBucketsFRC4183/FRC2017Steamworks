@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +26,6 @@ import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
 
 // Non-subsystem (i.e., non-commandable) controls
 import org.usfirst.frc.team4183.robot.LightingControl;
-import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -96,10 +94,7 @@ public class Robot extends IterativeRobot {
 		// Construct LightingControl, IMU, and vision
 		lightingControl = new LightingControl(); 		
 		imu = new NavxIMU();
-		
-		
-
-		
+			
 
 		// Construction is complete
 				
@@ -118,23 +113,7 @@ public class Robot extends IterativeRobot {
 		addSubsystemToDebug(driveSubsystem);
 		addSubsystemToDebug(gearHandlerSubsystem);
 		addSubsystemToDebug(autonomousSubsystem);		
-		showDebugInfo();
-
-		// LIGHT TIMING DEBUGGING!! This kills the robot!!
-/*		
-		while(true) {
-			long tnow = System.nanoTime();
-			
-			for( int i = 0 ; i < 100 ; i++)
-				lightingControl.set(LightingObjects.BALL_SUBSYSTEM,
-		                LightingControl.FUNCTION_ON,
-		                LightingControl.COLOR_GREEN,
-		                0,		// Don't care
-		                0);		// Don't care 		
-			
-			System.out.format( "%f\n", (System.nanoTime() - tnow)/1.0e9);
-		}
-*/		
+		showDebugInfo();		
 	}
 
 	/**
@@ -219,22 +198,9 @@ public class Robot extends IterativeRobot {
 	List<Double> runTimeList = new ArrayList<>();
 	
 	@Override
-	public void teleopPeriodic() {
-			
+	public void teleopPeriodic() {			
 		runWatch.start();
-		Scheduler.getInstance().run();
-		
-		/*
-		 * Try this - deliberately add delay
-		 * What is effect on loop timers and "trip time" in DS?
-		try {
-			Thread.sleep(5);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			Thread.currentThread().interrupt();
-		}
-		*/
-		
+		Scheduler.getInstance().run();	
 		runWatch.stop();
 	}
 
@@ -257,22 +223,10 @@ public class Robot extends IterativeRobot {
 	}
 	
 	
-	// Called periodically in all modes
-	// I'm going to put some loop timing stats collection in here
-	
-	Stopwatch loopWatch = 
-			new Stopwatch( "Loop", 
-			(name, max, min, avg) -> System.out.format("%s %.1f %.1f %.1f\n", name, max, min, avg) );
-	Stopwatch runWatch = 
+
+	private Stopwatch runWatch = 
 			new Stopwatch( "Run", 
 			(name, max, min, avg) -> SmartDashboard.putNumber( "MaxRun", max) );
-	
-	@Override
-	public void robotPeriodic() {		
-		//loopWatch.stop();
-		//loopWatch.start();		
-	}
-
 	
 	private Set<Subsystem> subSystems = new HashSet<>();
 
