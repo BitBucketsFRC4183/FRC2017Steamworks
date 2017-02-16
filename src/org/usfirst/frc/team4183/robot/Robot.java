@@ -181,15 +181,39 @@ public class Robot extends IterativeRobot {
 		// Clear out the scheduler
 		// Will result in only Default Commands (Idle-s) running.
 		// Do this last to be sure that Idle-s see correct info when starting.
-		Scheduler.getInstance().removeAll();		
+		Scheduler.getInstance().removeAll();
+		
+		tLoopLast = System.nanoTime();
 	}
 
 	/**
 	 * This function is called periodically during operator control
 	 */
+	
+	private long tLoopLast = 0;
+	private long tRunAccum = 0;
+	private long tLoopAccum = 0;
+	private int count = 0;
+	private int ITERS = 50;
+	
 	@Override
 	public void teleopPeriodic() {
+		
+		tLoopAccum += (System.nanoTime() - tLoopLast);
+		tLoopLast = System.nanoTime();
+		
+		double tRunStart = System.nanoTime();
 		Scheduler.getInstance().run();
+		tRunAccum += (System.nanoTime() - tRunStart);
+		
+		if( ++count == ITERS) {
+			System.out.format("run:%f, loop:%f\n", 
+					(double)tRunAccum/1.0e6/ITERS, (double)tLoopAccum/1.0e6/ITERS);
+			
+			count = 0;
+			tRunAccum = 0;
+			tLoopAccum = 0;
+		}				
 	}
 
 	/**
