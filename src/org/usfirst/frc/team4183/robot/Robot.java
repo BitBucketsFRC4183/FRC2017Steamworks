@@ -174,11 +174,7 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		runMode = RunMode.TELEOP;
 		
-		// Set up OI with specific driver & operator mappings.
-		// Must do this before clearing out scheduler, see note in autonomousInit().
-		// TODO use real names
-		// TODO get this info from SmartDashboard
-		oi.teleopInit( OI.Driver.JOE, OI.Operator.BILL);
+		oi.teleopInit();
 
 		// Clear out the scheduler
 		// Will result in only Default Commands (Idle-s) running.

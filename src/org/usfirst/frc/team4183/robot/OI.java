@@ -117,7 +117,13 @@ public class OI {
 	public static LogicalAxis axisForward;
 	public static LogicalAxis axisTurn;
 
-
+	
+	//****************************
+	// Permanent SoftButtons (used for inter-SM communications)
+	//****************************
+	public static LogicalButton sbtnDriveLock = new SoftButton();
+		
+	
 	// End of public interface
 
 	

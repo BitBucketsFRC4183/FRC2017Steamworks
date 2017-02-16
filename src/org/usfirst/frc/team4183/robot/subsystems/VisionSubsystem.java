@@ -10,7 +10,7 @@ public class VisionSubsystem extends Subsystem
 	// Strings to place into BucketVision NetworkTable
 	public static final String GEAR_LIFT_MODE = "gearLift";
 	public static final String BOILER_MODE = "Boiler";	
-	public static final String FRONT_CAM= "frontCam";
+	public static final String FRONT_CAM = "frontCam";
 	public static final String REAR_CAM = "rearCam";
 	
 	public static final String FRONT_CAM_MODE = "FrontCamMode";
@@ -50,10 +50,10 @@ public class VisionSubsystem extends Subsystem
 		bvtable.putString(CURRENT_CAM, currentCam);
 		
 		gearLiftData = new TargetData();
-		bvtable.putValue(GEAR_LIFT_DATA, gearLiftData);
+		//bvtable.putValue(GEAR_LIFT_DATA, gearLiftData);
 		
 		boilerData = new TargetData();
-		bvtable.putValue(BOILER_DATA, boilerData);
+		//bvtable.putValue(BOILER_DATA, boilerData);
 		
 	}
 	
