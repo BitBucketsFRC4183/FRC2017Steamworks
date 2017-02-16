@@ -15,9 +15,6 @@ import edu.wpi.first.wpilibj.command.Command;
 public class DriverControl extends Command 
 {
 
-	OI.ButtonEvent btnToggleCamMode;
-	OI.ButtonEvent btnFrontCamMode;
-	OI.ButtonEvent btnRearCamMode;
 	
     public DriverControl() 
     {
@@ -34,40 +31,23 @@ public class DriverControl extends Command
     		                      LightingControl.COLOR_ORANGE,
     		                      0,	// nspace - don't care
     		                      0);	// period_msec - don't care
-    	btnToggleCamMode = OI.getBtnEvt(OI.btnToggleFrontCameraView);
-    	btnFrontCamMode = OI.getBtnEvt(OI.btnToggleFrontCam);
-    	btnRearCamMode = OI.getBtnEvt(OI.btnToggleBackCam);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() 
     {
     	Robot.driveSubsystem.arcadeDrive(OI.axisForward.get(), OI.axisTurn.get());
-    	if(btnToggleCamMode.onPressed()) 
-    	{
-    		if(Robot.vision.isBoilerMode()) 
-    		{
-    			Robot.vision.setGearMode();
-    		}
-    		else if(Robot.vision.isGearMode()) 
-    		{
-    			Robot.vision.setBoilerMode();
-    		}
-    	}
-    	if(btnFrontCamMode.onPressed()) 
-    	{
-    		Robot.vision.setFrontCam();
-    	}
-    	if(btnRearCamMode.onPressed()) 
-    	{
-    		Robot.vision.setRearCam();
-    	}
+
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if(OI.btnAlignLock.get()) 
+    	if (OI.btnDriveLock.get() || OI.sbtnDriveLock.get())
+    	{
+    		return CommandUtils.stateChange(this, new DriveLock());
+    	}
+    	else if(OI.btnAlignLock.get()) 
     	{
     		return CommandUtils.stateChange(this, new AlignLock());
     	}

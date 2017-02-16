@@ -80,7 +80,7 @@ from faces import Faces             # Useful for basic testing of driverCam/Proc
 
 from blueboiler import BlueBoiler
 from redboiler import RedBoiler
-from gearpeg import GearPeg
+from gearlift import GearLift
 from smokestack import SmokeStack
 
 # And so it begins
@@ -105,7 +105,7 @@ bvTable = NetworkTables.getTable("BucketVision")
 
 # Make the cameraMode an auto updating listener from the network table
 camMode = bvTable.getAutoUpdateValue('CurrentCam','frontCam') # 'frontcam' or 'rearcam'
-frontCamMode = bvTable.getAutoUpdateValue('FrontCamMode', 'gear') # 'gear' or 'boiler'
+frontCamMode = bvTable.getAutoUpdateValue('FrontCamMode', 'gearLift') # 'gearLift' or 'Boiler'
 alliance = 'red'    # default until chooser returns a value
 
 # Also make the alliance based on a chooser 
@@ -139,7 +139,7 @@ cc = ChooserControl('Alliances',
 
 redBoiler = RedBoiler()
 blueBoiler = BlueBoiler()
-gear = GearPeg()
+gearLift = GearLift(bvTable)
 
 rope = Faces()     # Temporary placeholder for rope processing
 
@@ -177,9 +177,9 @@ print("BucketCapture appears online!")
 
 frontPipes = {'redBoiler' : redBoiler,
               'blueBoiler' : blueBoiler,
-              'gear' : gear}
+              'gearLift' : gearLift}
 
-frontProcessor = BucketProcessor(frontCam,frontPipes,'gear').start()
+frontProcessor = BucketProcessor(frontCam,frontPipes,'gearLift').start()
 
 rearPipes = {'rope' : rope}
 

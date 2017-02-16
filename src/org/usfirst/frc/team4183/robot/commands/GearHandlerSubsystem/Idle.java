@@ -11,31 +11,40 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class Idle extends Command {
+public class Idle extends Command 
+{
 
-    public Idle() {
+    public Idle() 
+    {
         requires(Robot.gearHandlerSubsystem);
+    	setRunWhenDisabled(true);  // Idle state needs this!
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
+    protected void initialize() 
+    {
     	Robot.gearHandlerSubsystem.disable();
     	Robot.lightingControl.setSleeping(LightingObjects.GEAR_SUBSYSTEM);
     }
 
     // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    protected void execute() 
+    {
     }
 
     // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
-    	if(OI.btnOpenGate.get()) {
+    protected boolean isFinished() 
+    {
+    	if(OI.btnSpitGearA.get() && OI.btnSpitGearB.get()) 
+    	{
     		return CommandUtils.stateChange(this, new GateOpen());
     	}
-    	if(OI.btnWaitForGear.get()) {
+    	if(OI.btnWaitForGear.get()) 
+    	{
     		return CommandUtils.stateChange(this, new WaitingForGear());
     	}
-    	if(OI.btnWaitForBalls.get()) {
+    	if(OI.btnWaitForBalls.get()) 
+    	{
     		return CommandUtils.stateChange(this, new WaitingForBalls());
     	}
         return false;

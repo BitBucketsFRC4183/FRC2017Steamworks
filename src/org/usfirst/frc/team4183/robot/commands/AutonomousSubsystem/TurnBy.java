@@ -3,26 +3,24 @@ package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.utils.CommandUtils;
+import org.usfirst.frc.team4183.utils.ControlLoop;
+import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
+import org.usfirst.frc.team4183.utils.RateLimit;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 
-// Probably I should have derived from PIDCommand but the code in there
-// (and in PIDController) is so complicated I don't quite trust it.
-// My faith in WPILib is not running real high right now.
-// This is such a simple loop I decided to implement using my own thread,
-// at least when it doesn't work, I'll have nobody else to blame! --tjw
 
-public class TurnBy extends Command {
+public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	
 	// TODO the loop gain constants & NL params work
 	// but need further tuning.
 	
 	// Proportional gain
-	private final static double Kp = 0.02; // purposely low for 1st pass
+	private final static double Kp = 0.03; // purposely low for 1st pass
 
 	// Largest drive that will be applied
-	private final double MAX_DRIVE = 0.7;
+	private final double MAX_DRIVE = 0.8;
 	// Smallest drive that will be applied 
 	// (unless error falls within dead zone, then drive goes to 0)
 	private final double MIN_DRIVE = 0.4; // Yeah this does seem high
@@ -32,17 +30,17 @@ public class TurnBy extends Command {
 	// Used (along with dead zone) to determine when turn is complete.
 	// If angular velocity (Degrees/sec) is greater than this,
 	// we're not done yet.
-	private final double ALLOWED_RATE_DPS = 1.0;
+	private final double SETTLED_RATE_DPS = 0.5;
 	
-	
-	// Delay between iterations of control loop
-	private final long LOOP_MSECS = 40;	
+	// Limits ramp rate of drive signal
+	private final double RATE_LIM_PER_SEC = 2.0;
 	
 	private final Command nextState;
 	private final double degreesToTurn;
 	
-	private double setPoint;
-	private LoopThread loopThread;
+	private ControlLoop cloop;
+	private RateLimit rateLimit;
+	private MinMaxDeadzone deadZone;
 	
 	// Require a no-arg constructor for use in state-testing mode
 	public TurnBy() {
@@ -59,25 +57,25 @@ public class TurnBy extends Command {
 	@Override
 	protected void initialize() {
 		// Compute setPoint
-		setPoint = degreesToTurn + Robot.imu.getYawDeg();
+		double setPoint = degreesToTurn + Robot.imu.getYawDeg();
 		
-		// Start the control loop thread
-		loopThread = new LoopThread();
-		loopThread.setPriority(Thread.NORM_PRIORITY+2);
-		loopThread.start();
+		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
+		deadZone = new MinMaxDeadzone( DEAD_ZONE_DEG, MIN_DRIVE, MAX_DRIVE);
+		
+		// Fire up the loop
+		cloop = new ControlLoop( this, setPoint);
+		cloop.start();
 	}
 	
-	@Override
-	protected void execute() {
-	}
+
 	
 	@Override
 	protected boolean isFinished() {
 		
 		// We are finished when loop error and angular velocity both small
-		if( ( Math.abs( getError()) < DEAD_ZONE_DEG )
+		if( ( Math.abs(cloop.getError()) < DEAD_ZONE_DEG )
 			&&
-			( Math.abs(Robot.imu.getRateDeg()) < ALLOWED_RATE_DPS )
+			( Math.abs(Robot.imu.getRateDeg()) < SETTLED_RATE_DPS )
 		) {
 			if( nextState != null)
 				return CommandUtils.stateChange(this, nextState);
@@ -90,19 +88,10 @@ public class TurnBy extends Command {
 	
 	@Override
 	protected void end() {
-		
-		// Signal control loop to quit
-		loopThread.quit();
-		
-		// Wait for thread to exit
-		try {
-			loopThread.join();
-		} catch (InterruptedException e) {
-			// Per this excellent article:
-			// http://www.ibm.com/developerworks/library/j-jtp05236/
-			Thread.currentThread().interrupt();
-		}
-		
+	
+		// Don't forget to stop the loop!
+		cloop.stop();
+				
 		// Set output to zero before leaving
 		OI.axisTurn.set(0.0);				
 	}
@@ -113,58 +102,28 @@ public class TurnBy extends Command {
 	}
 	
 	
-	private double getError() {
-		return setPoint - Robot.imu.getYawDeg();
+	@Override
+	public double getFeedback() {
+		return Robot.imu.getYawDeg();
 	}
 	
-	
-	// This Thread implements the control loop
-	private class LoopThread extends Thread {
-						
-		private void quit() {
-			interrupt();
-		}
+	@Override
+	public void setError( double error) {
 		
-		@Override
-		public void run() {
+		double x1 = Kp * error;
 			
-			@SuppressWarnings("unused")
-			int loopcnt = 0;
-						
-			// Loop until signaled to quit
-			while( !isInterrupted()) {
-
-				double inDrive = Kp * getError();
-				
-				
-				// Apply drive non-linearities
-				double absDrv = Math.abs(inDrive);						
-				if( absDrv > MAX_DRIVE) absDrv = MAX_DRIVE;
+		// Apply drive non-linearities
+		double x2 = deadZone.f(x1, error);		
+		double x3 = rateLimit.f(x2);
 		
-				if( absDrv < MIN_DRIVE) absDrv = MIN_DRIVE;
-				if( Math.abs(getError()) < DEAD_ZONE_DEG) absDrv = 0.0;
-				double outDrive = Math.signum(inDrive)*absDrv;
-				
-				// Set the output
-				// - sign required because + stick produces right turn,
-				// but right turn is actually a negative yaw angle
-				// (using our yaw angle convention: right-hand-rule w/z-axis up)
-				OI.axisTurn.set( -outDrive);				
-
-				
-				if( loopcnt++ > 10) {
-					loopcnt = 0;
-					System.out.format( "Err=%f inDrive=%f outDrive=%f\n", getError(), inDrive, outDrive);
-				}
-				
-				
-				// Delay
-				try {
-					Thread.sleep(LOOP_MSECS);
-				} catch (InterruptedException e) {
-					interrupt();
-				}				
-			}			
-		}
-	}	
+		// Debug
+		System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
+		
+		// Set the output
+		// - sign required because + stick produces right turn,
+		// but right turn is actually a negative yaw angle
+		// (using our yaw angle convention: right-hand-rule w/z-axis up)
+		OI.axisTurn.set( -x3);						
+	}
+	
 }

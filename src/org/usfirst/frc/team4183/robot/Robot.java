@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +16,7 @@ import java.util.Set;
 import org.usfirst.frc.team4183.robot.subsystems.AutonomousSubsystem;
 // Subsystems
 import org.usfirst.frc.team4183.robot.subsystems.BallManipSubsystem;
+import org.usfirst.frc.team4183.robot.subsystems.VisionSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
@@ -24,7 +24,6 @@ import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
 
 // Non-subsystem (i.e., non-commandable) controls
 import org.usfirst.frc.team4183.robot.LightingControl;
-import org.usfirst.frc.team4183.robot.BucketVision;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -46,6 +45,7 @@ public class Robot extends IterativeRobot {
 	public static DriveSubsystem driveSubsystem;
 	public static GearHandlerSubsystem gearHandlerSubsystem;
 	public static AutonomousSubsystem autonomousSubsystem;
+	public static VisionSubsystem visionSubsystem;
 	
 	public static OI oi;
 	public static SendableChooser<String> Alliances;
@@ -53,7 +53,6 @@ public class Robot extends IterativeRobot {
 	public static LightingControl lightingControl;	
 	public static NavxIMU imu;
 	
-	public static BucketVision vision;
 		
 	private Compressor compressor;
 		
@@ -85,6 +84,7 @@ public class Robot extends IterativeRobot {
 		driveSubsystem = new DriveSubsystem();
 		gearHandlerSubsystem = new GearHandlerSubsystem();
 		autonomousSubsystem = new AutonomousSubsystem();
+		visionSubsystem  = new VisionSubsystem();
 		
 		// Construct Compressor
 		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);		
@@ -92,7 +92,6 @@ public class Robot extends IterativeRobot {
 		// Construct LightingControl, IMU, and vision
 		lightingControl = new LightingControl(); 		
 		imu = new NavxIMU();
-		vision  = new BucketVision();
 		
 
 		// Construction is complete
@@ -174,11 +173,7 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		runMode = RunMode.TELEOP;
 		
-		// Set up OI with specific driver & operator mappings.
-		// Must do this before clearing out scheduler, see note in autonomousInit().
-		// TODO use real names
-		// TODO get this info from SmartDashboard
-		oi.teleopInit( OI.Driver.JOE, OI.Operator.BILL);
+		oi.teleopInit();
 
 		// Clear out the scheduler
 		// Will result in only Default Commands (Idle-s) running.
