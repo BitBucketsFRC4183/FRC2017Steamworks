@@ -117,7 +117,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		double x3 = rateLimit.f(x2);
 		
 		// Debug
-		System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
+		//System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
 		
 		// Set the output
 		// - sign required because + stick produces right turn,

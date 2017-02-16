@@ -82,7 +82,7 @@ public class DriveSubsystem extends Subsystem {
 			// Turn stick is + to the right,
 			// +yaw is CCW looking down,
 			// so + stick should lower the setpoint. 
-			yawSetPoint += -0.2 * Deadzone.f(turn, .05);
+			yawSetPoint += -0.3 * Deadzone.f(turn, .05);
 
 			if(OI.btnLowSensitiveDrive.get())
 				speed *= lowSensitivityGain;

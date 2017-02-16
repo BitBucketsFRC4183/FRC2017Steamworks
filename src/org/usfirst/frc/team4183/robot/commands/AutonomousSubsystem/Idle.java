@@ -26,6 +26,7 @@ public class Idle extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
+    	
     	if( Robot.runMode == Robot.RunMode.AUTO ) {
     		// TODO go to 1st state here
     		// This transition is just for testing
