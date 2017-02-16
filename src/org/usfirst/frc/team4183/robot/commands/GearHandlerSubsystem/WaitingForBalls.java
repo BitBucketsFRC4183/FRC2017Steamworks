@@ -21,7 +21,7 @@ public class WaitingForBalls extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.gearHandlerSubsystem.closeGate();
-    	OI.btnDriveLock.push();
+    	OI.sbtnDriveLock.push();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -47,7 +47,7 @@ public class WaitingForBalls extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-    	OI.btnDriveLock.release();
+    	OI.sbtnDriveLock.release();
     }
 
     // Called when another command which requires one or more of the same

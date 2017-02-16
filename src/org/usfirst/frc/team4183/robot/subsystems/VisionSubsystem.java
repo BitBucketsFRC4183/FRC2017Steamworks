@@ -50,10 +50,10 @@ public class VisionSubsystem extends Subsystem
 		bvtable.putString(CURRENT_CAM, currentCam);
 		
 		gearLiftData = new TargetData();
-		bvtable.putValue(GEAR_LIFT_DATA, gearLiftData);
+		//bvtable.putValue(GEAR_LIFT_DATA, gearLiftData);
 		
 		boilerData = new TargetData();
-		bvtable.putValue(BOILER_DATA, boilerData);
+		//bvtable.putValue(BOILER_DATA, boilerData);
 		
 	}
 	
