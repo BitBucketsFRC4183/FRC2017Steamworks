@@ -9,13 +9,16 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.usfirst.frc.team4183.robot.subsystems.AutonomousSubsystem;
 // Subsystems
 import org.usfirst.frc.team4183.robot.subsystems.BallManipSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.VisionSubsystem;
+import org.usfirst.frc.team4183.utils.Stopwatch;
 import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
@@ -91,7 +94,7 @@ public class Robot extends IterativeRobot {
 		// Construct LightingControl, IMU, and vision
 		lightingControl = new LightingControl(); 		
 		imu = new NavxIMU();
-		
+			
 
 		// Construction is complete
 				
@@ -110,7 +113,7 @@ public class Robot extends IterativeRobot {
 		addSubsystemToDebug(driveSubsystem);
 		addSubsystemToDebug(gearHandlerSubsystem);
 		addSubsystemToDebug(autonomousSubsystem);		
-		showDebugInfo();
+		showDebugInfo();		
 	}
 
 	/**
@@ -130,7 +133,9 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void disabledPeriodic() {
+		runWatch.start();
 		Scheduler.getInstance().run();
+		runWatch.stop();
 	}
 
 	/**
@@ -165,7 +170,9 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		runWatch.start();
 		Scheduler.getInstance().run();
+		runWatch.stop();
 	}
 
 	@Override
@@ -181,15 +188,20 @@ public class Robot extends IterativeRobot {
 		// Clear out the scheduler
 		// Will result in only Default Commands (Idle-s) running.
 		// Do this last to be sure that Idle-s see correct info when starting.
-		Scheduler.getInstance().removeAll();		
+		Scheduler.getInstance().removeAll();
 	}
 
 	/**
 	 * This function is called periodically during operator control
 	 */
+
+	List<Double> runTimeList = new ArrayList<>();
+	
 	@Override
-	public void teleopPeriodic() {
-		Scheduler.getInstance().run();
+	public void teleopPeriodic() {			
+		runWatch.start();
+		Scheduler.getInstance().run();	
+		runWatch.stop();
 	}
 
 	/**
@@ -210,6 +222,11 @@ public class Robot extends IterativeRobot {
 		LiveWindow.run();		
 	}
 	
+	
+
+	private Stopwatch runWatch = 
+			new Stopwatch( "Run", 
+			(name, max, min, avg) -> SmartDashboard.putNumber( "MaxRun", max) );
 	
 	private Set<Subsystem> subSystems = new HashSet<>();
 
