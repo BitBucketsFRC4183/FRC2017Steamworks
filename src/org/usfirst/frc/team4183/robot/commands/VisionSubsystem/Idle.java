@@ -51,6 +51,23 @@ public class Idle extends Command {
     	{
     		Robot.visionSubsystem.setRearCam();
     	}
+    	if(Robot.visionSubsystem.isBlueAlliance()) 
+    	{
+    		if(!Robot.visionSubsystem.currentAlliance.equals(Robot.visionSubsystem.BLUE_ALLIANCE)) 
+    		{
+    			Robot.visionSubsystem.setRedAlliance();
+    		}
+    	} 
+    	else if(Robot.visionSubsystem.isRedAlliance()) 
+    	{
+    		if(!Robot.visionSubsystem.currentAlliance.equals(Robot.visionSubsystem.RED_ALLIANCE)) 
+    		{
+    			Robot.visionSubsystem.setBlueAlliance();
+    		}
+    	}
+    	if(!(Robot.visionSubsystem.getAllianceNumber() == Robot.visionSubsystem.alliancePosition)) {
+    		Robot.visionSubsystem.setAllianceNumber();
+    	}
     }
 
     // Make this return true when this Command no longer needs to run execute()
