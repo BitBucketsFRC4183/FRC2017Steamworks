@@ -23,14 +23,14 @@ public class VisionSubsystem extends Subsystem
 	public static final String RED_ALLIANCE = "red";
 	public static final String BLUE_ALLIANCE = "blue";
 	
-	private static final String ALLIANCE_COLOR = "color";
-	private static final String ALLIANCE_NUMBER = "number";
+	private static final String ALLIANCE_COLOR_KEY = "allianceColor";
+	private static final String ALLIANCE_LOCATION_KEY = "allianceLocation";
 	
 	private static String currentCam = FRONT_CAM;
 	private static String currentFrontCamMode = GEAR_LIFT_MODE;
 	
-	public static String currentAlliance = "red";
-	public static int alliancePosition = 1;
+	public static String currentAllianceColor = "red";
+	public static int currentAllianceLocation = 1;
 
 	private static NetworkTable bvtable;
 	
@@ -40,13 +40,15 @@ public class VisionSubsystem extends Subsystem
 	{
 		public double confidenceFactor;
 		public double distance_m;
-		public double angle_deg;
+		public double angleToCenter_deg;	// Angle to center target in FOV
+		public double angleToTarget_deg;	// Angle of camera relative target center line
 		
 		TargetData()
 		{
 			confidenceFactor = 0.0;
 			distance_m = 0.0;
-			angle_deg = 0.0;
+			angleToCenter_deg = 0.0;
+			angleToTarget_deg = 0.0;
 		}
 	}
 	
@@ -119,36 +121,46 @@ public class VisionSubsystem extends Subsystem
 		return (boilerData.confidenceFactor >= 0.5);
 	}
 	
-	public boolean isRedAlliance() {
-		if(driverStation.getAlliance().equals(DriverStation.Alliance.Red)) {
-			return true;
+	public boolean isRedAlliance() 
+	{
+		return driverStation.getAlliance().equals(DriverStation.Alliance.Red);
+	}
+	
+	public void setRedAlliance() 
+	{
+		if (currentAllianceColor.equals(BLUE_ALLIANCE))
+		{
+			currentAllianceColor = RED_ALLIANCE;
+			bvtable.putString(ALLIANCE_COLOR_KEY, currentAllianceColor);
 		}
-		return false;
 	}
 	
-	public void setRedAlliance() {
-		currentAlliance = "red";
-		bvtable.putString(ALLIANCE_COLOR, RED_ALLIANCE);
-	}
-	
-	public void setBlueAlliance() {
-		currentAlliance = "blue";
-		bvtable.putString(ALLIANCE_COLOR, BLUE_ALLIANCE);
-	}
-	
-	public boolean isBlueAlliance() {
-		if(driverStation.getAlliance().equals(DriverStation.Alliance.Blue)) {
-			return true;
+	public void setBlueAlliance() 
+	{
+		// Only change it if we think the color is wrong
+		if (currentAllianceColor.equals(RED_ALLIANCE))
+		{
+			currentAllianceColor = BLUE_ALLIANCE;
+			bvtable.putString(ALLIANCE_COLOR_KEY, currentAllianceColor);
 		}
-		return false;
 	}
 	
-	public void setAllianceNumber() {
-		alliancePosition = driverStation.getLocation();
-		bvtable.putNumber(ALLIANCE_NUMBER, alliancePosition);
+	public boolean isBlueAlliance() 
+	{
+		return driverStation.getAlliance().equals(DriverStation.Alliance.Blue);
 	}
 	
-	public int getAllianceNumber() {
+	public void setAllianceNumber() 
+	{
+		if (currentAllianceLocation != driverStation.getLocation())
+		{
+			currentAllianceLocation = driverStation.getLocation();
+			bvtable.putNumber(ALLIANCE_LOCATION_KEY, currentAllianceLocation);
+		}
+	}
+	
+	public int getAllianceNumber() 
+	{
 		return driverStation.getLocation();
 	}
 	
