@@ -10,7 +10,7 @@ public class Stopwatch {
 	private long startNanos;
 	private List<Double> list = new ArrayList<>();
 	private long lastReport = System.currentTimeMillis();
-	private long REPORT_INTVL_MILLIS = 1000;
+	private long reportIntvlMillis = 1000;
 	private boolean isRunning = false;
 	
 	public interface Reporter {
@@ -18,8 +18,13 @@ public class Stopwatch {
 	}
 	
 	public Stopwatch( String name, Reporter reporter ) {
+		this( name, reporter, 200);
+	}
+	
+	public Stopwatch( String name, Reporter reporter, int reportIntvlMillis ) {
 		this.name = name;
-		this.reporter = reporter;		
+		this.reporter = reporter;
+		this.reportIntvlMillis = reportIntvlMillis;
 	}
 	
 	public void start() {
@@ -35,7 +40,7 @@ public class Stopwatch {
 		double interval = (System.nanoTime() - startNanos)/1.0e6;
 		list.add(interval);
 		
-		if(System.currentTimeMillis() - lastReport > REPORT_INTVL_MILLIS) {
+		if(System.currentTimeMillis() - lastReport > reportIntvlMillis) {
 			double sum = 0.0;
 			for( Double d : list) {
 				sum += d;

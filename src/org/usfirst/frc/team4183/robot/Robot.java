@@ -223,10 +223,19 @@ public class Robot extends IterativeRobot {
 	}
 	
 	
+	@Override
+	public void robotPeriodic() {
+		loopWatch.stop();
+		loopWatch.start();
+	}
 
 	private Stopwatch runWatch = 
 			new Stopwatch( "Run", 
 			(name, max, min, avg) -> SmartDashboard.putNumber( "MaxRun", max) );
+	private Stopwatch loopWatch = 
+			new Stopwatch( "Loop", 
+			(name, max, min, avg) -> SmartDashboard.putNumber( "MaxLoop", max) );
+
 	
 	private Set<Subsystem> subSystems = new HashSet<>();
 
