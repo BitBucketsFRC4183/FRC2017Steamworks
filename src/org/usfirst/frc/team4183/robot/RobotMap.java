@@ -18,7 +18,7 @@ public class RobotMap {
 	public static final int RIGHT_REAR_MOTOR_ID = 4; 
 	
 	public static final CANTalon.FeedbackDevice DRIVE_ENCODER = CANTalon.FeedbackDevice.QuadEncoder;
-	public static final int DRIVE_PULSES_PER_REV = 2048; 
+	public static final int DRIVE_PULSES_PER_REV = 250; 
 	
 	
 	// Climb Subsystem

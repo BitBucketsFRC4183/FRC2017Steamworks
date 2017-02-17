@@ -298,10 +298,10 @@ print("CamServer appears online!")
 
 while (True):
 
-    if (frontCamMode.value == 'gear'):
-        frontProcessor.updateSelection('gear')
+    if (frontCamMode.value == 'gearLift'):
+        frontProcessor.updateSelection('gearLift')
         frontCam.updateExposure(FRONT_CAM_GEAR_EXPOSURE)
-    elif (frontCamMode.value == 'boiler'):
+    elif (frontCamMode.value == 'Boiler'):
         selection = cc.getSelected()
         frontProcessor.updateSelection(alliance + "Boiler")
         if (alliance == 'red'):

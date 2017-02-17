@@ -3,7 +3,6 @@ package org.usfirst.frc.team4183.utils;
 import org.usfirst.frc.team4183.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class CommandUtils {
 	
@@ -18,9 +17,23 @@ public class CommandUtils {
 	 * 
 	 * @param next  The Command that represents the next state
 	 */
-	public static boolean stateChange( Command from, Command to) {
-		Robot.instance().stateChange(from, to);		
-		return true;
+	public static boolean stateChange( Command fromState, Command toState) {
+		
+		// When Robot Disabled, only Idle states run
+		// (because Idle's are the subsystem's default states).
+		// Only allow transition out of Idle when in either
+		// Teleop or Autonomous.
+		// (Mode Test is currently pretty useless). 
+		
+		if( Robot.runMode == Robot.RunMode.TELEOP 
+			|| 
+			Robot.runMode == Robot.RunMode.AUTO ) {
+			
+			toState.start();
+			return true;
+		}
+		else
+			return false;
 	}
 
 }

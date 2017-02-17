@@ -33,7 +33,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private final double SETTLED_RATE_DPS = 0.5;
 	
 	// Limits ramp rate of drive signal
-	private final double RATE_LIM_PER_SEC = 1.5;
+	private final double RATE_LIM_PER_SEC = 2.0;
 	
 	private final Command nextState;
 	private final double degreesToTurn;
@@ -113,11 +113,11 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		double x1 = Kp * error;
 			
 		// Apply drive non-linearities
-		double x2 = rateLimit.f(x1);
-		double x3 = deadZone.f(x2, error);		
+		double x2 = deadZone.f(x1, error);		
+		double x3 = rateLimit.f(x2);
 		
 		// Debug
-		System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
+		//System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
 		
 		// Set the output
 		// - sign required because + stick produces right turn,

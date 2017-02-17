@@ -10,6 +10,7 @@ import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.DriveSubsystem.Idle;
+import org.usfirst.frc.team4183.utils.Deadzone;
 
 /**
  *
@@ -78,16 +79,10 @@ public class DriveSubsystem extends Subsystem {
 		
 		public void doAlignDrive(double speed, double turn) {
 			
-			/* No requirement for this but might be nice to have?
-			 * Allows a bit of driver yaw adjust while in this mode.
-			 * The 0.2 is chosen to give a max of 10 deg/sec setpoint change
-			 * at full stick (a modest amount).
-			 * 
 			// Turn stick is + to the right,
 			// +yaw is CCW looking down,
 			// so + stick should lower the setpoint. 
-			yawSetPoint += -0.2 * Deadzone.f(turn, .05);
-			*/
+			yawSetPoint += -0.3 * Deadzone.f(turn, .05);
 
 			if(OI.btnLowSensitiveDrive.get())
 				speed *= lowSensitivityGain;
@@ -130,11 +125,13 @@ public class DriveSubsystem extends Subsystem {
 			m.setPosition(0.0);
 			
 			// TODO magic numbers
-			m.setPID(0.05, 0.0, 0.0);  // TODO Gain??
+			m.setPID(0.2, 0.0, 0.0);  // TODO Gain?? depends on gearing & position pulses
 			m.setF(0.0);
 			m.setIZone(0);
-			m.setCloseLoopRampRate(50.0);  // Smoothes a bit
-			m.setAllowableClosedLoopErr(100);
+			m.setCloseLoopRampRate(50.0);  // Smoothes things a bit
+			double allowedErr_deg = 2.0;
+			double npu_per_deg = (4*RobotMap.DRIVE_PULSES_PER_REV)/360.0;
+			m.setAllowableClosedLoopErr((int)(allowedErr_deg * npu_per_deg));
 			m.configNominalOutputVoltage(+4.0, -4.0);
 			m.configPeakOutputVoltage(+12.0, -12.0);			
 		}

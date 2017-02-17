@@ -21,18 +21,19 @@ public class WaitingForGear extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	
+    	Robot.lightingControl.set(LightingObjects.GEAR_SUBSYSTEM,
+                LightingControl.FUNCTION_FORWARD,
+                LightingControl.COLOR_GREEN,
+                4,		// nspace - good for either 8 or 16 pixel strips
+                200);		// period_msec    		
+
     	Robot.gearHandlerSubsystem.closeGate();
    }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	Robot.gearHandlerSubsystem.spinRollerGear();
-    	Robot.lightingControl.set(LightingObjects.GEAR_SUBSYSTEM,
-                                  LightingControl.FUNCTION_REVERSE,
-                                  OI.btnDriveLock.get()? LightingControl.COLOR_GREEN : LightingControl.COLOR_ORANGE,
-                                  4,		// nspace - good for either 8 or 16 pixel strips
-                                  200);		// period_msec    		
-    	
     }
 
     // Make this return true when this Command no longer needs to run execute()
