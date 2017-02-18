@@ -12,17 +12,17 @@ import com.ctre.CANTalon;
 public class RobotMap {
 
 	// Drive Subsystem
-	public static final int LEFT_FRONT_MOTOR_ID = 1;
-	public static final int LEFT_REAR_MOTOR_ID = 2;
-	public static final int RIGHT_FRONT_MOTOR_ID = 3;
-	public static final int RIGHT_REAR_MOTOR_ID = 4; 
+	public static final int LEFT_FRONT_MOTOR_ID = 3;
+	public static final int LEFT_REAR_MOTOR_ID = 4;
+	public static final int RIGHT_FRONT_MOTOR_ID = 1;
+	public static final int RIGHT_REAR_MOTOR_ID = 2; 
 	
 	public static final CANTalon.FeedbackDevice DRIVE_ENCODER = CANTalon.FeedbackDevice.QuadEncoder;
-	public static final int DRIVE_PULSES_PER_REV = 2048; 
+	public static final int DRIVE_PULSES_PER_REV = 250; 
 	
 	
 	// Climb Subsystem
-	public static final int CLIMB_MOTOR_ID = 9;
+	public static final int CLIMB_MOTOR_ID = 6;
 	public static final int CLIMB_PNEUMA_CHANNEL = 4;
 	
 	public static final int LEFT_SWITCH_PORT = 0; 
@@ -32,8 +32,8 @@ public class RobotMap {
 
 	// Ball Manipulator
 	public static final int BALL_SUBSYSTEM_TOP_ROLLER_MOTOR_ID = 5; 
-	public static final int BALL_SUBSYSTEM_CONVEYER_MOTOR_ID = 6;
-	public static final int BALL_SUBSYSTEM_SWEEPER_MOTOR_ID = 7;
+	public static final int BALL_SUBSYSTEM_CONVEYER_MOTOR_ID = 7;
+	public static final int BALL_SUBSYSTEM_SWEEPER_MOTOR_ID = 9;
 	
 	public static final int SHOOTER_ROLLER_PULSES_PER_REV = 256;
 	
