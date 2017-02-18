@@ -29,11 +29,11 @@ public class ClimbSubsystem extends Subsystem {
 	
 	public void enable() {
 		// Deploy
-		climbSolenoid.set(true);
+		climbSolenoid.set(false);
 	}
 	
 	public void disable() {
-		climbSolenoid.set(false);
+		climbSolenoid.set(true);
 		climbMotor.set(0.0);
 	}
 	
@@ -43,11 +43,11 @@ public class ClimbSubsystem extends Subsystem {
 	}
 	public void onForward()
 	{
-		climbMotor.set(CLIMB_MOTOR_SPEED_PVBUS);
+		climbMotor.set(-CLIMB_MOTOR_SPEED_PVBUS);
 	}
 	public void onReverse()
 	{
-		climbMotor.set(-CLIMB_MOTOR_SPEED_PVBUS);
+		climbMotor.set(CLIMB_MOTOR_SPEED_PVBUS);
 	}
 	
 	public double getCurrent()

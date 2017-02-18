@@ -27,7 +27,7 @@ public class RobotMap {
 	
 	public static final int LEFT_SWITCH_PORT = 0; 
 	public static final int RIGHT_SWITCH_PORT = 1; 
-	public static final boolean INVERT_BUMPER_SWITCH = true;
+	public static final boolean INVERT_BUMPER_SWITCH = false;
 		
 
 	// Ball Manipulator
@@ -43,8 +43,8 @@ public class RobotMap {
 	// Gear Handler
 	public static final int GEAR_HANDLER_MOTOR_ID = 8;
 	
-	public static final int GEAR_HANDLER_PNEUMA_OPEN_CHANNEL = 2;
-	public static final int GEAR_HANDLER_PNEUMA_CLOSED_CHANNEL = 3;
+	public static final int GEAR_HANDLER_PNEUMA_OPEN_CHANNEL = 3; // was 2;
+	public static final int GEAR_HANDLER_PNEUMA_CLOSED_CHANNEL = 2; // was 3;
 	
 	public static final int PNEUMATICS_CONTROL_MODULE_ID = 0;
 }
