@@ -103,7 +103,8 @@ public class OI {
 	public static LogicalButton btnSpitGearB;
 	
 	// Ball handling functions
-	public static LogicalButton btnOpenCloseHopper;
+	public static LogicalButton btnOpenHopper;
+	public static LogicalButton btnCloseHopper;
 	public static LogicalButton btnIntakeOn;
 	public static LogicalButton btnShooterStart;
 	public static LogicalButton btnShoot;
@@ -177,7 +178,8 @@ public class OI {
 		btnSpitGearA = new SoftButton();
 		btnSpitGearB = new SoftButton();
 		
-		btnOpenCloseHopper = new SoftButton();
+		btnOpenHopper = new SoftButton();
+		btnCloseHopper = new SoftButton();
 		btnIntakeOn = new SoftButton();
 		btnShooterStart = new SoftButton();
 		btnShoot = new SoftButton();
@@ -220,7 +222,8 @@ public class OI {
 		btnSpitGearA = operatorController.bL2;
 		btnSpitGearB = operatorController.bTriangle;
 		
-		btnOpenCloseHopper = operatorController.bPovLeft;
+		btnOpenHopper = operatorController.bPovLeft;
+		btnCloseHopper = operatorController.bPovRight;
 		btnIntakeOn = operatorController.bL1;
 		btnShooterStart = operatorController.bR1;
 		btnShoot = operatorController.bR2;

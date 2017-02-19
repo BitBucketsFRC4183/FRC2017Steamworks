@@ -20,7 +20,7 @@ public class GearHandlerSubsystem extends Subsystem {
 	
 	public GearHandlerSubsystem(){
 		Preferences prefs = Preferences.getInstance();
-		gearRecieveMotorSpeed_PVBUS = prefs.getDouble("GearLoadSpeed", -0.3);
+		gearRecieveMotorSpeed_PVBUS = prefs.getDouble("GearLoadSpeed", -1.0);
 		ballReceiveMotorSpeed_PVBUS = prefs.getDouble("BallLoadSpeed", 0.3);
 	}
 	
