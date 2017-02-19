@@ -145,10 +145,13 @@ public class DriveSubsystem extends Subsystem {
 		}
 		
 		
-		public double getPosition() {
-			// TODO: calibrate this & return meaningful units
-			// (currently returns rotations of the encoder, I believe)
-			return leftFrontMotor.getPosition();
+		public double getPositionFt() {
+			// TODO: calibrate this.
+			// Constant below is assuming 4" wheel
+			// 1.047 ft/rot = (4" * pi) in/rot * 1/12 ft/in
+			// Also make sure that moving forward INCREASES the position
+			// (it should, because the reverseSensor() call should've made it so)
+			return 1.047 * leftFrontMotor.getPosition();
 		}
 		
 		public void initDefaultCommand() {

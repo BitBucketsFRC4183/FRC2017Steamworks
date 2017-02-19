@@ -26,7 +26,7 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	// (unless error falls within dead zone, then drive goes to 0)
 	private final double MIN_DRIVE = 0.4; // Yeah this does seem high
 	// Size of dead zone in degrees
-	private final double DEAD_ZONE_METER = 0.03;
+	private final double DEAD_ZONE_FT = 0.2;
 	//Time to settled
 	private final long SETTLED_MSECS = 1000;	
 	
@@ -34,7 +34,7 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	private final double RATE_LIM_PER_SEC = 2.0;
 	
 	private final Command nextState;
-	private final double metersFwd;
+	private final double distanceFt;
 	
 	private ControlLoop cloop;
 	private RateLimit rateLimit;
@@ -42,22 +42,22 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	private SettledDetector settledDetector; 
 	
 	
-	public DriveBy( double metersFwd, Command nextState) {		
+	public DriveBy( double distanceFt, Command nextState) {		
 		requires( Robot.autonomousSubsystem);
 		
-		this.metersFwd = metersFwd;
+		this.distanceFt = distanceFt;
 		this.nextState = nextState;
 	}
 
 	@Override
 	protected void initialize() {
 		// Compute setPoint
-		double setPoint = metersFwd + Robot.driveSubsystem.getPosition();
+		double setPoint = distanceFt + Robot.driveSubsystem.getPositionFt();
 		
 		// Make helpers
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
-		deadZone = new MinMaxDeadzone( DEAD_ZONE_METER, MIN_DRIVE, MAX_DRIVE);
-		settledDetector = new SettledDetector(SETTLED_MSECS, DEAD_ZONE_METER);
+		deadZone = new MinMaxDeadzone( DEAD_ZONE_FT, MIN_DRIVE, MAX_DRIVE);
+		settledDetector = new SettledDetector(SETTLED_MSECS, DEAD_ZONE_FT);
 		
 		// Put DriveSubsystem into "Align Lock" (drive straight)
 		OI.btnAlignLock.push();
@@ -103,7 +103,7 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	
 	@Override
 	public double getFeedback() {
-		return Robot.driveSubsystem.getPosition();
+		return Robot.driveSubsystem.getPositionFt();
 	}
 	
 	@Override
@@ -121,7 +121,6 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 		//System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
 		
 		// Set the output
-		// TODO need to determine sign
 		OI.axisForward.set( x3);						
 	}
 	
