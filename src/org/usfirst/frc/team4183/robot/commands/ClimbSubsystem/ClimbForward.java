@@ -3,8 +3,11 @@ package org.usfirst.frc.team4183.robot.commands.ClimbSubsystem;
 
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
+import org.usfirst.frc.team4183.robot.commands.GearHandlerSubsystem.Idle;
 import org.usfirst.frc.team4183.utils.CommandUtils;
 import org.usfirst.frc.team4183.robot.LightingControl;
+import org.usfirst.frc.team4183.robot.OI;
+
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -32,7 +35,11 @@ public class ClimbForward extends Command {
     
 
     // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
+    protected boolean isFinished() 
+    {
+    	if(OI.btnIdle.get()) {
+    		return CommandUtils.stateChange(this, new Idle());
+    	}
     	
     	if ( (timeSinceInitialized() < 1.0) && (Robot.climbSubsystem.isPastCurrentLimit()) ) {
     		return CommandUtils.stateChange( this, new ClimbReverse() );
