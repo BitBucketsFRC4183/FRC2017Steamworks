@@ -23,7 +23,6 @@ public class RobotMap {
 	
 	// Climb Subsystem
 	public static final int CLIMB_MOTOR_ID = 6;
-	public static final int CLIMB_PNEUMA_CHANNEL = 4;
 	
 	public static final int LEFT_SWITCH_PORT = 0; 
 	public static final int RIGHT_SWITCH_PORT = 1; 
@@ -36,18 +35,19 @@ public class RobotMap {
 	public static final int BALL_SUBSYSTEM_SWEEPER_MOTOR_ID = 9;
 	
 	public static final int SHOOTER_ROLLER_PULSES_PER_REV = 256;
-	
-	public static final int BALLSUB_INTAKE_PNEUMA_CHANNEL = 5;
-	public static final int BALLSUB_SHOOT_PNEUMA_CHANNEL = 6;
-	
-	public static final int HOPPER_OPEN_PNEUMA_CHANNEL = 0;
-	public static final int HOPPER_CLOSE_PNEUMA_CHANNEL = 1;
-	
+			
 	// Gear Handler
 	public static final int GEAR_HANDLER_MOTOR_ID = 8;
 	
-	public static final int GEAR_HANDLER_PNEUMA_OPEN_CHANNEL = 3;
+	// Pneumatics
+	public static final int HOPPER_OPEN_PNEUMA_CHANNEL = 0;
+	public static final int HOPPER_CLOSE_PNEUMA_CHANNEL = 1;
 	public static final int GEAR_HANDLER_PNEUMA_CLOSED_CHANNEL = 2;
+	public static final int GEAR_HANDLER_PNEUMA_OPEN_CHANNEL = 3;
+	public static final int CLIMB_PNEUMA_RELEASE_CHANNEL = 4;
+	public static final int CLIMB_PNEUMA_HOLD_CHANNEL = 7;
+	public static final int BALLSUB_INTAKE_PNEUMA_CHANNEL = 5;
+	public static final int BALLSUB_SHOOT_PNEUMA_CHANNEL = 6;
 	
 	public static final int PNEUMATICS_CONTROL_MODULE_ID = 0;
 }

@@ -29,7 +29,7 @@ public class VisionSubsystem extends Subsystem
 	private static String currentCam = FRONT_CAM;
 	private static String currentFrontCamMode = GEAR_LIFT_MODE;
 	
-	public static String currentAllianceColor = "red";
+	public static DriverStation.Alliance currentAllianceColor = DriverStation.Alliance.Red;
 	public static int currentAllianceLocation = 1;
 
 	private static NetworkTable bvtable;
@@ -121,33 +121,30 @@ public class VisionSubsystem extends Subsystem
 		return (boilerData.confidenceFactor >= 0.5);
 	}
 	
+	public void setAllianceColor()
+	{
+		if ( ! currentAllianceColor.equals(driverStation.getAlliance()))
+		{
+			currentAllianceColor = driverStation.getAlliance();
+			if (currentAllianceColor.equals(DriverStation.Alliance.Blue))
+			{
+				bvtable.putString(ALLIANCE_COLOR_KEY, BLUE_ALLIANCE);
+			}
+			else
+			{
+				bvtable.putString(ALLIANCE_COLOR_KEY, RED_ALLIANCE);				
+			}
+		}
+	}
+	
 	public boolean isRedAlliance() 
 	{
-		return driverStation.getAlliance().equals(DriverStation.Alliance.Red);
-	}
-	
-	public void setRedAlliance() 
-	{
-		if (currentAllianceColor.equals(BLUE_ALLIANCE))
-		{
-			currentAllianceColor = RED_ALLIANCE;
-			bvtable.putString(ALLIANCE_COLOR_KEY, currentAllianceColor);
-		}
-	}
-	
-	public void setBlueAlliance() 
-	{
-		// Only change it if we think the color is wrong
-		if (currentAllianceColor.equals(RED_ALLIANCE))
-		{
-			currentAllianceColor = BLUE_ALLIANCE;
-			bvtable.putString(ALLIANCE_COLOR_KEY, currentAllianceColor);
-		}
+		return currentAllianceColor.equals(DriverStation.Alliance.Red);
 	}
 	
 	public boolean isBlueAlliance() 
 	{
-		return driverStation.getAlliance().equals(DriverStation.Alliance.Blue);
+		return currentAllianceColor.equals(DriverStation.Alliance.Blue);
 	}
 	
 	public void setAllianceNumber() 
@@ -158,10 +155,10 @@ public class VisionSubsystem extends Subsystem
 			bvtable.putNumber(ALLIANCE_LOCATION_KEY, currentAllianceLocation);
 		}
 	}
-	
+		
 	public int getAllianceNumber() 
 	{
-		return driverStation.getLocation();
+		return currentAllianceLocation;
 	}
 	
 	@Override

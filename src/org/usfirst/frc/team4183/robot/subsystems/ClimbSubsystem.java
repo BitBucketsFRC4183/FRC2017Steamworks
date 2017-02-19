@@ -5,7 +5,7 @@ import com.ctre.CANTalon;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.ClimbSubsystem.Idle;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 /**
  *
  */
@@ -17,7 +17,7 @@ public class ClimbSubsystem extends Subsystem {
 	private DigitalInput leftSwitch; 
 	private DigitalInput rightSwitch;
 	
-	private Solenoid climbSolenoid = new Solenoid(RobotMap.CLIMB_PNEUMA_CHANNEL);
+	private DoubleSolenoid climbSolenoid = new DoubleSolenoid(RobotMap.CLIMB_PNEUMA_RELEASE_CHANNEL, RobotMap.CLIMB_PNEUMA_HOLD_CHANNEL);
 
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
@@ -29,11 +29,11 @@ public class ClimbSubsystem extends Subsystem {
 	
 	public void enable() {
 		// Deploy
-		climbSolenoid.set(false);
+		climbSolenoid.set(DoubleSolenoid.Value.kReverse);
 	}
 	
 	public void disable() {
-		climbSolenoid.set(true);
+		climbSolenoid.set(DoubleSolenoid.Value.kForward);
 		climbMotor.set(0.0);
 	}
 	
