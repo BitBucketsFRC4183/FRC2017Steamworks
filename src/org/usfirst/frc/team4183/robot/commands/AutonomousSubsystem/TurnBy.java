@@ -109,6 +109,8 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	@Override
 	public void setError( double error) {
 		
+		settledDetector.set(error);
+		
 		double x1 = Kp * error;
 			
 		// Apply drive non-linearities
