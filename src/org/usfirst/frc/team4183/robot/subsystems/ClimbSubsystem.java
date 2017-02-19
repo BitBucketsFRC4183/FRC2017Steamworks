@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Solenoid;
  */
 public class ClimbSubsystem extends Subsystem {
 
-	private static final double CLIMB_MOTOR_SPEED_PVBUS = 1.0;
+	private static final double CLIMB_MOTOR_SPEED_PVBUS = 0.8;
 	private static final double CLIMB_MOTOR_CURRENT_LIMIT_AMPS = 40.0;
 	private CANTalon climbMotor;
 	private DigitalInput leftSwitch; 
