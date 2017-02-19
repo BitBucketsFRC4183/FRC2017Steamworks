@@ -34,7 +34,7 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	private final double RATE_LIM_PER_SEC = 2.0;
 	
 	private final Command nextState;
-	private final double metersToGo;
+	private final double metersFwd;
 	
 	private ControlLoop cloop;
 	private RateLimit rateLimit;
@@ -42,21 +42,25 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	private SettledDetector settledDetector; 
 	
 	
-	public DriveBy( double metersToGo, Command nextState) {		
+	public DriveBy( double metersFwd, Command nextState) {		
 		requires( Robot.autonomousSubsystem);
 		
-		this.metersToGo = metersToGo;
+		this.metersFwd = metersFwd;
 		this.nextState = nextState;
 	}
 
 	@Override
 	protected void initialize() {
 		// Compute setPoint
-		double setPoint = metersToGo + Robot.driveSubsystem.getPosition();
+		double setPoint = metersFwd + Robot.driveSubsystem.getPosition();
 		
+		// Make helpers
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
 		deadZone = new MinMaxDeadzone( DEAD_ZONE_METER, MIN_DRIVE, MAX_DRIVE);
 		settledDetector = new SettledDetector(SETTLED_MSECS, DEAD_ZONE_METER);
+		
+		// Put DriveSubsystem into "Align Lock" (drive straight)
+		OI.btnAlignLock.push();
 		
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
@@ -68,8 +72,7 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	@Override
 	protected boolean isFinished() {
 		
-		// We are finished when loop error and angular velocity both small
-		if (settledDetector.get()) {
+		if (settledDetector.isSettled()) {
 			if( nextState != null)
 				return CommandUtils.stateChange(this, nextState);
 			else
@@ -84,6 +87,9 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	
 		// Don't forget to stop the loop!
 		cloop.stop();
+		
+		// Put DriveSubsystem out of "Align Lock"
+		OI.btnAlignLock.release();
 				
 		// Set output to zero before leaving
 		OI.axisForward.set(0.0);				
@@ -102,7 +108,7 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	
 	@Override
 	public void setError( double error) {
-		
+	
 		settledDetector.set(error); 
 		
 		double x1 = Kp * error;

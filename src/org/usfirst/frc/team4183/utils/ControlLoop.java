@@ -3,7 +3,7 @@ package org.usfirst.frc.team4183.utils;
 
 // Yes this is just a re-invention (very simplified) of PIDController.
 // I just don't trust the code in PIDController - overly complicated
-// and the syncronization looks VERY ad-hoc and buggy. 
+// and the synchronization looks VERY ad-hoc and buggy. 
 // My faith in WPILib is not running real high right now.
 // At least when it doesn't work, I'll have nobody else to blame! --tjw
 
