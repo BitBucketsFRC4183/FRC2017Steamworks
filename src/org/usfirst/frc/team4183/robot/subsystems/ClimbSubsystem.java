@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Solenoid;
  */
 public class ClimbSubsystem extends Subsystem {
 
-	private static final double CLIMB_MOTOR_SPEED_PVBUS = 1.0;
+	private static final double CLIMB_MOTOR_SPEED_PVBUS = 0.8;
 	private static final double CLIMB_MOTOR_CURRENT_LIMIT_AMPS = 40.0;
 	private CANTalon climbMotor;
 	private DigitalInput leftSwitch; 
@@ -29,11 +29,11 @@ public class ClimbSubsystem extends Subsystem {
 	
 	public void enable() {
 		// Deploy
-		climbSolenoid.set(true);
+		climbSolenoid.set(false);
 	}
 	
 	public void disable() {
-		climbSolenoid.set(false);
+		climbSolenoid.set(true);
 		climbMotor.set(0.0);
 	}
 	
@@ -43,11 +43,11 @@ public class ClimbSubsystem extends Subsystem {
 	}
 	public void onForward()
 	{
-		climbMotor.set(CLIMB_MOTOR_SPEED_PVBUS);
+		climbMotor.set(-CLIMB_MOTOR_SPEED_PVBUS);
 	}
 	public void onReverse()
 	{
-		climbMotor.set(-CLIMB_MOTOR_SPEED_PVBUS);
+		climbMotor.set(CLIMB_MOTOR_SPEED_PVBUS);
 	}
 	
 	public double getCurrent()

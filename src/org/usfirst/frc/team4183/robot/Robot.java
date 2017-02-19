@@ -22,8 +22,7 @@ import org.usfirst.frc.team4183.utils.Stopwatch;
 import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
-
-
+import org.usfirst.frc.team4183.robot.subsystems.HopperSubsystem;
 // Non-subsystem (i.e., non-commandable) controls
 import org.usfirst.frc.team4183.robot.LightingControl;
 
@@ -43,6 +42,7 @@ public class Robot extends IterativeRobot {
 	
 	
 	public static BallManipSubsystem ballManipSubsystem;
+	public static HopperSubsystem hopperSubsystem;
 	public static ClimbSubsystem climbSubsystem;
 	public static DriveSubsystem driveSubsystem;
 	public static GearHandlerSubsystem gearHandlerSubsystem;
@@ -82,6 +82,7 @@ public class Robot extends IterativeRobot {
 		
 		// Construct the Subsystems
 		ballManipSubsystem = new BallManipSubsystem();
+		hopperSubsystem = new HopperSubsystem();
 		climbSubsystem = new ClimbSubsystem();
 		driveSubsystem = new DriveSubsystem();
 		gearHandlerSubsystem = new GearHandlerSubsystem();
@@ -109,6 +110,7 @@ public class Robot extends IterativeRobot {
 						
 		// Add all subsystems for debugging
 		addSubsystemToDebug(ballManipSubsystem);
+		addSubsystemToDebug(hopperSubsystem);
 		addSubsystemToDebug(climbSubsystem);
 		addSubsystemToDebug(driveSubsystem);
 		addSubsystemToDebug(gearHandlerSubsystem);

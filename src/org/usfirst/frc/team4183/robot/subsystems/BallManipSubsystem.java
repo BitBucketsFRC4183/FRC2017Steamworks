@@ -43,8 +43,8 @@ public class BallManipSubsystem extends Subsystem {
 		
 		// Load preferences
 		Preferences prefs = Preferences.getInstance();
-		shooterRpm = prefs.getDouble("ShooterRpm", 4200.0);
-		intakeRpm = prefs.getDouble("IntakeRpm", 500.0);
+		shooterRpm = prefs.getDouble("ShooterRpm", -4200.0);
+		intakeRpm = prefs.getDouble("IntakeRpm", -500.0);
 		conveyorDrive = prefs.getDouble("ConveyorDrive", 0.8);	
 		sweeperDrive = prefs.getDouble("SweeperDrive", 0.1);
 		    	
