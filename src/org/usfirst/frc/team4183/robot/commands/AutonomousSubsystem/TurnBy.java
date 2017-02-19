@@ -42,11 +42,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private RateLimit rateLimit;
 	private MinMaxDeadzone deadZone;
 	
-	// Require a no-arg constructor for use in state-testing mode
-	public TurnBy() {
-		this( 10.0, null);
-	}
-	
+
 	public TurnBy( double degreesToTurn, Command nextState) {		
 		requires( Robot.autonomousSubsystem);
 		
