@@ -54,6 +54,7 @@ public class Idle extends Command {
     	}
     	
     	// These functions will only change things if necessary
+    	Robot.visionSubsystem.updateTime();
     	Robot.visionSubsystem.setAllianceColor();
     	Robot.visionSubsystem.setAllianceNumber();
     }

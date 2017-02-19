@@ -5,6 +5,7 @@ import org.usfirst.frc.team4183.robot.commands.VisionSubsystem.Idle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionSubsystem extends Subsystem
 {
@@ -31,6 +32,8 @@ public class VisionSubsystem extends Subsystem
 	
 	public static DriverStation.Alliance currentAllianceColor = DriverStation.Alliance.Red;
 	public static int currentAllianceLocation = 1;
+	
+	private static double upTime_sec = 0.0;
 
 	private static NetworkTable bvtable;
 	
@@ -119,6 +122,17 @@ public class VisionSubsystem extends Subsystem
 		bvtable.getValue(BOILER_DATA, boilerData);
 		
 		return (boilerData.confidenceFactor >= 0.5);
+	}
+	
+	public void updateTime()
+	{
+		double current = bvtable.getNumber("BucketVisionTime", -1.0);
+		if (upTime_sec != current)
+		{
+			upTime_sec = current;
+			SmartDashboard.putNumber("BucketVisionTime", upTime_sec);
+		}
+		
 	}
 	
 	public void setAllianceColor()
