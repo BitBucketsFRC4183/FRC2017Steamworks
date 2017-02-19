@@ -122,7 +122,7 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 		
 		// Set the output
 		// TODO need to determine sign
-		OI.axisForward.set( -x3);						
+		OI.axisForward.set( x3);						
 	}
 	
 }
