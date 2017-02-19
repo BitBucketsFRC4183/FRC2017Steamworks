@@ -26,6 +26,7 @@ public class DriveSubsystem extends Subsystem {
 		private double lowSensitivityGain = 0.5;		// Half-control seems nice
 		private final double ALIGN_LOOP_GAIN = 0.05;
 		private final int ENCODER_PULSES_PER_REV = 360;
+		private final boolean REVERSE_SENSOR = false;  // TODO
 		
 		private double yawSetPoint;
 		
@@ -41,10 +42,14 @@ public class DriveSubsystem extends Subsystem {
 			robotDrive = new RobotDrive(leftFrontMotor, leftRearMotor, rightFrontMotor, rightRearMotor);
 			robotDrive.setSafetyEnabled(false);
 
+			// Set up the position encoders, can be used external to this class
 			leftFrontMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 			leftFrontMotor.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV); 
+			leftFrontMotor.reverseSensor(REVERSE_SENSOR);
+
 			rightFrontMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 			rightFrontMotor.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV);
+			rightFrontMotor.reverseSensor(REVERSE_SENSOR);		
 		}	
 
 		public void enable() {}
@@ -122,7 +127,7 @@ public class DriveSubsystem extends Subsystem {
 			m.changeControlMode(CANTalon.TalonControlMode.Position);
 			m.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 			m.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV);
-			m.reverseSensor(false);  // TODO true or false? I think false...
+			m.reverseSensor(REVERSE_SENSOR); 
 			m.setPosition(0.0);
 			
 			// TODO magic numbers
