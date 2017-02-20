@@ -23,10 +23,10 @@ public class WaitingForGear extends Command {
     protected void initialize() {
     	
     	Robot.lightingControl.set(LightingObjects.GEAR_SUBSYSTEM,
-                LightingControl.FUNCTION_FORWARD,
-                LightingControl.COLOR_GREEN,
-                4,		// nspace - good for either 8 or 16 pixel strips
-                200);		// period_msec    		
+                LightingControl.FUNCTION_BLINK,
+                LightingControl.COLOR_ORANGE,
+                0,			// nspace - don't care
+                300);		// period_msec    		
 
     	Robot.gearHandlerSubsystem.closeGate();
    }
