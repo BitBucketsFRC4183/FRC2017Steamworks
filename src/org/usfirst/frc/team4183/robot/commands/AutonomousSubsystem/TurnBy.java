@@ -114,8 +114,8 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		double x1 = Kp * error;
 			
 		// Apply drive non-linearities
-		double x2 = deadZone.f(x1, error);		
-		double x3 = rateLimit.f(x2);
+		double x2 = rateLimit.f(x1);
+		double x3 = deadZone.f(x2, error);		
 		
 		// Debug
 		//System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);

@@ -14,11 +14,10 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	
-	// TODO the loop gain constants & NL params work
-	// but need further tuning.
+	// TODO the loop gain constants & NL params need testing
 	
 	// Proportional gain
-	private final static double Kp = 0.03; // purposely low for 1st pass
+	private final static double Kp = 1.0;
 
 	// Largest drive that will be applied
 	private final double MAX_DRIVE = 0.8;
@@ -26,9 +25,9 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	// (unless error falls within dead zone, then drive goes to 0)
 	private final double MIN_DRIVE = 0.4; // Yeah this does seem high
 	// Size of dead zone in degrees
-	private final double DEAD_ZONE_FT = 0.2;
+	private final double DEAD_ZONE_FT = 0.1;
 	//Time to settled
-	private final long SETTLED_MSECS = 1000;	
+	private final long SETTLED_MSECS = 1000;  // Hopefully can reduce	
 	
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 2.0;
@@ -114,8 +113,8 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 		double x1 = Kp * error;
 			
 		// Apply drive non-linearities
-		double x2 = deadZone.f(x1, error);		
-		double x3 = rateLimit.f(x2);
+		double x2 = rateLimit.f(x1);
+		double x3 = deadZone.f(x2, error);
 		
 		// Debug
 		//System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
