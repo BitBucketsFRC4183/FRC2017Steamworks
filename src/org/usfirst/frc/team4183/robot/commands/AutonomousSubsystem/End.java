@@ -18,7 +18,6 @@ public class End extends Command {
     protected void initialize() {
     	OI.axisForward.set(0.0);
     	OI.axisTurn.set(0.0);
-    	OI.btnIdle.push();
     }
 
     // Called repeatedly when this Command is scheduled to run
