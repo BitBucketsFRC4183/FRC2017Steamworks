@@ -22,10 +22,10 @@ public class AutonomousControl extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.lightingControl.set(LightingObjects.DRIVE_SUBSYSTEM,
-                LightingControl.FUNCTION_FORWARD,
-                LightingControl.COLOR_GREEN,
-                4,		// nspace - good for either 8 or 16 pixel strips
-                200);	// period_msec    	
+                LightingControl.FUNCTION_BLINK,
+                LightingControl.COLOR_BLUE,
+                0,			// nspace - don't care
+                300);		// period_msec    	
     }
 
     // Called repeatedly when this Command is scheduled to run

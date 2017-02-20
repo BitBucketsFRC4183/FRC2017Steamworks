@@ -23,8 +23,8 @@ public class ClimbFinish extends Command {
     	Robot.lightingControl.set(LightingObjects.CLIMB_SUBSYSTEM, 
 					              LightingControl.FUNCTION_BLINK, 
 					              LightingControl.COLOR_RED,
-					              0,
-					              500);
+					              0,	// nspace - don't care
+					              300);	// period_ms
     }
 
     // Called repeatedly when this Command is scheduled to run
