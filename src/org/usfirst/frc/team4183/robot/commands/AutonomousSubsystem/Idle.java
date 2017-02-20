@@ -30,9 +30,20 @@ public class Idle extends Command {
     		// This is just for testing
     		
     		// Build the chain backwards (last to first)
+    		/*
     		Command n3 = new End();
     		Command n2 = new TurnBy(45.0, n3);
     		Command n1 = new DriveBy(3.0, n2);
+    		*/
+    		
+    		/*
+    		Command n2 = new End();
+    		Command n1 = new DriveBy(3.0, n2);
+    		 */
+    		
+    		Command n2 = new End();
+    		Command n1 = new TurnBy(45.0, n2);
+    		
     		
     		return CommandUtils.stateChange(this, n1); 
     	}
