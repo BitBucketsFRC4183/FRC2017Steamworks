@@ -1,6 +1,5 @@
 package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 
-import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.utils.CommandUtils;
 
@@ -28,9 +27,14 @@ public class Idle extends Command {
     protected boolean isFinished() {
     	
     	if( Robot.runMode == Robot.RunMode.AUTO ) {
-    		// TODO go to 1st state here
-    		// This transition is just for testing
-    		return CommandUtils.stateChange(this, new TurnBy(180.0, new End()));
+    		// This is just for testing
+    		
+    		// Build the chain backwards (last to first)
+    		Command n3 = new End();
+    		Command n2 = new TurnBy(45.0, n3);
+    		Command n1 = new DriveBy(3.0, n2);
+    		
+    		return CommandUtils.stateChange(this, n1); 
     	}
         return false;
     }
