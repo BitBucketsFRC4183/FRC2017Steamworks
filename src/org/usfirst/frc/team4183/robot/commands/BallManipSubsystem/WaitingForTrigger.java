@@ -22,17 +22,19 @@ public class WaitingForTrigger extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	
+    	// TODO: Switch to execute on changes based on alignment
        	Robot.lightingControl.set(LightingObjects.BALL_SUBSYSTEM,
-                LightingControl.FUNCTION_ON,
+                LightingControl.FUNCTION_BLINK,
                 LightingControl.COLOR_ORANGE,
-                0,		// Don't care
-                0);		// Don't care 
+                0,		// nspace - don't care
+                300);	// period_ms 
        	
     	btnShooting = OI.getBtnEvt(OI.btnShoot);
     }
 
     // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    protected void execute() 
+    {
     	Robot.ballManipSubsystem.setTopRollerToShootingSpeed();
     }
 

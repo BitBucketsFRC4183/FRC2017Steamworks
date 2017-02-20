@@ -20,12 +20,13 @@ public class ClimbForward extends Command {
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
+    protected void initialize() 
+    {
     	Robot.lightingControl.set(LightingObjects.CLIMB_SUBSYSTEM, 
-					              LightingControl.FUNCTION_FORWARD, 
+					              LightingControl.FUNCTION_BLINK, 
 					              LightingControl.COLOR_GREEN,
-					              3,
-					              300);
+					              0,		// nspace - don't care
+					              300);		// period_ms
     	}
 
     // Called repeatedly when this Command is scheduled to run
