@@ -50,7 +50,6 @@ public class Robot extends IterativeRobot {
 	public static VisionSubsystem visionSubsystem;
 	
 	public static OI oi;
-	public static SendableChooser<String> Alliances;
 	
 	public static LightingControl lightingControl;	
 	public static NavxIMU imu;
@@ -102,11 +101,6 @@ public class Robot extends IterativeRobot {
 		// Start pressurizing the tanks
 		compressor.setClosedLoopControl(true);
 		
-		// Initialize Network Tables and Sendable Chooser
-		Alliances = new SendableChooser<String>();
-		Alliances.addDefault("Red", "red");
-		Alliances.addObject("Blue", "blue");		
-		SmartDashboard.putData("Alliances", Alliances);
 						
 		// Add all subsystems for debugging
 		addSubsystemToDebug(ballManipSubsystem);
