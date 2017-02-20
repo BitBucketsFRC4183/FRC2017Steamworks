@@ -100,6 +100,7 @@ except ValueError as e:
     print("\n\n[WARNING]: BucketVision NetworkTable Not Connected!\n\n")
 
 bvTable = NetworkTables.getTable("BucketVision")
+bvTable.putString("BucketVisionState","Starting")
 
 # Auto updating listener should be good for avoiding the need to poll for value explicitly
 # A ChooserControl is also another option
@@ -278,6 +279,10 @@ cmd = ['sudo iptables -t nat -D PREROUTING 1']
 call(cmd,shell=True)
 cmd = ['sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080']
 call(cmd,shell=True)
+cmd = ['sudo iptables -t nat -D PREROUTING 2']
+call(cmd,shell=True)
+cmd = ['sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j REDIRECT --to-port 8080']
+call(cmd,shell=True)
 
 camHttpServer = HTTPServer(('',8080),CamHTTPHandler)
 camServer = BucketServer("CamServer", camHttpServer).start()
@@ -286,9 +291,18 @@ while (camServer.isStopped() == True):
     time.sleep(0.001)
 
 print("CamServer appears online!")
+bvTable.putString("BucketVisionState","ONLINE")
 
+runTime = 0
+bvTable.putNumber("BucketVisionTime",runTime)
+nextTime = time.time() + 1
 
 while (True):
+
+    if (time.time() > nextTime):
+        nextTime = nextTime + 1
+        runTime = runTime + 1
+        bvTable.putNumber("BucketVisionTime",runTime)
 
     if (frontCamMode.value == 'gearLift'):
         frontProcessor.updateSelection('gearLift')
