@@ -6,6 +6,7 @@ import org.usfirst.frc.team4183.utils.CommandUtils;
 import org.usfirst.frc.team4183.utils.ControlLoop;
 import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
 import org.usfirst.frc.team4183.utils.RateLimit;
+import org.usfirst.frc.team4183.utils.SettledDetector;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -41,12 +42,9 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private ControlLoop cloop;
 	private RateLimit rateLimit;
 	private MinMaxDeadzone deadZone;
+	private SettledDetector settledDetector;
 	
-	// Require a no-arg constructor for use in state-testing mode
-	public TurnBy() {
-		this( 10.0, null);
-	}
-	
+
 	public TurnBy( double degreesToTurn, Command nextState) {		
 		requires( Robot.autonomousSubsystem);
 		
@@ -61,6 +59,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
 		deadZone = new MinMaxDeadzone( DEAD_ZONE_DEG, MIN_DRIVE, MAX_DRIVE);
+		settledDetector = new SettledDetector(500, DEAD_ZONE_DEG);
 		
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
@@ -73,7 +72,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	protected boolean isFinished() {
 		
 		// We are finished when loop error and angular velocity both small
-		if( ( Math.abs(cloop.getError()) < DEAD_ZONE_DEG )
+		if( settledDetector.isSettled()
 			&&
 			( Math.abs(Robot.imu.getRateDeg()) < SETTLED_RATE_DPS )
 		) {
@@ -109,6 +108,8 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	
 	@Override
 	public void setError( double error) {
+		
+		settledDetector.set(error);
 		
 		double x1 = Kp * error;
 			
