@@ -34,8 +34,6 @@ public class DriveLock extends Command
                                   0);	// period_msec - don't care   
     	
     	
-    	//Robot.driveSubsystem.setAlignDrive(true);
-    	// FIXME Change to:
         Robot.driveSubsystem.setLockDrive(true);
     	
     }
@@ -43,8 +41,6 @@ public class DriveLock extends Command
     // Called repeatedly when this Command is scheduled to run
     protected void execute() 
     {
-    	//Robot.driveSubsystem.doAlignDrive(0, 0);
-    	// FIXME change to:
     	Robot.driveSubsystem.doLockDrive();
     }
 
@@ -71,8 +67,6 @@ public class DriveLock extends Command
     // Called once after isFinished returns true
     protected void end() 
     {
-    	//Robot.driveSubsystem.setAlignDrive(false);
-    	// FIXME change to:
     	Robot.driveSubsystem.setLockDrive(false);
     }
 
