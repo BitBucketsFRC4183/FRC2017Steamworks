@@ -35,23 +35,23 @@ public abstract class LoggerBase {
 		public void quit() {
 			interrupt();
 		}
-		
+
 		public void run() {
-			
+
 			while(!isInterrupted()) {
 				long millis = System.currentTimeMillis() - startMillis;
 				if( millis > 1000.0 * duration) 
 					break;
-				
+
 				writeLine( writer, millis);
-				
+
 				try {
 					sleep(interval);
 				} catch (InterruptedException e) {
 					interrupt();
 				}
 			}
-			
+
 			writer.close();
 		}
 	}
@@ -85,7 +85,7 @@ public abstract class LoggerBase {
 
 		try {
 			writer = new PrintWriter( file);
-			
+
 			writerThread = new WriterThread(writer, interval, duration);
 			writerThread.setPriority(Thread.NORM_PRIORITY+2);
 			writerThread.start();

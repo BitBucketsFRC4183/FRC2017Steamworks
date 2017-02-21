@@ -1,9 +1,9 @@
 package org.usfirst.frc.team4183.utils;
 
 public class MinMaxDeadzone {
-	
+
 	public final double minDrive, maxDrive, deadZone;
-	
+
 	/**
 	 * Define parameters for y = f(x) below
 	 * @param deadZone If |error| < deadZone then y = 0
@@ -15,8 +15,8 @@ public class MinMaxDeadzone {
 		this.minDrive = min;
 		this.maxDrive = max;
 	}
-	
-	
+
+
 	/**
 	 * y = f(x)
 	 * @param x  
@@ -32,7 +32,7 @@ public class MinMaxDeadzone {
 		x = Math.abs(x);						
 		if( x > maxDrive) x = maxDrive;
 		if( x < minDrive) x = minDrive;
-		
+
 		return sign*x;						
 	}
 

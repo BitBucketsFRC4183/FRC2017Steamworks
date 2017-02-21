@@ -13,10 +13,10 @@ import edu.wpi.first.wpilibj.command.Command;
 
 
 public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
-	
+
 	// TODO the loop gain constants & NL params work
 	// but need further tuning.
-	
+
 	// Proportional gain
 	private final static double Kp = 0.03; // purposely low for 1st pass
 
@@ -27,27 +27,27 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private final double MIN_DRIVE = 0.4; // Yeah this does seem high
 	// Size of dead zone in degrees
 	private final double DEAD_ZONE_DEG = 1.0;
-	
+
 	// Used (along with dead zone) to determine when turn is complete.
 	// If angular velocity (Degrees/sec) is greater than this,
 	// we're not done yet.
 	private final double SETTLED_RATE_DPS = 0.5;
-	
+
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 2.0;
-	
+
 	private final Command nextState;
 	private final double degreesToTurn;
-	
+
 	private ControlLoop cloop;
 	private RateLimit rateLimit;
 	private MinMaxDeadzone deadZone;
 	private SettledDetector settledDetector;
-	
+
 
 	public TurnBy( double degreesToTurn, Command nextState) {		
 		requires( Robot.autonomousSubsystem);
-		
+
 		this.degreesToTurn = degreesToTurn;
 		this.nextState = nextState;
 	}
@@ -56,75 +56,75 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	protected void initialize() {
 		// Compute setPoint
 		double setPoint = degreesToTurn + Robot.imu.getYawDeg();
-		
+
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
 		deadZone = new MinMaxDeadzone( DEAD_ZONE_DEG, MIN_DRIVE, MAX_DRIVE);
 		settledDetector = new SettledDetector(500, DEAD_ZONE_DEG);
-		
+
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
 		cloop.start();
 	}
-	
 
-	
+
+
 	@Override
 	protected boolean isFinished() {
-		
+
 		// We are finished when loop error and angular velocity both small
 		if( settledDetector.isSettled()
-			&&
-			( Math.abs(Robot.imu.getRateDeg()) < SETTLED_RATE_DPS )
-		) {
+				&&
+				( Math.abs(Robot.imu.getRateDeg()) < SETTLED_RATE_DPS )
+				) {
 			if( nextState != null)
 				return CommandUtils.stateChange(this, nextState);
 			else
 				return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	@Override
 	protected void end() {
-	
+
 		// Don't forget to stop the loop!
 		cloop.stop();
-				
+
 		// Set output to zero before leaving
 		OI.axisTurn.set(0.0);				
 	}
-	
+
 	@Override
 	protected void interrupted() {
 		end();
 	}
-	
-	
+
+
 	@Override
 	public double getFeedback() {
 		return Robot.imu.getYawDeg();
 	}
-	
+
 	@Override
 	public void setError( double error) {
-		
+
 		settledDetector.set(error);
-		
+
 		double x1 = Kp * error;
-			
+
 		// Apply drive non-linearities
 		double x2 = rateLimit.f(x1);
 		double x3 = deadZone.f(x2, error);		
-		
+
 		// Debug
 		//System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
-		
+
 		// Set the output
 		// - sign required because + stick produces right turn,
 		// but right turn is actually a negative yaw angle
 		// (using our yaw angle convention: right-hand-rule w/z-axis up)
 		OI.axisTurn.set( -x3);						
 	}
-	
+
 }
