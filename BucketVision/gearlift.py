@@ -374,6 +374,10 @@ class GearLift:
                 (distanceRatioY <= expectedRatioY)):
                 # Target confidence is high
                 self.networkTable.putNumber("GearConfidence",1.0)
+                
+                # Estimate distance from power curve fit (R-squared = 0.9993088900150656)
+                distance_inches = 2209.78743431602 * (deltaX ** -0.987535082840163)
+                self.networkTable.putNumber("GearDistance_inches",distance_inches)
             else:
                 self.networkTable.putNumber("GearConfidence",0.0)
 
