@@ -131,14 +131,11 @@ public class DriveSubsystem extends Subsystem {
 			m.reverseSensor(REVERSE_SENSOR); 
 			m.setPosition(0.0);
 			
-			// TODO magic numbers
-			m.setPID(0.2, 0.0, 0.0);  // TODO Gain?? depends on gearing & position pulses
+			m.setPID(0.4, 0.0, 0.0); // Might be able to increase gain a bit
 			m.setF(0.0);
 			m.setIZone(0);
-			m.setCloseLoopRampRate(50.0);  // Smoothes things a bit
-			double allowedErr_deg = 2.0;
-			double npu_per_deg = (4*ENCODER_PULSES_PER_REV)/360.0;
-			m.setAllowableClosedLoopErr((int)(allowedErr_deg * npu_per_deg));
+			m.setCloseLoopRampRate(50.0);    // Smoothes things a bit
+			m.setAllowableClosedLoopErr(4);  // Specified in CANTalon "ticks"
 			m.configNominalOutputVoltage(+4.0, -4.0);
 			m.configPeakOutputVoltage(+12.0, -12.0);			
 		}
