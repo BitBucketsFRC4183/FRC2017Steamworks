@@ -16,15 +16,16 @@ public class RateLimit {
 	}
 	
 	public double f( double x) {
-						
-		double delta = maxChangePerMsec * (System.currentTimeMillis() - prevMsec);
-		if( x > prev + delta) x = prev + delta;
-		if( x < prev - delta) x = prev - delta;
-		
-		prev = x;
-		prevMsec = System.currentTimeMillis();
-		
-		return x;
-	}
 
+		double absx = Math.abs(x); 
+		double sgnx = Math.signum(x); 
+
+		double delta = maxChangePerMsec * (System.currentTimeMillis() - prevMsec);     
+		if( absx > prev + delta ) absx = prev + delta; 
+
+		prev = absx; 
+		prevMsec = System.currentTimeMillis(); 
+
+		return sgnx * absx;
+	}
 }

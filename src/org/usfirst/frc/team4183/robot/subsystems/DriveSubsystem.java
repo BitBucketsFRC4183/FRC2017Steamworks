@@ -58,6 +58,7 @@ public class DriveSubsystem extends Subsystem {
 			robotDrive.arcadeDrive(0.0, 0.0);			
 		}
 		
+		// +turn produces right turn (CW from above, -yaw angle)
 		public void arcadeDrive(double speed, double turn) {
 			
 			if(OI.btnLowSensitiveDrive.get()) {
