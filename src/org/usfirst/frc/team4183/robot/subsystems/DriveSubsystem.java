@@ -26,8 +26,10 @@ public class DriveSubsystem extends Subsystem {
 		private double lowSensitivityGain = 0.5;		// Half-control seems nice
 		private final double ALIGN_LOOP_GAIN = 0.05;
 
-		private final int ENCODER_PULSES_PER_REV = 256; // AndyMark says 360 but I think not
-		private final boolean REVERSE_SENSOR = false;   // Verified correct
+		// The counts-per-rev is printed on the encoder -
+		// it's the 1st number after the "E4P" or "E4T"
+		private final int ENCODER_PULSES_PER_REV = 250; 
+		private final boolean REVERSE_SENSOR = false;   // Verified correct 2/21
 		
 		private double yawSetPoint;
 		
@@ -140,7 +142,7 @@ public class DriveSubsystem extends Subsystem {
 			m.setIZone(0);
 			m.setCloseLoopRampRate(50.0);    // Smoothes things a bit
 			m.setAllowableClosedLoopErr(8);  // Specified in CANTalon "ticks"
-			m.configNominalOutputVoltage(+4.0, -4.0);
+			m.configNominalOutputVoltage(+4.5, -4.5);
 			m.configPeakOutputVoltage(+12.0, -12.0);			
 		}
 		
