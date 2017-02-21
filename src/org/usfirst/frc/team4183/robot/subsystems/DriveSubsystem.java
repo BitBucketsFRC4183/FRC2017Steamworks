@@ -25,8 +25,11 @@ public class DriveSubsystem extends Subsystem {
 		
 		private double lowSensitivityGain = 0.5;		// Half-control seems nice
 		private final double ALIGN_LOOP_GAIN = 0.05;
-		private final int ENCODER_PULSES_PER_REV = 360;
-		private final boolean REVERSE_SENSOR = false;  // TODO
+
+		// The counts-per-rev is printed on the encoder -
+		// it's the 1st number after the "E4P" or "E4T"
+		private final int ENCODER_PULSES_PER_REV = 250; 
+		private final boolean REVERSE_SENSOR = false;   // Verified correct 2/21
 		
 		private double yawSetPoint;
 		
@@ -46,10 +49,13 @@ public class DriveSubsystem extends Subsystem {
 			leftFrontMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 			leftFrontMotor.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV); 
 			leftFrontMotor.reverseSensor(REVERSE_SENSOR);
+			leftFrontMotor.setPosition(0.0);
+
 
 			rightFrontMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 			rightFrontMotor.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV);
-			rightFrontMotor.reverseSensor(REVERSE_SENSOR);		
+			rightFrontMotor.reverseSensor(REVERSE_SENSOR);
+			rightFrontMotor.setPosition(0.0);
 		}	
 
 		public void enable() {}
@@ -131,15 +137,12 @@ public class DriveSubsystem extends Subsystem {
 			m.reverseSensor(REVERSE_SENSOR); 
 			m.setPosition(0.0);
 			
-			// TODO magic numbers
-			m.setPID(0.2, 0.0, 0.0);  // TODO Gain?? depends on gearing & position pulses
+			m.setPID(0.4, 0.0, 0.0); // Might be able to increase gain a bit
 			m.setF(0.0);
 			m.setIZone(0);
-			m.setCloseLoopRampRate(50.0);  // Smoothes things a bit
-			double allowedErr_deg = 2.0;
-			double npu_per_deg = (4*ENCODER_PULSES_PER_REV)/360.0;
-			m.setAllowableClosedLoopErr((int)(allowedErr_deg * npu_per_deg));
-			m.configNominalOutputVoltage(+4.0, -4.0);
+			m.setCloseLoopRampRate(50.0);    // Smoothes things a bit
+			m.setAllowableClosedLoopErr(8);  // Specified in CANTalon "ticks"
+			m.configNominalOutputVoltage(+4.5, -4.5);
 			m.configPeakOutputVoltage(+12.0, -12.0);			
 		}
 		
@@ -154,9 +157,7 @@ public class DriveSubsystem extends Subsystem {
 		public double getPositionFt() {
 			// TODO: calibrate this.
 			// Constant below is assuming 4" wheel
-			// 1.047 ft/rot = (4" * pi) in/rot * 1/12 ft/in
-			// Also make sure that moving forward INCREASES the position
-			// (it should, because the reverseSensor() call should've made it so)
+			// 1.047 ft/rot = (4" * pi) in/rot * 1/12 ft/in		
 			return 1.047 * leftFrontMotor.getPosition();
 		}
 		
