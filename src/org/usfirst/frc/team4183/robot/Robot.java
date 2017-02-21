@@ -132,8 +132,6 @@ public class Robot extends IterativeRobot {
 		runWatch.start();
 		Scheduler.getInstance().run();
 		runWatch.stop();
-		
-		System.out.println(driveSubsystem.getPositionFt());
 	}
 
 	/**

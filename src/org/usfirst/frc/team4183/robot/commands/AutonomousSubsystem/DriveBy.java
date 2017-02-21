@@ -103,7 +103,7 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	@Override
 	public double getFeedback() {
 		// Debug
-		System.out.format( "positionFt=%f\n", Robot.driveSubsystem.getPositionFt());
+		// System.out.format( "positionFt=%f\n", Robot.driveSubsystem.getPositionFt());
 		return Robot.driveSubsystem.getPositionFt();
 	}
 	
@@ -122,8 +122,7 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 		//System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
 		
 		// Set the output
-		// OPEN LOOP
-		//OI.axisForward.set( x3);						
+		OI.axisForward.set( x3);						
 	}
 	
 }
