@@ -30,14 +30,14 @@ public class Idle extends Command {
 		c = new DriveBy(3.0, c);
 		*/
 		
-		/*
+		
 		c = new End();
 		c = new DriveBy(3.0, c);
-		 */
 		
+		/*
 		c = new End();
 		c = new TurnBy(90.0, c);
-		
+		*/
 		return c;		
     }
     

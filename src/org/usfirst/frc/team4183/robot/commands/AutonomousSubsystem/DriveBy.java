@@ -103,7 +103,7 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	@Override
 	public double getFeedback() {
 		// Debug
-		System.out.format( "positionFt=%f", Robot.driveSubsystem.getPositionFt());
+		System.out.format( "positionFt=%f\n", Robot.driveSubsystem.getPositionFt());
 		return Robot.driveSubsystem.getPositionFt();
 	}
 	

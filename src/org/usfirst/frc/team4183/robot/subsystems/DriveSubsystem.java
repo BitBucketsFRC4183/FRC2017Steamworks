@@ -25,8 +25,9 @@ public class DriveSubsystem extends Subsystem {
 		
 		private double lowSensitivityGain = 0.5;		// Half-control seems nice
 		private final double ALIGN_LOOP_GAIN = 0.05;
-		private final int ENCODER_PULSES_PER_REV = 360;
-		private final boolean REVERSE_SENSOR = false;  // TODO
+
+		private final int ENCODER_PULSES_PER_REV = 256; // AndyMark says 360 but I think not
+		private final boolean REVERSE_SENSOR = false;   // Verified correct
 		
 		private double yawSetPoint;
 		
@@ -46,10 +47,13 @@ public class DriveSubsystem extends Subsystem {
 			leftFrontMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 			leftFrontMotor.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV); 
 			leftFrontMotor.reverseSensor(REVERSE_SENSOR);
+			leftFrontMotor.setPosition(0.0);
+
 
 			rightFrontMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 			rightFrontMotor.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV);
-			rightFrontMotor.reverseSensor(REVERSE_SENSOR);		
+			rightFrontMotor.reverseSensor(REVERSE_SENSOR);
+			rightFrontMotor.setPosition(0.0);
 		}	
 
 		public void enable() {}
@@ -135,7 +139,7 @@ public class DriveSubsystem extends Subsystem {
 			m.setF(0.0);
 			m.setIZone(0);
 			m.setCloseLoopRampRate(50.0);    // Smoothes things a bit
-			m.setAllowableClosedLoopErr(4);  // Specified in CANTalon "ticks"
+			m.setAllowableClosedLoopErr(8);  // Specified in CANTalon "ticks"
 			m.configNominalOutputVoltage(+4.0, -4.0);
 			m.configPeakOutputVoltage(+12.0, -12.0);			
 		}
@@ -151,11 +155,7 @@ public class DriveSubsystem extends Subsystem {
 		public double getPositionFt() {
 			// TODO: calibrate this.
 			// Constant below is assuming 4" wheel
-			// 1.047 ft/rot = (4" * pi) in/rot * 1/12 ft/in
-			// Also make sure that moving forward INCREASES the position
-			// (it should, because the reverseSensor() call should've made it so)
-			
-			// Try the right encoder also
+			// 1.047 ft/rot = (4" * pi) in/rot * 1/12 ft/in		
 			return 1.047 * leftFrontMotor.getPosition();
 		}
 		
