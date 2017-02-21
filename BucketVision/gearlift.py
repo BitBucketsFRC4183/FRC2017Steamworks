@@ -131,7 +131,7 @@ class GearLift:
                     box = cv2.boxPoints(rect)
                     box = np.int0(box)
                     
-                    # Draw strong candidate in gree
+                    # Draw strong candidate in green
                     cv2.drawContours(source0,[box],0,(0,255,0),2)
                 else:
                     # Save this off just in case we need to build a
@@ -324,17 +324,25 @@ class GearLift:
             
             x1 = detection[0][0][0]
             y1 = detection[0][0][1]
+            w1 = detection[0][1][0]
+            h1 = detection[0][1][1]
+            
             
             x2 = detection[1][0][0]
             y2 = detection[1][0][1]
+            w2 = detection[1][1][0]
+            h2 = detection[1][1][1]
             
             # Using abs() since we don't care which detection is right or left
             deltaX = abs(x2 - x1)
-            distanceRatioX = deltaX / w        # Distance ratio using retro tape width as common factor
+            distanceRatioX = deltaX / ((w1 + w2)/2)  # Distance ratio using retro tape width as common factor
             expectedRatioX = 4.125             # (10.25 - 2.0) / 2.0 inches
             ratioToleranceX = 0.5            # Corresponds to 1" over the 2" baseline
             lowRatioX = expectedRatioX - ratioToleranceX
             highRatioX = expectedRatioX + ratioToleranceX
+            
+            self.networkTable.putNumber("GearDeltaX",deltaX)
+            self.networkTable.putNumber("GearRatioX",distanceRatioX)
             
             # Expect the centers to be close to each other
             # Allowing for up to a 5 degree camera tilt there
@@ -343,15 +351,32 @@ class GearLift:
             # Allowing for some tolerance anything less than 1" out of 5" (--> 0.2)
             # is acceptable
             deltaY = abs(y2 - y1)
-            distanceRatioY = deltaY / h
+            distanceRatioY = deltaY / ((h1 + h2)/2)
             expectedRatioY = 0.2
+            
+            self.networkTable.putNumber("GearDeltaY",deltaY)
+            self.networkTable.putNumber("GearRatioY",distanceRatioY)
+            
+            self.networkTable.putNumber("GearSide1_x",x1)
+            self.networkTable.putNumber("GearSide1_y",y1)
+            self.networkTable.putNumber("GearSide1_w",w1)
+            self.networkTable.putNumber("GearSide1_h",h1)
+            self.networkTable.putNumber("GearSide1_A",h1 * w1)
+            
+            self.networkTable.putNumber("GearSide2_x",x2)
+            self.networkTable.putNumber("GearSide2_y",y2)
+            self.networkTable.putNumber("GearSide2_w",w2)
+            self.networkTable.putNumber("GearSide2_h",h2)
+            self.networkTable.putNumber("GearSide2_A",h2 * w2)
+            
             
             if ((lowRatioX <= distanceRatioX <= highRatioX) and
                 (distanceRatioY <= expectedRatioY)):
                 # Target confidence is high
-                x = 1
+                self.networkTable.putNumber("GearConfidence",1.0)
             else:
-                x = 2
+                self.networkTable.putNumber("GearConfidence",0.0)
+
                 # Things don't appear to be what we think they are
                 # several things could be wrong
                 #    1.    Spring could be obscuring one side splitting
