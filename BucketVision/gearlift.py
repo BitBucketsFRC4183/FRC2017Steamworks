@@ -374,6 +374,10 @@ class GearLift:
                 (distanceRatioY <= expectedRatioY)):
                 # Target confidence is high
                 self.networkTable.putNumber("GearConfidence",1.0)
+                
+                # Estimate distance from power curve fit (R-squared = 0.9993088900150656)
+                distance_inches = 2209.78743431602 * (deltaX ** -0.987535082840163)
+                self.networkTable.putNumber("GearDistance_inches",distance_inches)
             else:
                 self.networkTable.putNumber("GearConfidence",0.0)
 
@@ -381,6 +385,17 @@ class GearLift:
                 # several things could be wrong
                 #    1.    Spring could be obscuring one side splitting
                 #       the image into two smaller pieces
+        elif (numDetections == 1):
+            # Do a single target distance estimate
+            x1 = detection[0][0][0]
+            y1 = detection[0][0][1]
+            w1 = detection[0][1][0]
+            h1 = detection[0][1][1]
+            self.networkTable.putNumber("GearConfidence",0.5)
+            distance_inches = 1441.45246948352 * (h1 ** -1.014995518927)
+            self.networkTable.putNumber("GearDistance_inches",distance_inches)
+        else:
+            self.networkTable.putNumber("GearConfidence",0.0)
             
         return (self.find_contours_output, self.filter_contours_output)
 
