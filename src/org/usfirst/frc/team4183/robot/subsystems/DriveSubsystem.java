@@ -157,6 +157,8 @@ public class DriveSubsystem extends Subsystem {
 			// 1.047 ft/rot = (4" * pi) in/rot * 1/12 ft/in
 			// Also make sure that moving forward INCREASES the position
 			// (it should, because the reverseSensor() call should've made it so)
+			
+			// Try the right encoder also
 			return 1.047 * leftFrontMotor.getPosition();
 		}
 		
