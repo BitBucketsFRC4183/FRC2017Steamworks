@@ -25,6 +25,7 @@ public class WaitForBounce extends Command {
 	              0,		// nspace - don't care
 	              0);		// period_ms - don't care
     	
+    	Robot.climbSubsystem.enable();
     }
 
     // Called repeatedly when this Command is scheduled to run
