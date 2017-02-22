@@ -35,9 +35,6 @@ public class DriveToGearpeg extends Command {
 		public void setError(double error) {
 			
 			double x = Kp * error;
-
-			// Debug
-			System.out.format("YawLoopUser error=%f\n", error, x);
 			
 			// TODO sign??
 			// If Vision defined same as IMU (see above) then this sign is correct.
