@@ -17,6 +17,8 @@ from threading import Lock
 from threading import Thread
 from threading import Condition
 
+import platform
+
 # import our classes
 
 from framerate import FrameRate
@@ -41,9 +43,7 @@ class BucketCapture:
         self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT,height)
         self.exposure = exposure
 
-        # cv2 exposure control DOES NOT WORK ON PI self.stream.set(cv2.CAP_PROP_EXPOSURE,self.exposure)
-        cmd = ['v4l2-ctl --device=' + str(self.src) + ' -c exposure_auto=1 -c exposure_absolute=' + str(self.exposure)]
-        call(cmd,shell=True)
+        self.setExposure()
 
         self.rate = self.stream.get(cv2.CAP_PROP_FPS)
         print("RATE = " + str(self.rate))
@@ -194,8 +194,12 @@ class BucketCapture:
         
     def setExposure(self):
         # cv2 exposure control DOES NOT WORK ON PI self.stream.set(cv2.CAP_PROP_EXPOSURE,self.exposure)
-        cmd = ['v4l2-ctl --device=' + str(self.src) + ' -c exposure_auto=1 -c exposure_absolute=' + str(self.exposure)]
-        call(cmd,shell=True)
+        # cv2 exposure control DOES NOT WORK ON PI self.stream.set(cv2.CAP_PROP_EXPOSURE,self.exposure)
+        if (platform.system() == 'Windows'):
+            self.stream.set(cv2.CAP_PROP_EXPOSURE,self.exposure)
+        else:
+            cmd = ['v4l2-ctl --device=' + str(self.src) + ' -c exposure_auto=1 -c exposure_absolute=' + str(self.exposure)]
+            call(cmd,shell=True)
         
     
     def stop(self):
