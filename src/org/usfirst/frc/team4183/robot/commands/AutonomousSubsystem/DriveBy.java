@@ -17,7 +17,7 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	// TODO the loop gain constants & NL params need testing
 	
 	// Proportional gain
-	private final static double Kp = 1.0;
+	private final static double Kp = 0.6;
 
 	// Largest drive that will be applied
 	private final double MAX_DRIVE = 0.8;

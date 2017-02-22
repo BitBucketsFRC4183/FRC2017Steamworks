@@ -52,7 +52,7 @@ public class DriveToGearpeg extends Command {
 
 		// TODO value?? 
 		// Same as DriveBy? Should be if vision returns distance to target in Feet
-		private double Kp = 1.0;
+		private double Kp = 0.6;
 		// TODO value? Same as DriveBy? Might depend on Vision noise.
 		// Gotta make sure it eventually settles within this value.
 		// Should this same value be used for both MinMaxDeadzone AND SettledDetector?
