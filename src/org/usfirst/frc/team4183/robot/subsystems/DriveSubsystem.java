@@ -56,7 +56,6 @@ public class DriveSubsystem extends Subsystem {
 			rightFrontMotor.setPosition(0.0);
 		}	
 
-		public void enable() {}
 		
 		public void disable() {
 			robotDrive.arcadeDrive(0.0, 0.0);			
