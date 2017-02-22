@@ -378,6 +378,13 @@ class GearLift:
                 # Estimate distance from power curve fit (R-squared = 0.9993088900150656)
                 distance_inches = 2209.78743431602 * (deltaX ** -0.987535082840163)
                 self.networkTable.putNumber("GearDistance_inches",distance_inches)
+                centerX = (x1+x2)/2
+                centerY = (y1+y2)/2
+                radius = 0.2*(h1+h2)/2      # w/h = 2/5 = 0.4 thus 1" is 0.2
+                cv2.circle(source0, (int(centerX), int(centerY)), int(radius), (0,255,0),2)
+                center = ((2.0*centerX)/320.0) - 1.0
+                self.networkTable.putNumber("GearCenterX",center) # cam res is 320, avg & scale cancel
+                self.networkTable.putNumber("GearCenter_deg",center * 55)
             else:
                 self.networkTable.putNumber("GearConfidence",0.0)
 
@@ -394,6 +401,15 @@ class GearLift:
             self.networkTable.putNumber("GearConfidence",0.5)
             distance_inches = 1441.45246948352 * (h1 ** -1.014995518927)
             self.networkTable.putNumber("GearDistance_inches",distance_inches)
+            
+            centerX = x1
+            centerY = y1
+            radius = 0.2*h1     # w/h = 2/5 = 0.4 thus 1" is 0.2
+            cv2.circle(source0, (int(centerX), int(centerY)), int(radius), (0,0,255),2)
+            center = ((2.0*centerX)/320.0) - 1.0
+            self.networkTable.putNumber("GearCenterX",center) # cam res is 320, avg & scale cancel
+            self.networkTable.putNumber("GearCenter_deg",center * 55)
+            
         else:
             self.networkTable.putNumber("GearConfidence",0.0)
             
