@@ -20,7 +20,9 @@ public class WaitingForShooterSpeed extends Command {
     // Called just before this Command runs the first time
     protected void initialize() 
     {
+    	Robot.ballManipSubsystem.enableTopRoller();
     	Robot.ballManipSubsystem.setFlapModeShoot();
+    	
     	Robot.lightingControl.set(LightingObjects.BALL_SUBSYSTEM, 
 	              LightingControl.FUNCTION_BLINK, 
 	              LightingControl.COLOR_RED,

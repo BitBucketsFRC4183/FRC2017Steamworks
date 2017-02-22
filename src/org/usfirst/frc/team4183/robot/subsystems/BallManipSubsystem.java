@@ -66,12 +66,7 @@ public class BallManipSubsystem extends Subsystem {
     	topRollerMotor.configPeakOutputVoltage(+12.0, -12.0);
     }
 	
-	public void enable() {
-		// Enable closed-loop motor;
-		// motor won't actually turn on until set() is done
-		topRollerMotor.enableControl();
-	}
-	
+
 	public void disable() {
 		setTopRollerOff();
 		setConveyerOff();
@@ -83,6 +78,12 @@ public class BallManipSubsystem extends Subsystem {
         setDefaultCommand(new Idle());
     }
     
+	public void enableTopRoller() {
+		// Enable closed-loop motor;
+		// motor won't actually turn on until set() is done
+		topRollerMotor.enableControl();
+	}
+	
     public void setTopRollerToIntakeSpeed(){
     	topRollerMotor.set(INTAKE_RPM);
     }

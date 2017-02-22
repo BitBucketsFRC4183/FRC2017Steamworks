@@ -20,6 +20,7 @@ public class IntakeOn extends Command {
     // Called just before this Command runs the first time
     protected void initialize() 
     {
+    	Robot.ballManipSubsystem.enableTopRoller();
     	Robot.ballManipSubsystem.setFlapModeIntake();
     	
     	Robot.lightingControl.set(LightingObjects.BALL_SUBSYSTEM, 
