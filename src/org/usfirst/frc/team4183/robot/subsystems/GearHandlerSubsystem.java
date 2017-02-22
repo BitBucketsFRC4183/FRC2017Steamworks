@@ -15,13 +15,10 @@ public class GearHandlerSubsystem extends Subsystem {
 	private final DoubleSolenoid gearGateSolenoid = new DoubleSolenoid(RobotMap.GEAR_HANDLER_PNEUMA_OPEN_CHANNEL, RobotMap.GEAR_HANDLER_PNEUMA_CLOSED_CHANNEL); 
 
 	private final CANTalon gearHandlerMotor = new CANTalon(RobotMap.GEAR_HANDLER_MOTOR_ID);
-	private final double gearRecieveMotorSpeed_PVBUS;
-	private final double ballReceiveMotorSpeed_PVBUS;
+	private final double GEAR_RX_MOTOR_DRIVE = -0.5;
+	private final double BALL_RX_MOTOR_DRIVE = 0.5;
 	
 	public GearHandlerSubsystem(){
-		Preferences prefs = Preferences.getInstance();
-		gearRecieveMotorSpeed_PVBUS = prefs.getDouble("GearLoadSpeed", -0.5);
-		ballReceiveMotorSpeed_PVBUS = prefs.getDouble("BallLoadSpeed", 0.5);
 	}
 	
 	public void enable(){
@@ -45,11 +42,11 @@ public class GearHandlerSubsystem extends Subsystem {
 	}
 	
 	public void spinRollerBalls() {
-		gearHandlerMotor.set(ballReceiveMotorSpeed_PVBUS);
+		gearHandlerMotor.set(BALL_RX_MOTOR_DRIVE);
 	}
 	
 	public void spinRollerGear() {
-		gearHandlerMotor.set(gearRecieveMotorSpeed_PVBUS);
+		gearHandlerMotor.set(GEAR_RX_MOTOR_DRIVE);
 	}
 	
 	public void stopRoller() {

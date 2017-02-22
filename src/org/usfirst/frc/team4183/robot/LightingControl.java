@@ -17,7 +17,7 @@ public class LightingControl
 	public static final int FIELD_BRIGHTNESS = 100;
 	public static final int MAX_BRIGHTNESS = 255;	// NOT EYE SAFE AT CLOSE RANGE, BUT MAY BE NEEDED FOR FIELD
 	
-	private static int prefBrightness;
+	private static int prefBrightness = SAFE_BRIGHTNESS;
 	
 	public enum LightingObjects
 	{
@@ -90,9 +90,6 @@ public class LightingControl
 	
 	public LightingControl() 
 	{
-		// Load preferences
-		Preferences prefs = Preferences.getInstance();
-		prefBrightness = prefs.getInt("LightingBrightness", SAFE_BRIGHTNESS);
 		
 		System.out.println( "Starting BucketLights");
 	
