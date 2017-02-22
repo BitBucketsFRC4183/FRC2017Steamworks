@@ -16,7 +16,7 @@ public class BallManipSubsystem extends Subsystem {
 	private CANTalon conveyerMotor;
 	private CANTalon sweeperMotor;
 	
-	private final double SHOOTER_RPM = -4200.0; //speed of top roller when shooting
+	private final double SHOOTER_RPM = -3200.0; //speed of top roller when shooting
 	private final double INTAKE_RPM = -500.0;   //speed of top roller when intake
 	private final double CONVEYOR_DRIVE = 0.8;	//open loop control of conveyer in fraction vbus
 	private final double SWEEPER_DRIVE = 0.1;	//open loop control of sweeper in fraction vbus
