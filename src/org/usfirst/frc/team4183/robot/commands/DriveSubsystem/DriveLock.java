@@ -12,9 +12,6 @@ import edu.wpi.first.wpilibj.command.Command;
  *
  */
 
-// NOTE this state is currently hacked
-// to actually do the same thing as AlignLock.
-// FIXME make it a real DriveLock, see comments below.
 public class DriveLock extends Command 
 {
 
