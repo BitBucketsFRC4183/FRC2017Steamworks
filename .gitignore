@@ -6,3 +6,5 @@ sysProps.xml
 /build/
 
 /dist/
+
+*.pyc

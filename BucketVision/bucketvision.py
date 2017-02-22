@@ -59,8 +59,13 @@ from bucketcapture import BucketCapture     # Camera capture threads... may rena
 from bucketprocessor import BucketProcessor   # Image processing threads... has same basic structure (may merge classes)
 from bucketserver import BucketServer       # Run the HTTP service
 
-#roboRioAddress = '10.38.14.2' # On practice field
-roboRioAddress = '10.41.83.2' # On competition field
+import platform
+
+if (platform.system() == 'Windows'):
+    roboRioAddress = '127.0.0.1'
+else:
+    #roboRioAddress = '10.38.14.2' # On practice field
+    roboRioAddress = '10.41.83.2' # On competition field
 
 # Instances of GRIP created pipelines (they usually require some manual manipulation
 # but basically we would pass one or more of these into one or more image processors (threads)
@@ -96,7 +101,7 @@ try:
     NetworkTables.initialize()
     
 except ValueError as e:
-    print e
+    print(e)
     print("\n\n[WARNING]: BucketVision NetworkTable Not Connected!\n\n")
 
 bvTable = NetworkTables.getTable("BucketVision")
@@ -136,8 +141,8 @@ rope = Faces()     # Temporary placeholder for rope processing
 # port does not seem to play well with the exposure settings (produces either no answer or causes errors depending
 # on the camera used)
 FRONT_CAM_GEAR_EXPOSURE = 20   # TODO: MAKE THESE TABLE/PREFERENCE DRIVEN!
-FRONT_CAM_RED_EXPOSURE = 70
-FRONT_CAM_BLUE_EXPOSURE = 50
+FRONT_CAM_RED_EXPOSURE = 100
+FRONT_CAM_BLUE_EXPOSURE = 100
 
 FRONT_CAM_NORMAL_EXPOSURE = -1  # Camera default
 
@@ -207,7 +212,7 @@ class CamHTTPHandler(BaseHTTPRequestHandler):
         self._self = True
         
     def do_GET(self):
-        print self.path
+        print(self.path)
         self.fps.start()
         if self.path.endswith('.mjpg'):
             self.send_response(200)
