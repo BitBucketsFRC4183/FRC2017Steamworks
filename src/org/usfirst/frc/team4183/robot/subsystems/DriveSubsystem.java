@@ -23,7 +23,7 @@ public class DriveSubsystem extends Subsystem {
 	    
 		private final RobotDrive robotDrive;
 		
-		private final double LOW_SENS_GAIN = 0.5;		// Half-control seems nice
+		private final double LOW_SENS_GAIN = 0.6;		
 		private final double ALIGN_LOOP_GAIN = 0.05;
 
 		// The counts-per-rev is printed on the encoder -
