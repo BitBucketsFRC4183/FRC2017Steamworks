@@ -10,7 +10,7 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 
 public class TeensyIMU {
-	
+
 	private SerialPort serialPort;
 	private double unwrappedYaw = 0.0;
 	PrintWriter pw;
@@ -24,9 +24,9 @@ public class TeensyIMU {
 
 
 	public TeensyIMU(){
-		
+
 		System.out.println("Starting Teensy");
-		
+
 		try {
 			pw = new PrintWriter("/home/lvuser/imutest-"+System.currentTimeMillis()+".txt");
 		} catch(Exception e) {
@@ -38,10 +38,10 @@ public class TeensyIMU {
 			System.out.println("No Teensy found");
 			return;
 		}
-			
+
 		// Start thread for reading in serial data
 		new Thread(new TeensyRunnable()).start();
-		
+
 		// Start thread to print out something at a reasonable rate (testing)
 		if( DEBUG_THREAD) {
 			new Thread() { 
@@ -56,9 +56,9 @@ public class TeensyIMU {
 			}.start();
 		}
 	}
-	
+
 	private class Tester implements PortTester {
-		
+
 		@Override
 		public boolean test( String input) {
 
@@ -82,11 +82,11 @@ public class TeensyIMU {
 				if( line.endsWith("\r") && (line.length() == IMUMESSAGELEN+1) ) {
 					return true;
 				}
-			
+
 			return false;
 		}
 	}
-	
+
 	private float hexToDouble(String str){		
 		//Parses string as decimal
 		Long i = Long.parseLong(str, 16);
@@ -98,18 +98,18 @@ public class TeensyIMU {
 		return Long.parseLong(str,16);		
 	}
 
-	
+
 	class TeensyRunnable implements Runnable {
 
 		@Override
 		public void run() {
-			
+
 			// Raw data
 			String rawIn;
-			
+
 			// Buffer for raw data
 			String inBuffer = "";
-			
+
 			while(true) {
 
 				try {
@@ -118,7 +118,7 @@ public class TeensyIMU {
 						continue;  // Nothing to read
 
 					inBuffer += rawIn;  // Append new input
-					
+
 					// Process the input lines.
 					// Lines ending is \r\n, but we have to watch out for 
 					// fragment line at end of inBuffer.
@@ -126,7 +126,7 @@ public class TeensyIMU {
 					inBuffer = "";
 					for( int i = 0 ; i < lines.length ; i++) {						
 						String line = lines[i];
-						
+
 						if( line.endsWith("\r")) {
 							// Full line, chop off the \r
 							line = line.substring(0, line.length()-1);							
@@ -139,7 +139,7 @@ public class TeensyIMU {
 							inBuffer = line;
 						}						
 					}
-					
+
 				} catch (SerialPortException e) {
 					e.printStackTrace();
 				}
@@ -152,14 +152,14 @@ public class TeensyIMU {
 				}
 			}
 		}
-		
+
 		private double prevYaw = Double.NaN;
 		private double prevTime = Double.NaN;
 		private double unwrapAccum = 0.0;
 		private double prevWrappedYaw = Double.NaN;
-		
+
 		private void processImuMsg( String msg) {
-						
+
 			// poseData[]:
 			// 0: IMU time, usecs: 8 hex chars representing 4-byte long
 			// 1: Fusion status, boolean: 2 hex chars representing 1 byte boolean
@@ -173,7 +173,7 @@ public class TeensyIMU {
 				return;
 
 			long imutime = hexToLong(poseData[0]);
-			
+
 			// Yaw angle delivered by Teensy is backwards from the usual
 			// convention (right-hand-rule with z-axis pointing up).
 			// So we'll fix that here (not tempted to change the Teensy code!)
@@ -188,16 +188,16 @@ public class TeensyIMU {
 			}
 			prevWrappedYaw = wrappedYaw;
 			unwrappedYaw = wrappedYaw + unwrapAccum;
-			
+
 			// Calculate yaw rate (gotta watch out for excessive rate)
 			if( !Double.isNaN(prevYaw)) {
 				double timeDelta = (imutime - prevTime)/1000000.0;			
 				double yawRate = (unwrappedYaw - prevYaw)/timeDelta;
-				
-//				System.out.format("IMU Time:%d YawRate:%f Yaw:%f\n", imutime, yawRate, unwrappedYaw);			
-//				pw.format("IMU Time:%d YawRate:%f Yaw:%f\n", imutime, yawRate, unwrappedYaw);
+
+				//				System.out.format("IMU Time:%d YawRate:%f Yaw:%f\n", imutime, yawRate, unwrappedYaw);			
+				//				pw.format("IMU Time:%d YawRate:%f Yaw:%f\n", imutime, yawRate, unwrappedYaw);
 			}
-			
+
 			prevTime = imutime;
 			prevYaw = unwrappedYaw;
 		}	

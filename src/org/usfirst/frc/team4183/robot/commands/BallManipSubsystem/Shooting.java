@@ -12,51 +12,51 @@ import edu.wpi.first.wpilibj.command.Command;
  *
  */
 public class Shooting extends Command {
-	
+
 	OI.ButtonEvent btnShooting;
 
-    public Shooting() {
-        requires(Robot.ballManipSubsystem);
-    }
+	public Shooting() {
+		requires(Robot.ballManipSubsystem);
+	}
 
-    // Called just before this Command runs the first time
-    protected void initialize() { 
-    	
-    	// TODO: Change to execute on changes on alignment
-       	Robot.lightingControl.set(LightingObjects.BALL_SUBSYSTEM,
-                LightingControl.FUNCTION_ON,
-                LightingControl.COLOR_ORANGE,
-                0,		// nspace - don't care
-                0);		// period_ms - don't care 
-       	
-    	btnShooting = OI.getBtnEvt(OI.btnShoot);
-    }
+	// Called just before this Command runs the first time
+	protected void initialize() { 
 
-    // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
-    	Robot.ballManipSubsystem.setConveyerOn();
-    	Robot.ballManipSubsystem.setTopRollerToShootingSpeed();
-    }
+		// TODO: Change to execute on changes on alignment
+		Robot.lightingControl.set(LightingObjects.BALL_SUBSYSTEM,
+				LightingControl.FUNCTION_ON,
+				LightingControl.COLOR_ORANGE,
+				0,		// nspace - don't care
+				0);		// period_ms - don't care 
 
-    // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
-    	if(btnShooting.onReleased()) {
-    		Robot.ballManipSubsystem.setConveyerOff();
-    		return CommandUtils.stateChange(this, new WaitingForTrigger());
-    	}
-    	if(OI.btnIdle.get()) {
-    		return CommandUtils.stateChange(this, new Idle());
-    	}
-        return false;
-    }
+		btnShooting = OI.getBtnEvt(OI.btnShoot);
+	}
 
-    // Called once after isFinished returns true
-    protected void end() {
-    }
+	// Called repeatedly when this Command is scheduled to run
+	protected void execute() {
+		Robot.ballManipSubsystem.setConveyerOn();
+		Robot.ballManipSubsystem.setTopRollerToShootingSpeed();
+	}
 
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    protected void interrupted() {
-    	end();
-    }
+	// Make this return true when this Command no longer needs to run execute()
+	protected boolean isFinished() {
+		if(btnShooting.onReleased()) {
+			Robot.ballManipSubsystem.setConveyerOff();
+			return CommandUtils.stateChange(this, new WaitingForTrigger());
+		}
+		if(OI.btnIdle.get()) {
+			return CommandUtils.stateChange(this, new Idle());
+		}
+		return false;
+	}
+
+	// Called once after isFinished returns true
+	protected void end() {
+	}
+
+	// Called when another command which requires one or more of the same
+	// subsystems is scheduled to run
+	protected void interrupted() {
+		end();
+	}
 }

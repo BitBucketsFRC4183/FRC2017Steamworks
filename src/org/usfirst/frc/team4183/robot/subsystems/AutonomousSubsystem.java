@@ -12,8 +12,8 @@ public class AutonomousSubsystem extends Subsystem {
 	// Nothing in here now...it's pretty much a dummy,
 	// just to make the state machine work.
 
-    public void initDefaultCommand() {
-        setDefaultCommand(new Idle());
-    }
+	public void initDefaultCommand() {
+		setDefaultCommand(new Idle());
+	}
 }
 

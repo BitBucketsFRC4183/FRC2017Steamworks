@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.ArrayList;
@@ -39,8 +38,8 @@ public class Robot extends IterativeRobot {
 	// current running mode of the Robot.
 	public enum RunMode { DISABLED, AUTO, TELEOP, TEST };
 	public static RunMode runMode = RunMode.DISABLED;
-	
-	
+
+
 	public static BallManipSubsystem ballManipSubsystem;
 	public static HopperSubsystem hopperSubsystem;
 	public static ClimbSubsystem climbSubsystem;
@@ -48,26 +47,26 @@ public class Robot extends IterativeRobot {
 	public static GearHandlerSubsystem gearHandlerSubsystem;
 	public static AutonomousSubsystem autonomousSubsystem;
 	public static VisionSubsystem visionSubsystem;
-	
+
 	public static OI oi;
-	
+
 	public static LightingControl lightingControl;	
 	public static NavxIMU imu;
-	
-		
+
+
 	private Compressor compressor;
-		
+
 	// Anybody needing the (singleton) Robot instance 
 	// can get it by doing Robot.instance().
 	// Bit of a hack but WPILib leaves me no other way.
 	private static Robot robotInstance;
 	public static Robot instance() { return robotInstance; }
-	
+
 	public Robot() {
 		robotInstance = this;
 	}
-	
-	
+
+
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -78,7 +77,7 @@ public class Robot extends IterativeRobot {
 		// Construct the OI
 		// Do this first in case any Subsystems need to look at it
 		oi = OI.instance();
-		
+
 		// Construct the Subsystems
 		ballManipSubsystem = new BallManipSubsystem();
 		hopperSubsystem = new HopperSubsystem();
@@ -87,21 +86,21 @@ public class Robot extends IterativeRobot {
 		gearHandlerSubsystem = new GearHandlerSubsystem();
 		autonomousSubsystem = new AutonomousSubsystem();
 		visionSubsystem  = new VisionSubsystem();
-		
+
 		// Construct Compressor
 		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);		
-		
+
 		// Construct LightingControl, IMU, and vision
 		lightingControl = new LightingControl(); 		
 		imu = new NavxIMU();
-			
+
 
 		// Construction is complete
-				
+
 		// Start pressurizing the tanks
 		compressor.setClosedLoopControl(true);
-		
-						
+
+
 		// Add all subsystems for debugging
 		addSubsystemToDebug(ballManipSubsystem);
 		addSubsystemToDebug(hopperSubsystem);
@@ -120,7 +119,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void disabledInit() {
 		runMode = RunMode.DISABLED;
-		
+
 		// Clear out the scheduler
 		// Will result in only Default Commands (Idle-s) running.
 		// Do this last to be sure that Idle-s see correct info when starting.
@@ -148,13 +147,13 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		runMode = RunMode.AUTO;
-		
+
 		// Set up OI for autonomous mode
 		// NOTE: Must do this BEFORE clearing out scheduler!
 		// Clearing out scheduler causes Default Commands (Idle-s)
 		// to start, and we want those to see the new OI mappings.
 		oi.autonomousInit();
-				
+
 		// Clear out the scheduler
 		// Will result in only Default Commands (Idle-s) running.
 		// Do this last to be sure that Idle-s see correct info when starting.
@@ -192,7 +191,7 @@ public class Robot extends IterativeRobot {
 	 */
 
 	List<Double> runTimeList = new ArrayList<>();
-	
+
 	@Override
 	public void teleopPeriodic() {			
 		runWatch.start();
@@ -203,13 +202,13 @@ public class Robot extends IterativeRobot {
 	/**
 	 * This function is called periodically during test mode
 	 */
-	
+
 	@Override
 	public void testInit() {
 		runMode = RunMode.TEST;
 	}
 
-	
+
 	/**
 	 * This function is called periodically during test mode
 	 */
@@ -217,8 +216,8 @@ public class Robot extends IterativeRobot {
 	public void testPeriodic() {
 		LiveWindow.run();		
 	}
-	
-	
+
+
 	@Override
 	public void robotPeriodic() {
 		loopWatch.stop();
@@ -227,12 +226,12 @@ public class Robot extends IterativeRobot {
 
 	private Stopwatch runWatch = 
 			new Stopwatch( "Run", 
-			(name, max, min, avg) -> SmartDashboard.putNumber( "MaxRun", max) );
+					(name, max, min, avg) -> SmartDashboard.putNumber( "MaxRun", max) );
 	private Stopwatch loopWatch = 
 			new Stopwatch( "Loop", 
-			(name, max, min, avg) -> SmartDashboard.putNumber( "MaxLoop", max) );
+					(name, max, min, avg) -> SmartDashboard.putNumber( "MaxLoop", max) );
 
-	
+
 	private Set<Subsystem> subSystems = new HashSet<>();
 
 	// Add Subsystem to the test set

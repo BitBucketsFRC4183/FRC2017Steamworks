@@ -1,7 +1,7 @@
 package org.usfirst.frc.team4183.utils;
 
 public class Deadzone {
-	
+
 	/**
 	 * Simple deadzone function
 	 * 

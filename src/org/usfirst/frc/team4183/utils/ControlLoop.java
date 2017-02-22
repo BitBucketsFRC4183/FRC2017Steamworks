@@ -26,10 +26,10 @@ public class ControlLoop {
 	private final static long DEFAULT_MSECS = 20;
 	private final long msecs;
 	private volatile double setPoint;
-	
+
 	private final LoopThread loopThread;
 	private final ControlLoopUser user;
-	
+
 	/**
 	 * User of ControlLoop must provide an implementation of this interface
 	 * @author twilson
@@ -40,14 +40,14 @@ public class ControlLoop {
 		 * @return The feedback value
 		 */
 		public double getFeedback();
-		
+
 		/**
 		 * Give the User the value of loop error
 		 * @param error
 		 */
 		public void setError( double error);
 	}
-	
+
 	/**
 	 * Constructor
 	 * @param user  The user of this class
@@ -56,7 +56,7 @@ public class ControlLoop {
 	public ControlLoop( ControlLoopUser user, double setPoint) {
 		this( user, setPoint, DEFAULT_MSECS);
 	}
-	
+
 	/**
 	 * Constructor
 	 * @param user  The user of this class
@@ -67,11 +67,11 @@ public class ControlLoop {
 		this.user = user;
 		this.setPoint = setPoint;
 		this.msecs = msecs;
-	
+
 		loopThread = new LoopThread();
 		loopThread.setPriority(Thread.NORM_PRIORITY+2);		
 	}
-	
+
 	/**
 	 * Set the loop setpoint (normally done in constructor)
 	 * @param setPoint
@@ -79,7 +79,7 @@ public class ControlLoop {
 	public synchronized void setSetpoint( double setPoint) {
 		this.setPoint = setPoint;
 	}
-		
+
 	/**
 	 * Get the loop error
 	 * @return Loop error
@@ -87,23 +87,23 @@ public class ControlLoop {
 	public synchronized double getError() {
 		return setPoint - user.getFeedback();
 	}
-	
+
 	/**
 	 * Start operation
 	 */
 	public void start() {
 		loopThread.start();
 	}
-	
+
 	/**
 	 * Stop operation
 	 * Does not return until loop thread has exited.
 	 */
 	public void stop() {
-		
+
 		// Signal control loop to quit
 		loopThread.quit();
-		
+
 		// Wait for thread to exit
 		try {
 			loopThread.join();
@@ -112,27 +112,27 @@ public class ControlLoop {
 			// http://www.ibm.com/developerworks/library/j-jtp05236/
 			Thread.currentThread().interrupt();
 		}
-		
+
 		user.setError(0.0);
 	}
-	
-	
-	
+
+
+
 	// This Thread implements the control loop
 	private class LoopThread extends Thread {
-						
+
 		private void quit() {
 			interrupt();
 		}
-		
+
 		@Override
 		public void run( ) {
-									
+
 			// Loop until signaled to quit
 			while( !isInterrupted()) {
 
 				user.setError( getError() );				
-				
+
 				// Delay
 				try {
 					Thread.sleep(msecs);

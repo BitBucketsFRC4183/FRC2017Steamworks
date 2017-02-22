@@ -15,11 +15,11 @@ import edu.wpi.first.wpilibj.command.Command;
 public class DriveLock extends Command 
 {
 
-    public DriveLock() 
-    {
-        // Use requires() here to declare subsystem dependencies
-        requires(Robot.driveSubsystem);
-    }
+	public DriveLock() 
+	{
+		// Use requires() here to declare subsystem dependencies
+		requires(Robot.driveSubsystem);
+	}
 
     // Called just before this Command runs the first time
     protected void initialize() 
@@ -41,25 +41,9 @@ public class DriveLock extends Command
     	Robot.driveSubsystem.doLockDrive();
     }
 
-    // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() 
-    {
-    	if( OI.btnDriveLock.get())
-    	{
-    		// Stay in state
-    		return false; 
-    	}
-    	
-    	if (OI.btnAlignLock.get())
-    	{
-    		return CommandUtils.stateChange(this, new AlignLock());
-    	}
-    	else
-    	{
-    		return CommandUtils.stateChange(this, new DriverControl());
-    	}
-    	
-    }
+				Robot.driveSubsystem.setAlignDrive(true);
+				// FIXME Change to:
+				//Robot.driveSubsystem.setLockDrive(true);
 
     // Called once after isFinished returns true
     protected void end() 
@@ -67,10 +51,46 @@ public class DriveLock extends Command
     	Robot.driveSubsystem.setLockDrive(false);
     }
 
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    protected void interrupted() 
-    {
-    	end();
-    }
+	// Called repeatedly when this Command is scheduled to run
+	protected void execute() 
+	{
+		Robot.driveSubsystem.doAlignDrive(0, 0);
+		// FIXME change to:
+		//Robot.driveSubsystem.doLockDrive();
+	}
+
+	// Make this return true when this Command no longer needs to run execute()
+	protected boolean isFinished() 
+	{
+		if( OI.btnDriveLock.get())
+		{
+			// Stay in state
+			return false; 
+		}
+
+		if (OI.btnAlignLock.get())
+		{
+			return CommandUtils.stateChange(this, new AlignLock());
+		}
+		else
+		{
+			return CommandUtils.stateChange(this, new DriverControl());
+		}
+
+	}
+
+	// Called once after isFinished returns true
+	protected void end() 
+	{
+		Robot.driveSubsystem.setAlignDrive(false);
+		// FIXME change to:
+		//Robot.driveSubsystem.setLockDrive(false);
+	}
+
+	// Called when another command which requires one or more of the same
+	// subsystems is scheduled to run
+	protected void interrupted() 
+	{
+		end();
+	}
 }

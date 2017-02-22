@@ -11,18 +11,18 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class Idle extends Command {
 
-    public Idle() {
-    	requires( Robot.autonomousSubsystem);
-    	setRunWhenDisabled(true);  // Idle state needs this!
-    }
-    
-    
-    Command location1chain() {
-    	Command c;
-    	
-    	// Build the chain in reverse order
-    	// (last to first) for easier construction.
-    	
+	public Idle() {
+		requires( Robot.autonomousSubsystem);
+		setRunWhenDisabled(true);  // Idle state needs this!
+	}
+
+
+	Command location1chain() {
+		Command c;
+
+		// Build the chain in reverse order
+		// (last to first) for easier construction.
+
 		// These are just for testing.
 		/*
 		c = new End();
@@ -39,71 +39,71 @@ public class Idle extends Command {
 		c = new TurnBy(90.0, c);
 		*/
 		return c;		
-    }
-    
-    private Command location2chain() {
-    	return null;
-    }
-    
-    private Command location3chain() {   	
-    	return null;
-    }
-    
-    private Command buildAutoChain() {
-    	
-    	// Positions are numbered 1,2,3  L-to-R when viewed from behind.
-    	// This is true for both Red and Blue ends of the field.
+	}
 
-    	int location = DriverStation.getInstance().getLocation();
+	private Command location2chain() {
+		return null;
+	}
 
-    	// FIXME for testing only!! Take this out!!
-    	location = 1;
+	private Command location3chain() {   	
+		return null;
+	}
 
-    	Command firstState = null;
-    	switch(location) {
-    	case 1:
-    		firstState = location1chain();
-    		break;
-    	case 2:
-    		firstState = location2chain();
-    		break;
-    	case 3:
-    		firstState = location3chain();
-    		break;
+	private Command buildAutoChain() {
 
-    	default: 
-    		throw new IllegalArgumentException();
-    	}
-    	
-    	return firstState;
-    }
+		// Positions are numbered 1,2,3  L-to-R when viewed from behind.
+		// This is true for both Red and Blue ends of the field.
 
-    
-    // Called just before this Command runs the first time
-    protected void initialize() {
-    }
+		int location = DriverStation.getInstance().getLocation();
 
-    // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
-    }
+		// FIXME for testing only!! Take this out!!
+		location = 1;
 
-    // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
-    	
-    	if( Robot.runMode == Robot.RunMode.AUTO ) {    		
-    		return CommandUtils.stateChange(this, buildAutoChain()); 
-    	}
-    	
-        return false;
-    }
+		Command firstState = null;
+		switch(location) {
+		case 1:
+			firstState = location1chain();
+			break;
+		case 2:
+			firstState = location2chain();
+			break;
+		case 3:
+			firstState = location3chain();
+			break;
 
-    // Called once after isFinished returns true
-    protected void end() {
-    }
+		default: 
+			throw new IllegalArgumentException();
+		}
 
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    protected void interrupted() {
-    	end();
-    }
+		return firstState;
+	}
+
+
+	// Called just before this Command runs the first time
+	protected void initialize() {
+	}
+
+	// Called repeatedly when this Command is scheduled to run
+	protected void execute() {
+	}
+
+	// Make this return true when this Command no longer needs to run execute()
+	protected boolean isFinished() {
+
+		if( Robot.runMode == Robot.RunMode.AUTO ) {    		
+			return CommandUtils.stateChange(this, buildAutoChain()); 
+		}
+
+		return false;
+	}
+
+	// Called once after isFinished returns true
+	protected void end() {
+	}
+
+	// Called when another command which requires one or more of the same
+	// subsystems is scheduled to run
+	protected void interrupted() {
+		end();
+	}
 }

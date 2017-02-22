@@ -14,55 +14,55 @@ import edu.wpi.first.wpilibj.command.Command;
 public class AlignLock extends Command 
 {
 
-    public AlignLock() 
-    {
-        // Use requires() here to declare subsystem dependencies
-        requires(Robot.driveSubsystem);
-    }
+	public AlignLock() 
+	{
+		// Use requires() here to declare subsystem dependencies
+		requires(Robot.driveSubsystem);
+	}
 
-    // Called just before this Command runs the first time
-    protected void initialize() 
-    {
-    	Robot.lightingControl.set(LightingObjects.DRIVE_SUBSYSTEM,
-                                  LightingControl.FUNCTION_BLINK,
-                                  LightingControl.COLOR_GREEN,
-                                  0,		// nspace - don't care
-                                  300);	// period_msec - a nice blink rate
-    	
-        Robot.driveSubsystem.setAlignDrive(true);
-    }
+	// Called just before this Command runs the first time
+	protected void initialize() 
+	{
+		Robot.lightingControl.set(LightingObjects.DRIVE_SUBSYSTEM,
+				LightingControl.FUNCTION_BLINK,
+				LightingControl.COLOR_GREEN,
+				0,		// nspace - don't care
+				300);	// period_msec - a nice blink rate
 
-    // Called repeatedly when this Command is scheduled to run
-    protected void execute() 
-    {
-    	Robot.driveSubsystem.doAlignDrive(OI.axisForward.get(), OI.axisTurn.get());
-    }
+				Robot.driveSubsystem.setAlignDrive(true);
+	}
 
-    // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() 
-    {
-    	
-    	if (OI.btnDriveLock.get())
-    	{
-    		return CommandUtils.stateChange(this, new DriveLock());
-    	}
-    	else if( ! OI.btnAlignLock.get()) 
-    	{
-    		return CommandUtils.stateChange(this, new DriverControl());
-    	}
-        return false;
-    }
+	// Called repeatedly when this Command is scheduled to run
+	protected void execute() 
+	{
+		Robot.driveSubsystem.doAlignDrive(OI.axisForward.get(), OI.axisTurn.get());
+	}
 
-    // Called once after isFinished returns true
-    protected void end() 
-    {
-        Robot.driveSubsystem.setAlignDrive(false);
-    }
+	// Make this return true when this Command no longer needs to run execute()
+	protected boolean isFinished() 
+	{
 
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    protected void interrupted() 
-    {
-    	end();
-    }
+		if (OI.btnDriveLock.get())
+		{
+			return CommandUtils.stateChange(this, new DriveLock());
+		}
+		else if( ! OI.btnAlignLock.get()) 
+		{
+			return CommandUtils.stateChange(this, new DriverControl());
+		}
+		return false;
+	}
+
+	// Called once after isFinished returns true
+	protected void end() 
+	{
+		Robot.driveSubsystem.setAlignDrive(false);
+	}
+
+	// Called when another command which requires one or more of the same
+	// subsystems is scheduled to run
+	protected void interrupted() 
+	{
+		end();
+	}
 }

@@ -16,7 +16,7 @@ public class ClimbSubsystem extends Subsystem {
 	private CANTalon climbMotor;
 	private DigitalInput leftSwitch; 
 	private DigitalInput rightSwitch;
-	
+
 	private DoubleSolenoid climbSolenoid = new DoubleSolenoid(RobotMap.CLIMB_PNEUMA_RELEASE_CHANNEL, RobotMap.CLIMB_PNEUMA_HOLD_CHANNEL);
 
 	// Put methods for controlling this subsystem
@@ -26,17 +26,17 @@ public class ClimbSubsystem extends Subsystem {
 		leftSwitch = new DigitalInput(RobotMap.LEFT_SWITCH_PORT);
 		rightSwitch = new DigitalInput(RobotMap.RIGHT_SWITCH_PORT);
 	}
-	
+
 	public void enable() {
 		// Deploy
 		climbSolenoid.set(DoubleSolenoid.Value.kReverse);
 	}
-	
+
 	public void disable() {
 		climbSolenoid.set(DoubleSolenoid.Value.kForward);
 		climbMotor.set(0.0);
 	}
-	
+
 	public void off()
 	{
 		climbMotor.set(0.0);
@@ -49,12 +49,12 @@ public class ClimbSubsystem extends Subsystem {
 	{
 		climbMotor.set(CLIMB_MOTOR_SPEED_PVBUS);
 	}
-	
+
 	public double getCurrent()
 	{
 		return climbMotor.getOutputCurrent();
 	}
-	
+
 	public boolean isPastCurrentLimit()
 	{
 		return (getCurrent() >= CLIMB_MOTOR_CURRENT_LIMIT_AMPS);
@@ -63,7 +63,7 @@ public class ClimbSubsystem extends Subsystem {
 		boolean invertSwitch = RobotMap.INVERT_BUMPER_SWITCH;
 		return (invertSwitch ^ leftSwitch.get() ) || ( invertSwitch ^ rightSwitch.get() );
 	}
-	
+
 	public void initDefaultCommand() {
 		setDefaultCommand(new Idle());
 	}

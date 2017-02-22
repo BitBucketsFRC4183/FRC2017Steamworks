@@ -1,9 +1,8 @@
 package org.usfirst.frc.team4183.robot;
 
 // These constants should be used in place of literals
-// TODO: Consider using built in classes provided by WPI
 public enum PS4Constants {
-	
+
 	// Axis
 	LEFT_STICK_X(0),
 	LEFT_STICK_Y(1),
@@ -11,7 +10,7 @@ public enum PS4Constants {
 	RIGHT_STICK_Y(5),
 	L2_AXIS(3),
 	R2_AXIS(4),
-	
+
 	// Buttons
 	SQUARE   (1), 
 	CROSS    (2), 
@@ -27,13 +26,13 @@ public enum PS4Constants {
 	R_STICK  (12), 
 	PS4      (13), 
 	TRACKPAD (14);
-	
-	
+
+
 	private int value;
 	private PS4Constants(int value) {
 		this.value = value;
 	}
-	
+
 	public int getValue() {
 		return value;
 	}
