@@ -24,7 +24,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class ControlLoop {
 
-	private final static long DEFAULT_MSECS = 40;
+	// This maybe should be longer - 40 or 50?
+	private final static long DEFAULT_MSECS = 20;  
 	private final long msecs;
 	private volatile double setPoint;
 	private String loggingKey = "";

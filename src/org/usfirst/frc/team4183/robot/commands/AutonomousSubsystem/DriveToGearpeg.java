@@ -118,6 +118,7 @@ public class DriveToGearpeg extends Command {
     	   	
     	double yawSetpoint = 0.0;
     	yawCloop = new ControlLoop( new YawLoopUser(), yawSetpoint);
+    	yawCloop.enableLogging("yawCloop");
     	yawCloop.start();
 		
     	// TODO distance setpoint should be what??

@@ -120,6 +120,13 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void disabledInit() {
 		runMode = RunMode.DISABLED;
+
+		// Set up OI for teleop mode - in case there are any buttons
+		// that should work while disabled (unlikely but possible).
+		// NOTE: Must do this BEFORE clearing out scheduler!
+		// Clearing out scheduler causes Default Commands (Idle-s)
+		// to start, and we want those to see the new OI mappings.
+		oi.teleopInit();
 		
 		// Clear out the scheduler
 		// Will result in only Default Commands (Idle-s) running.
