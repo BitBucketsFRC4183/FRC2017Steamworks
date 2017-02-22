@@ -18,7 +18,7 @@ public class DriveToGearpeg extends Command {
 	
 	private static class YawLoopUser implements ControlLoop.ControlLoopUser {
 		
-		// TODO value?? Same as AlignLock?
+		// TODO value?? Same as AlignLock? Or more gain?
 		private double Kp = 0.05;  
 
 		@Override
@@ -35,12 +35,15 @@ public class DriveToGearpeg extends Command {
 		public void setError(double error) {
 			
 			double x = Kp * error;
+
+			// Debug
+			System.out.format("YawLoopUser error=%f\n", error, x);
 			
 			// TODO sign??
 			// If Vision defined same as IMU (see above) then this sign is correct.
 			// (same as in TurnBy)
 			// gain must be + from error to feedback
-			// +error -> -stick -> +yaw -> +
+			// +error -> -stick -> +yaw 
 			OI.axisTurn.set( -x);	
 		}		
 	}
@@ -90,7 +93,7 @@ public class DriveToGearpeg extends Command {
 			//System.out.format("DistLoopUser error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
 			
 			// Set the output
-			// TODO sign? Guessing negative because fwd stick decreases distance
+			// TODO sign? Negative because fwd stick decreases distance
 			OI.axisForward.set( -x3);			
 		}		
 	}
@@ -113,17 +116,15 @@ public class DriveToGearpeg extends Command {
     	//Tell Vision to look for gear
     	Robot.visionSubsystem.setGearMode();
     	   	
-    	// TODO yaw setpoint should 0.
-    	// Vision yaw error value should be 0-centered.
     	double yawSetpoint = 0.0;
     	yawCloop = new ControlLoop( new YawLoopUser(), yawSetpoint);
     	yawCloop.start();
 		
     	// TODO distance setpoint should be what??
-    	double distSetpoint = 0.0;
+    	// We'll try 0.5 ft for now.
+    	double distSetpoint = 0.5;
     	distLoopUser = new DistLoopUser();
     	distCloop = new ControlLoop( distLoopUser, distSetpoint);
-
     	distCloop.start();
     }
 
