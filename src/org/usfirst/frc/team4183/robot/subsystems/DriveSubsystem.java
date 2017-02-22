@@ -23,7 +23,7 @@ public class DriveSubsystem extends Subsystem {
 	    
 		private final RobotDrive robotDrive;
 		
-		private double lowSensitivityGain = 0.5;		// Half-control seems nice
+		private final double LOW_SENS_GAIN = 0.6;		
 		private final double ALIGN_LOOP_GAIN = 0.05;
 
 		// The counts-per-rev is printed on the encoder -
@@ -34,8 +34,6 @@ public class DriveSubsystem extends Subsystem {
 		private double yawSetPoint;
 		
 		public DriveSubsystem() {
-			Preferences prefs = Preferences.getInstance();
-			lowSensitivityGain = prefs.getDouble("LowSensitivityGain", lowSensitivityGain);
 
 	private final RobotDrive robotDrive;
 
@@ -87,17 +85,34 @@ public class DriveSubsystem extends Subsystem {
 			speed *= lowSensitivityGain;
 			turn *= lowSensitivityGain;
 		}
-		if(OI.btnInvertAxis.get()) {
-			speed *= -1.0;
+		
+		// +turn produces right turn (CW from above, -yaw angle)
+		public void arcadeDrive(double speed, double turn) {
+			
+			if(OI.btnLowSensitiveDrive.get()) {
+				speed *= LOW_SENS_GAIN;
+				turn *= LOW_SENS_GAIN;
+			}
+			if(OI.btnInvertAxis.get()) {
+				speed *= -1.0;
+			}
+			
+			// Turn stick is + to the right;
+			// but arcadeDrive 2nd arg + produces left turn
+			// (this is +yaw when yaw is defined according to right-hand-rule
+			// with z-axis up, so arguably correct).
+			// Anyhow need the - sign to make it turn correctly.
+			robotDrive.arcadeDrive(speed, -turn);
 		}
 
-		// Turn stick is + to the right;
-		// but arcadeDrive 2nd arg + produces left turn
-		// (this is +yaw when yaw is defined according to right-hand-rule
-		// with z-axis up, so arguably correct).
-		// Anyhow need the - sign to make it turn correctly.
-		robotDrive.arcadeDrive(speed, -turn);
-	}
+			if(OI.btnLowSensitiveDrive.get())
+				speed *= LOW_SENS_GAIN;
+			
+			if(OI.btnInvertAxis.get()) {
+				speed *= -1.0;
+			}
+			
+			double error = ALIGN_LOOP_GAIN * (yawSetPoint - Robot.imu.getYawDeg());
 
 
 	public void setAlignDrive(boolean start) {

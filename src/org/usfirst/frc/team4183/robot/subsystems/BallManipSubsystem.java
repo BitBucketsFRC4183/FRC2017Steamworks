@@ -15,12 +15,12 @@ public class BallManipSubsystem extends Subsystem {
 	private CANTalon topRollerMotor;		// Used for shooting AND intake (i.e., multi-speed)
 	private CANTalon conveyerMotor;
 	private CANTalon sweeperMotor;
-
-	private final double shooterRpm;		 //speed of top roller when shooting
-	private final double intakeRpm;		    //speed of top roller when intake
-	private final double conveyorDrive;	        //open loop control of conveyer in fraction vbus
-	private final double sweeperDrive;			//open loop control of sweeper in fraction vbus
-
+	
+	private final double SHOOTER_RPM = -4200.0; //speed of top roller when shooting
+	private final double INTAKE_RPM = -500.0;   //speed of top roller when intake
+	private final double CONVEYOR_DRIVE = 0.8;	//open loop control of conveyer in fraction vbus
+	private final double SWEEPER_DRIVE = 0.1;	//open loop control of sweeper in fraction vbus
+	
 	/* Used to limit range of real-time shooter RPM adjustment
 	 * not used for now (see "animate()" below) - tjw	
 	private final double MAX_SHOOTER_RPM = 4500.0;
@@ -40,14 +40,7 @@ public class BallManipSubsystem extends Subsystem {
 	DoubleSolenoid flapSolenoid = new DoubleSolenoid(RobotMap.BALLSUB_INTAKE_PNEUMA_CHANNEL, RobotMap.BALLSUB_SHOOT_PNEUMA_CHANNEL);
 
 	public BallManipSubsystem(){
-
-		// Load preferences
-		Preferences prefs = Preferences.getInstance();
-		shooterRpm = prefs.getDouble("ShooterRpm", -4200.0);
-		intakeRpm = prefs.getDouble("IntakeRpm", -500.0);
-		conveyorDrive = prefs.getDouble("ConveyorDrive", 0.8);	
-		sweeperDrive = prefs.getDouble("SweeperDrive", 0.1);
-
+		    	
 		topRollerMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_TOP_ROLLER_MOTOR_ID);
 		conveyerMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_CONVEYER_MOTOR_ID);
 		sweeperMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_SWEEPER_MOTOR_ID);
@@ -85,19 +78,19 @@ public class BallManipSubsystem extends Subsystem {
 		setSweeperOff();
 		setFlapModeShoot();
 	}
-
-	public void initDefaultCommand() {
-		setDefaultCommand(new Idle());
-	}
-
-	public void setTopRollerToIntakeSpeed(){
-		topRollerMotor.set(intakeRpm);
-	}
-
-	public void setTopRollerToShootingSpeed(){
-		topRollerMotor.set(shooterRpm);
-	}
-
+		
+    public void initDefaultCommand() {
+        setDefaultCommand(new Idle());
+    }
+    
+    public void setTopRollerToIntakeSpeed(){
+    	topRollerMotor.set(INTAKE_RPM);
+    }
+          
+    public void setTopRollerToShootingSpeed(){
+    	topRollerMotor.set(SHOOTER_RPM);
+    }
+    
 	public void setTopRollerOff(){
 		// Stop closed-loop motor (immediate)
 		// NOTE: Motor is disabled rather than setting speed to 0
@@ -106,31 +99,31 @@ public class BallManipSubsystem extends Subsystem {
 		// setting speed to 0 will not actually stop the motor.
 		topRollerMotor.disableControl();
 	}
-
-	public void setConveyerOn(){
-		conveyerMotor.set(conveyorDrive);
-	}
-
-	public void setConveyerOff(){
-		conveyerMotor.set(0);
-	}
-
-	public void setSweeperOn(){
-		sweeperMotor.set(sweeperDrive);
-	}
-
-	public void setSweeperOff(){
-		sweeperMotor.set(0);
-	}
-
-	public void setFlapModeIntake(){
-		flapSolenoid.set(DoubleSolenoid.Value.kForward);
-	}
-
-	public void setFlapModeShoot(){
-		flapSolenoid.set(DoubleSolenoid.Value.kReverse);
-	}
-
+	
+    public void setConveyerOn(){
+    	conveyerMotor.set(CONVEYOR_DRIVE);
+    }
+    
+    public void setConveyerOff(){
+    	conveyerMotor.set(0);
+    }
+    
+    public void setSweeperOn(){
+    	sweeperMotor.set(SWEEPER_DRIVE);
+    }
+    
+    public void setSweeperOff(){
+    	sweeperMotor.set(0);
+    }
+    
+    public void setFlapModeIntake(){
+    	flapSolenoid.set(DoubleSolenoid.Value.kForward);
+    }
+    
+    public void setFlapModeShoot(){
+    	flapSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
+    
 	/* Allows the operator to adjust the shooter RPM setpoint --
 	 * disabled for now. tjw.
 	 * To re-enable:

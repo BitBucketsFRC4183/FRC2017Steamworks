@@ -26,7 +26,10 @@ public class VisionSubsystem extends Subsystem
 
 	private static final String ALLIANCE_COLOR_KEY = "allianceColor";
 	private static final String ALLIANCE_LOCATION_KEY = "allianceLocation";
-
+	
+	private static final String GEAR_DISTANCE_KEY = "GearDistance_inches";
+	private static final String GEAR_ANGLE_KEY = "GearCenter_deg";
+	
 	private static String currentCam = FRONT_CAM;
 	private static String currentFrontCamMode = GEAR_LIFT_MODE;
 
@@ -75,7 +78,16 @@ public class VisionSubsystem extends Subsystem
 		driverStation = DriverStation.getInstance();
 
 	}
-
+	public double getGearDistance_ft() 
+	{
+		return bvtable.getNumber(GEAR_DISTANCE_KEY, -1)/12;
+	}
+	
+	public double getGearAngle_deg()
+	{
+		return bvtable.getNumber(GEAR_ANGLE_KEY, 0.0);
+	}
+	
 	public void setFrontCam()
 	{
 		currentCam = FRONT_CAM;
