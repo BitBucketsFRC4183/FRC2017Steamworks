@@ -12,9 +12,6 @@ import edu.wpi.first.wpilibj.command.Command;
  *
  */
 
-// NOTE this state is currently hacked
-// to actually do the same thing as AlignLock.
-// FIXME make it a real DriveLock, see comments below.
 public class DriveLock extends Command 
 {
 
@@ -24,21 +21,35 @@ public class DriveLock extends Command
 		requires(Robot.driveSubsystem);
 	}
 
-	// Called just before this Command runs the first time
-	protected void initialize() 
-	{
-		Robot.lightingControl.set(LightingObjects.DRIVE_SUBSYSTEM,
-				LightingControl.FUNCTION_ON,
-				LightingControl.COLOR_GREEN,
-				0,	// nspace - don't care
-				0);	// period_msec - don't care   
+    // Called just before this Command runs the first time
+    protected void initialize() 
+    {
+    	Robot.lightingControl.set(LightingObjects.DRIVE_SUBSYSTEM,
+                                  LightingControl.FUNCTION_ON,
+                                  LightingControl.COLOR_GREEN,
+                                  0,	// nspace - don't care
+                                  0);	// period_msec - don't care   
+    	
+    	
+        Robot.driveSubsystem.setLockDrive(true);
+    	
+    }
 
+    // Called repeatedly when this Command is scheduled to run
+    protected void execute() 
+    {
+    	Robot.driveSubsystem.doLockDrive();
+    }
 
 				Robot.driveSubsystem.setAlignDrive(true);
 				// FIXME Change to:
 				//Robot.driveSubsystem.setLockDrive(true);
 
-	}
+    // Called once after isFinished returns true
+    protected void end() 
+    {
+    	Robot.driveSubsystem.setLockDrive(false);
+    }
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() 

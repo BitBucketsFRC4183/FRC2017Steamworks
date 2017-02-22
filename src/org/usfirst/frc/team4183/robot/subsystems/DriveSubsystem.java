@@ -16,19 +16,41 @@ import org.usfirst.frc.team4183.utils.Deadzone;
  *
  */
 public class DriveSubsystem extends Subsystem {
-	private final CANTalon leftFrontMotor;
-	private final CANTalon leftRearMotor; 
-	private final CANTalon rightFrontMotor;
-	private final CANTalon rightRearMotor;
+		private final CANTalon leftFrontMotor;
+		private final CANTalon leftRearMotor; 
+		private final CANTalon rightFrontMotor;
+		private final CANTalon rightRearMotor;
+	    
+		private final RobotDrive robotDrive;
+		
+		private double lowSensitivityGain = 0.5;		// Half-control seems nice
+		private final double ALIGN_LOOP_GAIN = 0.05;
+
+		// The counts-per-rev is printed on the encoder -
+		// it's the 1st number after the "E4P" or "E4T"
+		private final int ENCODER_PULSES_PER_REV = 250; 
+		private final boolean REVERSE_SENSOR = false;   // Verified correct 2/21
+		
+		private double yawSetPoint;
+		
+		public DriveSubsystem() {
+			Preferences prefs = Preferences.getInstance();
+			lowSensitivityGain = prefs.getDouble("LowSensitivityGain", lowSensitivityGain);
 
 	private final RobotDrive robotDrive;
 
-	private double lowSensitivityGain = 0.5;		// Half-control seems nice
-	private final double ALIGN_LOOP_GAIN = 0.05;
-	private final int ENCODER_PULSES_PER_REV = 360;
-	private final boolean REVERSE_SENSOR = false;  
+			// Set up the position encoders, can be used external to this class
+			leftFrontMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+			leftFrontMotor.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV); 
+			leftFrontMotor.reverseSensor(REVERSE_SENSOR);
+			leftFrontMotor.setPosition(0.0);
 
-	private double yawSetPoint;
+
+			rightFrontMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+			rightFrontMotor.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV);
+			rightFrontMotor.reverseSensor(REVERSE_SENSOR);
+			rightFrontMotor.setPosition(0.0);
+		}	
 
 	public DriveSubsystem() {
 		Preferences prefs = Preferences.getInstance();
@@ -115,53 +137,41 @@ public class DriveSubsystem extends Subsystem {
 			rightRearMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
 			rightRearMotor.reverseOutput(false); // Follow the front
 		}
-		else {
-			leftFrontMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-			leftRearMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-			rightFrontMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-			rightRearMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);							
+		
+		private void setupClosedLoopMaster( CANTalon m) {
+			
+			m.changeControlMode(CANTalon.TalonControlMode.Position);
+			m.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+			m.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV);
+			m.reverseSensor(REVERSE_SENSOR); 
+			m.setPosition(0.0);
+			
+			m.setPID(0.4, 0.0, 0.0); // Might be able to increase gain a bit
+			m.setF(0.0);
+			m.setIZone(0);
+			m.setCloseLoopRampRate(50.0);    // Smoothes things a bit
+			m.setAllowableClosedLoopErr(8);  // Specified in CANTalon "ticks"
+			m.configNominalOutputVoltage(+4.5, -4.5);
+			m.configPeakOutputVoltage(+12.0, -12.0);			
 		}
-	}
-
-	private void setupClosedLoopMaster( CANTalon m) {
-
-		m.changeControlMode(CANTalon.TalonControlMode.Position);
-		m.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
-		m.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV);
-		m.reverseSensor(REVERSE_SENSOR); 
-		m.setPosition(0.0);
-
-		// TODO magic numbers
-		m.setPID(0.2, 0.0, 0.0);  // TODO Gain?? depends on gearing & position pulses
-		m.setF(0.0);
-		m.setIZone(0);
-		m.setCloseLoopRampRate(50.0);  // Smoothes things a bit
-		double allowedErr_deg = 2.0;
-		double npu_per_deg = (4*ENCODER_PULSES_PER_REV)/360.0;
-		m.setAllowableClosedLoopErr((int)(allowedErr_deg * npu_per_deg));
-		m.configNominalOutputVoltage(+4.0, -4.0);
-		m.configPeakOutputVoltage(+12.0, -12.0);			
-	}
-
-	public void doLockDrive() {
-		leftFrontMotor.set(0.0);
-		leftRearMotor.set(leftFrontMotor.getDeviceID());
-		rightFrontMotor.set(0.0);
-		rightRearMotor.set(rightFrontMotor.getDeviceID());			
-	}
-
-
-	public double getPositionFt() {
-		// TODO: calibrate this.
-		// Constant below is assuming 4" wheel
-		// 1.047 ft/rot = (4" * pi) in/rot * 1/12 ft/in
-		// Also make sure that moving forward INCREASES the position
-		// (it should, because the reverseSensor() call should've made it so)
-		return 1.047 * leftFrontMotor.getPosition();
-	}
-
-	public void initDefaultCommand() {
-		setDefaultCommand(new Idle());
-	}
+		
+		public void doLockDrive() {
+			leftFrontMotor.set(0.0);
+			leftRearMotor.set(leftFrontMotor.getDeviceID());
+			rightFrontMotor.set(0.0);
+			rightRearMotor.set(rightFrontMotor.getDeviceID());			
+		}
+		
+		
+		public double getPositionFt() {
+			// TODO: calibrate this.
+			// Constant below is assuming 4" wheel
+			// 1.047 ft/rot = (4" * pi) in/rot * 1/12 ft/in		
+			return 1.047 * leftFrontMotor.getPosition();
+		}
+		
+		public void initDefaultCommand() {
+			setDefaultCommand(new Idle());
+		}
 }
 
