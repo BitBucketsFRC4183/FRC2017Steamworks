@@ -144,9 +144,9 @@ public class DriveSubsystem extends Subsystem {
 		}
 		
 		public void doLockDrive(double value) {
-			leftFrontMotor.set(0.0);
+			leftFrontMotor.set(value);
 			leftRearMotor.set(leftFrontMotor.getDeviceID());
-			rightFrontMotor.set(0.0);
+			rightFrontMotor.set(value);
 			rightRearMotor.set(rightFrontMotor.getDeviceID());			
 		}
 		
