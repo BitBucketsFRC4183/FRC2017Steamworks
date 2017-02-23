@@ -21,6 +21,7 @@ public class BallManipSubsystem extends Subsystem {
 	private final double CONVEYOR_DRIVE = 0.8;	//open loop control of conveyer in fraction vbus
 	private final double SWEEPER_DRIVE = 0.1;	//open loop control of sweeper in fraction vbus
 	
+	private final double UNJAM_SPEED = -0.9;
 	/* Used to limit range of real-time shooter RPM adjustment
 	 * not used for now (see "animate()" below) - tjw	
 	private final double MAX_SHOOTER_RPM = 4500.0;
@@ -36,6 +37,8 @@ public class BallManipSubsystem extends Subsystem {
 	private final double I_VALUE = 1.2*0.001;
 	private final double D_VALUE = .02*1000.0;
 	private final double F_VALUE = 0.13;
+	
+	 
 	
 	DoubleSolenoid flapSolenoid = new DoubleSolenoid(RobotMap.BALLSUB_INTAKE_PNEUMA_CHANNEL, RobotMap.BALLSUB_SHOOT_PNEUMA_CHANNEL);
 	
@@ -125,6 +128,13 @@ public class BallManipSubsystem extends Subsystem {
     	flapSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
     
+    public void setTopRollerUnjam(){
+    	topRollerMotor.set(UNJAM_SPEED);
+    }
+    
+    public void setConveyerReverse(){
+    	conveyerMotor.set(UNJAM_SPEED);
+    }
 	/* Allows the operator to adjust the shooter RPM setpoint --
 	 * disabled for now. tjw.
 	 * To re-enable:

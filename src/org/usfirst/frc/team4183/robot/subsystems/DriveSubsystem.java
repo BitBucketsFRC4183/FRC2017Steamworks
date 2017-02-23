@@ -143,7 +143,7 @@ public class DriveSubsystem extends Subsystem {
 			m.configPeakOutputVoltage(+12.0, -12.0);			
 		}
 		
-		public void doLockDrive() {
+		public void doLockDrive(double value) {
 			leftFrontMotor.set(0.0);
 			leftRearMotor.set(leftFrontMotor.getDeviceID());
 			rightFrontMotor.set(0.0);

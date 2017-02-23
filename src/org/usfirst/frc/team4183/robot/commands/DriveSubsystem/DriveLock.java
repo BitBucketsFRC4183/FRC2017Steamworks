@@ -38,6 +38,9 @@ public class DriveLock extends Command
     // Called repeatedly when this Command is scheduled to run
     protected void execute() 
     {
+    	if(OI.btnUnjam.get()){
+    		Robot.driveSubsystem.doLockDrive(.2*squareWave(0.5));
+    	}
     	Robot.driveSubsystem.doLockDrive();
     }
 
@@ -50,7 +53,7 @@ public class DriveLock extends Command
     		return false; 
     	}
     	
-    	if (OI.btnAlignLock.get())
+    	if (OI.btnAlignLock.get() && !(OI.btnDriveLock.get() || OI.btnUnjam.get())) //second part might need fix
     	{
     		return CommandUtils.stateChange(this, new AlignLock());
     	}
