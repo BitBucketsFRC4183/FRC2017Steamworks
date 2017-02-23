@@ -78,6 +78,6 @@ public class DriveLock extends Command
     }
     
     protected double squareWave(double f_Hz){
-    	return ((f_Hz*(System.currentTimeMillis()/1000.0) % 1.0 ) < 0.5 ? -1 : 1 );
+    	return ((f_Hz*( System.currentTimeMillis() / 1000.0) % 1.0 ) < 0.5 ? -1 : 1 );
     }
 }
