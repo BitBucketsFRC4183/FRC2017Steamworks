@@ -12,13 +12,12 @@ import edu.wpi.first.wpilibj.command.Command;
 
 
 
-public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
+public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	
-	// TODO the loop gain constants & NL params work
-	// but need further tuning.
+	// TODO the loop gain constants & NL params need testing
 	
 	// Proportional gain
-	private final static double Kp = 0.03; // purposely low for 1st pass
+	private final static double Kp = 0.6;
 
 	// Largest drive that will be applied
 	private final double MAX_DRIVE = 0.8;
@@ -26,40 +25,41 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	// (unless error falls within dead zone, then drive goes to 0)
 	private final double MIN_DRIVE = 0.4; // Yeah this does seem high
 	// Size of dead zone in degrees
-	private final double DEAD_ZONE_DEG = 1.0;
-	
-	// Used (along with dead zone) to determine when turn is complete.
-	// If angular velocity (Degrees/sec) is greater than this,
-	// we're not done yet.
-	private final double SETTLED_RATE_DPS = 0.5;
+	private final double DEAD_ZONE_FT = 0.1;
+	//Time to settled
+	private final long SETTLED_MSECS = 1000;  // Hopefully can reduce	
 	
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 2.0;
 	
 	private final Command nextState;
-	private final double degreesToTurn;
+	private final double distanceFt;
 	
 	private ControlLoop cloop;
 	private RateLimit rateLimit;
 	private MinMaxDeadzone deadZone;
-	private SettledDetector settledDetector;
+	private SettledDetector settledDetector; 
 	
-
-	public TurnBy( double degreesToTurn, Command nextState) {		
+	
+	public DriveBy( double distanceFt, Command nextState) {		
 		requires( Robot.autonomousSubsystem);
 		
-		this.degreesToTurn = degreesToTurn;
+		this.distanceFt = distanceFt;
 		this.nextState = nextState;
 	}
 
 	@Override
 	protected void initialize() {
 		// Compute setPoint
-		double setPoint = degreesToTurn + Robot.imu.getYawDeg();
+		double setPoint = distanceFt + Robot.driveSubsystem.getPositionFt();
 		
+		// Make helpers
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
-		deadZone = new MinMaxDeadzone( DEAD_ZONE_DEG, MIN_DRIVE, MAX_DRIVE);
-		settledDetector = new SettledDetector(500, DEAD_ZONE_DEG);
+		deadZone = new MinMaxDeadzone( DEAD_ZONE_FT, MIN_DRIVE, MAX_DRIVE);
+		settledDetector = new SettledDetector(SETTLED_MSECS, DEAD_ZONE_FT);
+		
+		// Put DriveSubsystem into "Align Lock" (drive straight)
+		OI.btnAlignLock.push();
 		
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
@@ -71,11 +71,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	@Override
 	protected boolean isFinished() {
 		
-		// We are finished when loop error and angular velocity both small
-		if( settledDetector.isSettled()
-			&&
-			( Math.abs(Robot.imu.getRateDeg()) < SETTLED_RATE_DPS )
-		) {
+		if (settledDetector.isSettled()) {
 			if( nextState != null)
 				return CommandUtils.stateChange(this, nextState);
 			else
@@ -90,9 +86,12 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	
 		// Don't forget to stop the loop!
 		cloop.stop();
+		
+		// Put DriveSubsystem out of "Align Lock"
+		OI.btnAlignLock.release();
 				
 		// Set output to zero before leaving
-		OI.axisTurn.set(0.0);				
+		OI.axisForward.set(0.0);				
 	}
 	
 	@Override
@@ -103,28 +102,27 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	
 	@Override
 	public double getFeedback() {
-		return Robot.imu.getYawDeg();
+		// Debug
+		// System.out.format( "positionFt=%f\n", Robot.driveSubsystem.getPositionFt());
+		return Robot.driveSubsystem.getPositionFt();
 	}
 	
 	@Override
 	public void setError( double error) {
-		
-		settledDetector.set(error);
+	
+		settledDetector.set(error); 
 		
 		double x1 = Kp * error;
 			
 		// Apply drive non-linearities
 		double x2 = rateLimit.f(x1);
-		double x3 = deadZone.f(x2, error);		
+		double x3 = deadZone.f(x2, error);
 		
 		// Debug
 		//System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
 		
 		// Set the output
-		// - sign required because + stick produces right turn,
-		// but right turn is actually a negative yaw angle
-		// (using our yaw angle convention: right-hand-rule w/z-axis up)
-		OI.axisTurn.set( -x3);						
+		OI.axisForward.set( x3);						
 	}
 	
 }

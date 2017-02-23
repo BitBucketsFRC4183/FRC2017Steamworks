@@ -16,10 +16,10 @@ public class BallManipSubsystem extends Subsystem {
 	private CANTalon conveyerMotor;
 	private CANTalon sweeperMotor;
 	
-	private final double shooterRpm;		 //speed of top roller when shooting
-	private final double intakeRpm;		    //speed of top roller when intake
-	private final double conveyorDrive;	        //open loop control of conveyer in fraction vbus
-	private final double sweeperDrive;			//open loop control of sweeper in fraction vbus
+	private final double SHOOTER_RPM = -3200.0; //speed of top roller when shooting
+	private final double INTAKE_RPM = -500.0;   //speed of top roller when intake
+	private final double CONVEYOR_DRIVE = 0.8;	//open loop control of conveyer in fraction vbus
+	private final double SWEEPER_DRIVE = 0.1;	//open loop control of sweeper in fraction vbus
 	
 	/* Used to limit range of real-time shooter RPM adjustment
 	 * not used for now (see "animate()" below) - tjw	
@@ -40,13 +40,6 @@ public class BallManipSubsystem extends Subsystem {
 	DoubleSolenoid flapSolenoid = new DoubleSolenoid(RobotMap.BALLSUB_INTAKE_PNEUMA_CHANNEL, RobotMap.BALLSUB_SHOOT_PNEUMA_CHANNEL);
 	
 	public BallManipSubsystem(){
-		
-		// Load preferences
-		Preferences prefs = Preferences.getInstance();
-		shooterRpm = prefs.getDouble("ShooterRpm", 4200.0);
-		intakeRpm = prefs.getDouble("IntakeRpm", 500.0);
-		conveyorDrive = prefs.getDouble("ConveyorDrive", 0.8);	
-		sweeperDrive = prefs.getDouble("SweeperDrive", 0.1);
 		    	
 		topRollerMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_TOP_ROLLER_MOTOR_ID);
 		conveyerMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_CONVEYER_MOTOR_ID);
@@ -73,12 +66,7 @@ public class BallManipSubsystem extends Subsystem {
     	topRollerMotor.configPeakOutputVoltage(+12.0, -12.0);
     }
 	
-	public void enable() {
-		// Enable closed-loop motor;
-		// motor won't actually turn on until set() is done
-		topRollerMotor.enableControl();
-	}
-	
+
 	public void disable() {
 		setTopRollerOff();
 		setConveyerOff();
@@ -90,12 +78,18 @@ public class BallManipSubsystem extends Subsystem {
         setDefaultCommand(new Idle());
     }
     
+	public void enableTopRoller() {
+		// Enable closed-loop motor;
+		// motor won't actually turn on until set() is done
+		topRollerMotor.enableControl();
+	}
+	
     public void setTopRollerToIntakeSpeed(){
-    	topRollerMotor.set(intakeRpm);
+    	topRollerMotor.set(INTAKE_RPM);
     }
           
     public void setTopRollerToShootingSpeed(){
-    	topRollerMotor.set(shooterRpm);
+    	topRollerMotor.set(SHOOTER_RPM);
     }
     
 	public void setTopRollerOff(){
@@ -108,7 +102,7 @@ public class BallManipSubsystem extends Subsystem {
 	}
 	
     public void setConveyerOn(){
-    	conveyerMotor.set(conveyorDrive);
+    	conveyerMotor.set(CONVEYOR_DRIVE);
     }
     
     public void setConveyerOff(){
@@ -116,7 +110,7 @@ public class BallManipSubsystem extends Subsystem {
     }
     
     public void setSweeperOn(){
-    	sweeperMotor.set(sweeperDrive);
+    	sweeperMotor.set(SWEEPER_DRIVE);
     }
     
     public void setSweeperOff(){

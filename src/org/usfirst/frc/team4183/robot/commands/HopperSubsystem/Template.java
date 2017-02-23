@@ -1,30 +1,20 @@
-package org.usfirst.frc.team4183.robot.commands.ClimbSubsystem;
+package org.usfirst.frc.team4183.robot.commands.HopperSubsystem;
 
-import org.usfirst.frc.team4183.robot.LightingControl;
 import org.usfirst.frc.team4183.robot.Robot;
-import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class ClimbFinish extends Command {
+public class Template extends Command {
 
-    public ClimbFinish() {
-        requires(Robot.climbSubsystem);
+    public Template() {
+        requires(Robot.hopperSubsystem);
     }
 
-    // We are so done...
-    
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.climbSubsystem.disable();
-    	Robot.lightingControl.set(LightingObjects.CLIMB_SUBSYSTEM, 
-					              LightingControl.FUNCTION_BLINK, 
-					              LightingControl.COLOR_RED,
-					              0,	// nspace - don't care
-					              300);	// period_ms
     }
 
     // Called repeatedly when this Command is scheduled to run

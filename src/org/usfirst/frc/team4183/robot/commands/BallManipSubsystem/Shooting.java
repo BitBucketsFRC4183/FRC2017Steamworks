@@ -22,11 +22,12 @@ public class Shooting extends Command {
     // Called just before this Command runs the first time
     protected void initialize() { 
     	
+    	// TODO: Change to execute on changes on alignment
        	Robot.lightingControl.set(LightingObjects.BALL_SUBSYSTEM,
                 LightingControl.FUNCTION_ON,
-                LightingControl.COLOR_GREEN,
-                0,		// Don't care
-                0);		// Don't care 
+                LightingControl.COLOR_ORANGE,
+                0,		// nspace - don't care
+                0);		// period_ms - don't care 
        	
     	btnShooting = OI.getBtnEvt(OI.btnShoot);
     }

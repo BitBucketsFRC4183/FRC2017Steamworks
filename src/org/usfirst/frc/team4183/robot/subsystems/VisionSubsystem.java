@@ -5,6 +5,7 @@ import org.usfirst.frc.team4183.robot.commands.VisionSubsystem.Idle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionSubsystem extends Subsystem
 {
@@ -26,11 +27,16 @@ public class VisionSubsystem extends Subsystem
 	private static final String ALLIANCE_COLOR_KEY = "allianceColor";
 	private static final String ALLIANCE_LOCATION_KEY = "allianceLocation";
 	
+	private static final String GEAR_DISTANCE_KEY = "GearDistance_inches";
+	private static final String GEAR_ANGLE_KEY = "GearCenter_deg";
+	
 	private static String currentCam = FRONT_CAM;
 	private static String currentFrontCamMode = GEAR_LIFT_MODE;
 	
-	public static String currentAllianceColor = "red";
+	public static DriverStation.Alliance currentAllianceColor = DriverStation.Alliance.Red;
 	public static int currentAllianceLocation = 1;
+	
+	private static double upTime_sec = 0.0;
 
 	private static NetworkTable bvtable;
 	
@@ -71,6 +77,15 @@ public class VisionSubsystem extends Subsystem
 		
 		driverStation = DriverStation.getInstance();
 		
+	}
+	public double getGearDistance_ft() 
+	{
+		return bvtable.getNumber(GEAR_DISTANCE_KEY, -1)/12;
+	}
+	
+	public double getGearAngle_deg()
+	{
+		return bvtable.getNumber(GEAR_ANGLE_KEY, 0.0);
 	}
 	
 	public void setFrontCam()
@@ -121,33 +136,41 @@ public class VisionSubsystem extends Subsystem
 		return (boilerData.confidenceFactor >= 0.5);
 	}
 	
+	public void updateTime()
+	{
+		double current = bvtable.getNumber("BucketVisionTime", -1.0);
+		if (upTime_sec != current)
+		{
+			upTime_sec = current;
+			SmartDashboard.putNumber("BucketVisionTime", upTime_sec);
+		}
+		
+	}
+	
+	public void setAllianceColor()
+	{
+		if ( ! currentAllianceColor.equals(driverStation.getAlliance()))
+		{
+			currentAllianceColor = driverStation.getAlliance();
+			if (currentAllianceColor.equals(DriverStation.Alliance.Blue))
+			{
+				bvtable.putString(ALLIANCE_COLOR_KEY, BLUE_ALLIANCE);
+			}
+			else
+			{
+				bvtable.putString(ALLIANCE_COLOR_KEY, RED_ALLIANCE);				
+			}
+		}
+	}
+	
 	public boolean isRedAlliance() 
 	{
-		return driverStation.getAlliance().equals(DriverStation.Alliance.Red);
-	}
-	
-	public void setRedAlliance() 
-	{
-		if (currentAllianceColor.equals(BLUE_ALLIANCE))
-		{
-			currentAllianceColor = RED_ALLIANCE;
-			bvtable.putString(ALLIANCE_COLOR_KEY, currentAllianceColor);
-		}
-	}
-	
-	public void setBlueAlliance() 
-	{
-		// Only change it if we think the color is wrong
-		if (currentAllianceColor.equals(RED_ALLIANCE))
-		{
-			currentAllianceColor = BLUE_ALLIANCE;
-			bvtable.putString(ALLIANCE_COLOR_KEY, currentAllianceColor);
-		}
+		return currentAllianceColor.equals(DriverStation.Alliance.Red);
 	}
 	
 	public boolean isBlueAlliance() 
 	{
-		return driverStation.getAlliance().equals(DriverStation.Alliance.Blue);
+		return currentAllianceColor.equals(DriverStation.Alliance.Blue);
 	}
 	
 	public void setAllianceNumber() 
@@ -158,10 +181,10 @@ public class VisionSubsystem extends Subsystem
 			bvtable.putNumber(ALLIANCE_LOCATION_KEY, currentAllianceLocation);
 		}
 	}
-	
+		
 	public int getAllianceNumber() 
 	{
-		return driverStation.getLocation();
+		return currentAllianceLocation;
 	}
 	
 	@Override

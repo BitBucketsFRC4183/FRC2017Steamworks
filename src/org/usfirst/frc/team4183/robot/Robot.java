@@ -22,8 +22,7 @@ import org.usfirst.frc.team4183.utils.Stopwatch;
 import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
-
-
+import org.usfirst.frc.team4183.robot.subsystems.HopperSubsystem;
 // Non-subsystem (i.e., non-commandable) controls
 import org.usfirst.frc.team4183.robot.LightingControl;
 
@@ -43,6 +42,7 @@ public class Robot extends IterativeRobot {
 	
 	
 	public static BallManipSubsystem ballManipSubsystem;
+	public static HopperSubsystem hopperSubsystem;
 	public static ClimbSubsystem climbSubsystem;
 	public static DriveSubsystem driveSubsystem;
 	public static GearHandlerSubsystem gearHandlerSubsystem;
@@ -50,7 +50,6 @@ public class Robot extends IterativeRobot {
 	public static VisionSubsystem visionSubsystem;
 	
 	public static OI oi;
-	public static SendableChooser<String> Alliances;
 	
 	public static LightingControl lightingControl;	
 	public static NavxIMU imu;
@@ -82,6 +81,7 @@ public class Robot extends IterativeRobot {
 		
 		// Construct the Subsystems
 		ballManipSubsystem = new BallManipSubsystem();
+		hopperSubsystem = new HopperSubsystem();
 		climbSubsystem = new ClimbSubsystem();
 		driveSubsystem = new DriveSubsystem();
 		gearHandlerSubsystem = new GearHandlerSubsystem();
@@ -101,14 +101,10 @@ public class Robot extends IterativeRobot {
 		// Start pressurizing the tanks
 		compressor.setClosedLoopControl(true);
 		
-		// Initialize Network Tables and Sendable Chooser
-		Alliances = new SendableChooser<String>();
-		Alliances.addDefault("Red", "red");
-		Alliances.addObject("Blue", "blue");		
-		SmartDashboard.putData("Alliances", Alliances);
 						
 		// Add all subsystems for debugging
 		addSubsystemToDebug(ballManipSubsystem);
+		addSubsystemToDebug(hopperSubsystem);
 		addSubsystemToDebug(climbSubsystem);
 		addSubsystemToDebug(driveSubsystem);
 		addSubsystemToDebug(gearHandlerSubsystem);
@@ -124,6 +120,13 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void disabledInit() {
 		runMode = RunMode.DISABLED;
+
+		// Set up OI for teleop mode - in case there are any buttons
+		// that should work while disabled (unlikely but possible).
+		// NOTE: Must do this BEFORE clearing out scheduler!
+		// Clearing out scheduler causes Default Commands (Idle-s)
+		// to start, and we want those to see the new OI mappings.
+		oi.teleopInit();
 		
 		// Clear out the scheduler
 		// Will result in only Default Commands (Idle-s) running.
@@ -223,10 +226,19 @@ public class Robot extends IterativeRobot {
 	}
 	
 	
+	@Override
+	public void robotPeriodic() {
+		loopWatch.stop();
+		loopWatch.start();
+	}
 
 	private Stopwatch runWatch = 
 			new Stopwatch( "Run", 
 			(name, max, min, avg) -> SmartDashboard.putNumber( "MaxRun", max) );
+	private Stopwatch loopWatch = 
+			new Stopwatch( "Loop", 
+			(name, max, min, avg) -> SmartDashboard.putNumber( "MaxLoop", max) );
+
 	
 	private Set<Subsystem> subSystems = new HashSet<>();
 

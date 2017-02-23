@@ -23,40 +23,50 @@ public class DriveSubsystem extends Subsystem {
 	    
 		private final RobotDrive robotDrive;
 		
-		private double lowSensitivityGain = 0.5;		// Half-control seems nice
+		private final double LOW_SENS_GAIN = 0.6;		
 		private final double ALIGN_LOOP_GAIN = 0.05;
+
+		// The counts-per-rev is printed on the encoder -
+		// it's the 1st number after the "E4P" or "E4T"
+		private final int ENCODER_PULSES_PER_REV = 250; 
+		private final boolean REVERSE_SENSOR = false;   // Verified correct 2/21
 		
 		private double yawSetPoint;
 		
 		public DriveSubsystem() {
-			Preferences prefs = Preferences.getInstance();
+
 			leftFrontMotor = new CANTalon(RobotMap.LEFT_FRONT_MOTOR_ID);
 			leftRearMotor = new CANTalon(RobotMap.LEFT_REAR_MOTOR_ID);
 			rightFrontMotor = new CANTalon(RobotMap.RIGHT_FRONT_MOTOR_ID);
-			rightRearMotor = new CANTalon(RobotMap.RIGHT_REAR_MOTOR_ID);
-			
-			lowSensitivityGain = prefs.getDouble("LowSensitivityGain", lowSensitivityGain);
+			rightRearMotor = new CANTalon(RobotMap.RIGHT_REAR_MOTOR_ID);			
 	
 			robotDrive = new RobotDrive(leftFrontMotor, leftRearMotor, rightFrontMotor, rightRearMotor);
 			robotDrive.setSafetyEnabled(false);
-			
-			leftFrontMotor.setFeedbackDevice(RobotMap.DRIVE_ENCODER);
-			leftFrontMotor.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV); 
-			rightFrontMotor.setFeedbackDevice(RobotMap.DRIVE_ENCODER);
-			rightFrontMotor.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV);
+
+			// Set up the position encoders, can be used external to this class
+			leftFrontMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+			leftFrontMotor.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV); 
+			leftFrontMotor.reverseSensor(REVERSE_SENSOR);
+			leftFrontMotor.setPosition(0.0);
+
+
+			rightFrontMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+			rightFrontMotor.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV);
+			rightFrontMotor.reverseSensor(REVERSE_SENSOR);
+			rightFrontMotor.setPosition(0.0);
 		}	
 
-		public void enable() {}
 		
 		public void disable() {
 			robotDrive.arcadeDrive(0.0, 0.0);			
 		}
 		
+		// +turn produces right turn (CW from above, -yaw angle)
 		public void arcadeDrive(double speed, double turn) {
 			
 			if(OI.btnLowSensitiveDrive.get()) {
-				speed *= lowSensitivityGain;
-				turn *= lowSensitivityGain;
+				speed *= LOW_SENS_GAIN;
+				turn *= LOW_SENS_GAIN;
 			}
 			if(OI.btnInvertAxis.get()) {
 				speed *= -1.0;
@@ -85,7 +95,7 @@ public class DriveSubsystem extends Subsystem {
 			yawSetPoint += -0.3 * Deadzone.f(turn, .05);
 
 			if(OI.btnLowSensitiveDrive.get())
-				speed *= lowSensitivityGain;
+				speed *= LOW_SENS_GAIN;
 			
 			if(OI.btnInvertAxis.get()) {
 				speed *= -1.0;
@@ -119,20 +129,17 @@ public class DriveSubsystem extends Subsystem {
 		private void setupClosedLoopMaster( CANTalon m) {
 			
 			m.changeControlMode(CANTalon.TalonControlMode.Position);
-			m.setFeedbackDevice(RobotMap.DRIVE_ENCODER);
-			m.configEncoderCodesPerRev(RobotMap.DRIVE_PULSES_PER_REV);
-			m.reverseSensor(false);  // TODO true or false? I think false...
+			m.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+			m.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV);
+			m.reverseSensor(REVERSE_SENSOR); 
 			m.setPosition(0.0);
 			
-			// TODO magic numbers
-			m.setPID(0.2, 0.0, 0.0);  // TODO Gain?? depends on gearing & position pulses
+			m.setPID(0.4, 0.0, 0.0); // Might be able to increase gain a bit
 			m.setF(0.0);
 			m.setIZone(0);
-			m.setCloseLoopRampRate(50.0);  // Smoothes things a bit
-			double allowedErr_deg = 2.0;
-			double npu_per_deg = (4*RobotMap.DRIVE_PULSES_PER_REV)/360.0;
-			m.setAllowableClosedLoopErr((int)(allowedErr_deg * npu_per_deg));
-			m.configNominalOutputVoltage(+4.0, -4.0);
+			m.setCloseLoopRampRate(50.0);    // Smoothes things a bit
+			m.setAllowableClosedLoopErr(8);  // Specified in CANTalon "ticks"
+			m.configNominalOutputVoltage(+4.5, -4.5);
 			m.configPeakOutputVoltage(+12.0, -12.0);			
 		}
 		
@@ -144,10 +151,11 @@ public class DriveSubsystem extends Subsystem {
 		}
 		
 		
-		public double getPosition() {
-			// TODO: calibrate this & return meaningful units
-			// (currently returns rotations of the encoder, I believe)
-			return leftFrontMotor.getPosition();
+		public double getPositionFt() {
+			// TODO: calibrate this.
+			// Constant below is assuming 4" wheel
+			// 1.047 ft/rot = (4" * pi) in/rot * 1/12 ft/in		
+			return 1.047 * leftFrontMotor.getPosition();
 		}
 		
 		public void initDefaultCommand() {

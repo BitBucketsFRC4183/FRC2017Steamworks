@@ -5,19 +5,19 @@ import com.ctre.CANTalon;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.ClimbSubsystem.Idle;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 /**
  *
  */
 public class ClimbSubsystem extends Subsystem {
 
-	private static final double CLIMB_MOTOR_SPEED_PVBUS = 1.0;
+	private static final double CLIMB_MOTOR_SPEED_PVBUS = 0.8;
 	private static final double CLIMB_MOTOR_CURRENT_LIMIT_AMPS = 40.0;
 	private CANTalon climbMotor;
 	private DigitalInput leftSwitch; 
 	private DigitalInput rightSwitch;
 	
-	private Solenoid climbSolenoid = new Solenoid(RobotMap.CLIMB_PNEUMA_CHANNEL);
+	private DoubleSolenoid climbSolenoid = new DoubleSolenoid(RobotMap.CLIMB_PNEUMA_RELEASE_CHANNEL, RobotMap.CLIMB_PNEUMA_HOLD_CHANNEL);
 
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
@@ -29,11 +29,11 @@ public class ClimbSubsystem extends Subsystem {
 	
 	public void enable() {
 		// Deploy
-		climbSolenoid.set(true);
+		climbSolenoid.set(DoubleSolenoid.Value.kReverse);
 	}
 	
 	public void disable() {
-		climbSolenoid.set(false);
+		climbSolenoid.set(DoubleSolenoid.Value.kForward);
 		climbMotor.set(0.0);
 	}
 	
@@ -43,11 +43,11 @@ public class ClimbSubsystem extends Subsystem {
 	}
 	public void onForward()
 	{
-		climbMotor.set(CLIMB_MOTOR_SPEED_PVBUS);
+		climbMotor.set(-CLIMB_MOTOR_SPEED_PVBUS);
 	}
 	public void onReverse()
 	{
-		climbMotor.set(-CLIMB_MOTOR_SPEED_PVBUS);
+		climbMotor.set(CLIMB_MOTOR_SPEED_PVBUS);
 	}
 	
 	public double getCurrent()

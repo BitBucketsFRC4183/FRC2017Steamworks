@@ -43,6 +43,7 @@ import cv2
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 import time
 
+from subprocess import call
 from threading import Lock
 from threading import Thread
 
@@ -58,8 +59,13 @@ from bucketcapture import BucketCapture     # Camera capture threads... may rena
 from bucketprocessor import BucketProcessor   # Image processing threads... has same basic structure (may merge classes)
 from bucketserver import BucketServer       # Run the HTTP service
 
-#roboRioAddress = '10.38.14.2' # On practice field
-roboRioAddress = '10.41.83.2' # On competition field
+import platform
+
+if (platform.system() == 'Windows'):
+    roboRioAddress = '127.0.0.1'
+else:
+    #roboRioAddress = '10.38.14.2' # On practice field
+    roboRioAddress = '10.41.83.2' # On competition field
 
 # Instances of GRIP created pipelines (they usually require some manual manipulation
 # but basically we would pass one or more of these into one or more image processors (threads)
@@ -95,10 +101,11 @@ try:
     NetworkTables.initialize()
     
 except ValueError as e:
-    print e
+    print(e)
     print("\n\n[WARNING]: BucketVision NetworkTable Not Connected!\n\n")
 
 bvTable = NetworkTables.getTable("BucketVision")
+bvTable.putString("BucketVisionState","Starting")
 
 # Auto updating listener should be good for avoiding the need to poll for value explicitly
 # A ChooserControl is also another option
@@ -106,25 +113,8 @@ bvTable = NetworkTables.getTable("BucketVision")
 # Make the cameraMode an auto updating listener from the network table
 camMode = bvTable.getAutoUpdateValue('CurrentCam','frontCam') # 'frontcam' or 'rearcam'
 frontCamMode = bvTable.getAutoUpdateValue('FrontCamMode', 'gearLift') # 'gearLift' or 'Boiler'
-alliance = 'red'    # default until chooser returns a value
-
-# Also make the alliance based on a chooser 
-
-def on_allianceChoices(value):
-    print('OnAllianceChoice', value)
-
-allianceSelector = {'Red' : 'red',
-                    'Blue' : 'blue'}
-
-def on_allianceSelected(value):
-    global alliance
-    alliance = allianceSelector[value]
-    print("Alliance Choice is: " + alliance)
-
-
-cc = ChooserControl('Alliances',
-                    on_allianceChoices,
-                    on_allianceSelected)
+alliance = bvTable.getAutoUpdateValue('allianceColor','red')   # default until chooser returns a value
+location = bvTable.getAutoUpdateValue('allianceLocation',1)
 
 # NOTE: NOTE: NOTE
 #
@@ -151,8 +141,8 @@ rope = Faces()     # Temporary placeholder for rope processing
 # port does not seem to play well with the exposure settings (produces either no answer or causes errors depending
 # on the camera used)
 FRONT_CAM_GEAR_EXPOSURE = 20   # TODO: MAKE THESE TABLE/PREFERENCE DRIVEN!
-FRONT_CAM_RED_EXPOSURE = 70
-FRONT_CAM_BLUE_EXPOSURE = 50
+FRONT_CAM_RED_EXPOSURE = 100
+FRONT_CAM_BLUE_EXPOSURE = 100
 
 FRONT_CAM_NORMAL_EXPOSURE = -1  # Camera default
 
@@ -222,7 +212,7 @@ class CamHTTPHandler(BaseHTTPRequestHandler):
         self._self = True
         
     def do_GET(self):
-        print self.path
+        print(self.path)
         self.fps.start()
         if self.path.endswith('.mjpg'):
             self.send_response(200)
@@ -257,7 +247,7 @@ class CamHTTPHandler(BaseHTTPRequestHandler):
                     cv2.putText(img,"{:.1f}".format(self.fps.fps()),(0,60),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
 
                     cv2.putText(img,camModeValue,(0, 80),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
-                    cv2.putText(img,frontProcessor.ipselection,(0,100),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
+                    cv2.putText(img,processorSelection.ipselection,(0,100),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
 
                     r, buf = cv2.imencode(".jpg",img)
                     self.wfile.write("--jpgboundary\r\n")
@@ -278,7 +268,7 @@ class CamHTTPHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type','text/html')
             self.end_headers()
             self.wfile.write('<html><head></head><body>')
-            self.wfile.write('<img src="http://127.0.0.1:9090/cam.mjpg"/>')
+            self.wfile.write('<img src="http://127.0.0.1:8080/cam.mjpg"/>')
             self.wfile.write('</body></html>')
             return
 
@@ -287,24 +277,44 @@ class CamHTTPHandler(BaseHTTPRequestHandler):
 # then place the serve_forever call into a thread so we don't block here
 print("Waiting for CamServer to start...")
 
-camHttpServer = HTTPServer(('',9090),CamHTTPHandler)
+# Redirect port 80 to 8080
+# keeping us legal on the field (i.e., requires 80)
+# AND eliminating the need to start this script as root
+cmd = ['sudo iptables -t nat -D PREROUTING 1']
+call(cmd,shell=True)
+cmd = ['sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080']
+call(cmd,shell=True)
+cmd = ['sudo iptables -t nat -D PREROUTING 2']
+call(cmd,shell=True)
+cmd = ['sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j REDIRECT --to-port 8080']
+call(cmd,shell=True)
+
+camHttpServer = HTTPServer(('',8080),CamHTTPHandler)
 camServer = BucketServer("CamServer", camHttpServer).start()
 
 while (camServer.isStopped() == True):
     time.sleep(0.001)
 
 print("CamServer appears online!")
+bvTable.putString("BucketVisionState","ONLINE")
 
+runTime = 0
+bvTable.putNumber("BucketVisionTime",runTime)
+nextTime = time.time() + 1
 
 while (True):
+
+    if (time.time() > nextTime):
+        nextTime = nextTime + 1
+        runTime = runTime + 1
+        bvTable.putNumber("BucketVisionTime",runTime)
 
     if (frontCamMode.value == 'gearLift'):
         frontProcessor.updateSelection('gearLift')
         frontCam.updateExposure(FRONT_CAM_GEAR_EXPOSURE)
     elif (frontCamMode.value == 'Boiler'):
-        selection = cc.getSelected()
-        frontProcessor.updateSelection(alliance + "Boiler")
-        if (alliance == 'red'):
+        frontProcessor.updateSelection(alliance.value + "Boiler")
+        if (alliance.value == 'red'):
             frontCam.updateExposure(FRONT_CAM_RED_EXPOSURE)
         else:
             frontCam.updateExposure(FRONT_CAM_BLUE_EXPOSURE)

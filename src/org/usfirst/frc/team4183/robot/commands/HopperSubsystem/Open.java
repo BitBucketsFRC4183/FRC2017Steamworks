@@ -1,33 +1,40 @@
-package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
+package org.usfirst.frc.team4183.robot.commands.HopperSubsystem;
 
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
+import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- * End state - for testing
+ *
  */
-public class End extends Command {
+public class Open extends Command {
 
-    public End() {
-    	requires( Robot.autonomousSubsystem);
+    public Open() 
+    {
+        requires(Robot.hopperSubsystem);
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
-    	OI.axisForward.set(0.0);
-    	OI.axisTurn.set(0.0);
+    protected void initialize() 
+    {
+    	Robot.hopperSubsystem.open();
     }
 
     // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    protected void execute() 
+    {
     }
 
     // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
-    	// No exit from this state
-        return false;
+    protected boolean isFinished() 
+    {
+    	if (OI.btnCloseHopper.get())
+    	{
+    		return CommandUtils.stateChange(this, new Idle());
+    	}
+    	return false;
     }
 
     // Called once after isFinished returns true

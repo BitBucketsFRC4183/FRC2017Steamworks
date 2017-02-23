@@ -79,7 +79,8 @@ class GearLift:
         # at some angle (i.e, not aligned to screen)
         # In either case we can use the information to identify
         # our intended target
-        detection = []
+        detection = []        # List for items that have both angle and shape we want
+        other = []            # List for other objects that have correct angle, but are wrong shape
         for cnt in self.filter_contours_output:
 
             # Striaght rectangle thusly
@@ -89,19 +90,334 @@ class GearLift:
             rect = cv2.minAreaRect(cnt)
 
             # Rectangle format is: ( center (x,y), (width, height), angle of rotation )
-            if (abs(rect[2]) < 5.0):    # Angle is element 2, in degrees
-                # Then only accept retangles that have the correct ratio
-                ratio = rect[1][1] / rect[1][0]
+            x = rect[0][0]
+            y = rect[0][1]
+            w = rect[1][0]
+            h = rect[1][1]
+            angle_deg = abs(rect[2])
+        
+            # width and height also depend on angle to determine
+            # orientation; angles near 0 we will accept the width
+            # and height as-is, but near 90 we will swap the height
+            # and width to keep things normalized
+        
+            if (angle_deg >= 85.0):
+                w,h = h,w    # swap
+                angle_deg -= 90.0
+            
+            ratio = w / h
+
+            rect = ((x,y),(w,h),angle_deg)
+            
+            # only accept detections that are with 5 degrees of level
+            # and have the correct aspect ratio to be the 2" x 5"
+            # retro tape
+            #
+            # NOTE: This currently does NOT account for the possibility
+            # that the spring is splitting or truncating one of the 
+            # pieces of retro tape in the image. When this happens we
+            # would see that the ratios are getting closer to square
+            # or horizontal, but the center values of the pieces
+            # indicates that they are aligned vertically and the ratio
+            # of the extent of the pieces combined do make the desired
+            # ratio. We DON'T solve that problem here; we will do that
+            # after determining that we have a missing detection
+            if (angle_deg <= 5.0):
+                if (ratio <= 0.45):        # 2"/5" --> 0.4 + tolerance
+                    #print "strong: ", rect
+                    detection.append(rect)
+                    
+                    # Identify angled bounding box and display
+                    box = cv2.boxPoints(rect)
+                    box = np.int0(box)
+                    
+                    # Draw strong candidate in green
+                    cv2.drawContours(source0,[box],0,(0,255,0),2)
+                else:
+                    # Save this off just in case we need to build a
+                    # faux detection from the pieces of smaller objects
+                    #print "weak: ", rect
+                    other.append(rect)
+ 
+        # If there are any detections we need to sift through them for a pair
+        # that is on the same horizon but below the highest expected point on the image
+        numDetections = len(detection)
+        
+        # Having only 1 detection is problematic as it means that any of the following
+        #     1. we just aren't seeing the object, for which we can do nothing more
+        #    2. one of the objects is split or truncated by the spring
+        #
+        # If there are other items that are aligned but did not meet the initial
+        # ratio check then we want to create a faux detection by extending the
+        # object. Again there are two possibilities: one truncated object, or
+        # two smaller objects that are aligned vertically
+        # We want to merge proximal pairs first, then look for truncations
+        numOthers = len(other)
+        faux = []
+        
+        # NOTE: We may make this more efficient, later
+        # by recording only the unmatched index in a list
+        # but the logic is somewhat more complicated to
+        # understand, and we are going for easy to understand, first
+        matchFound = [False] * numOthers
+            
+        if ((numDetections < 2) and (numOthers > 2)):
+            # NOTE: Only assuming a single split of an object
+            # We don't need to merge objects that are split more than twice
+            # But the traversal to accumulate all objects along a line is
+            # fairly stright forward
+            i = -1
+            for oi in other:
+                i = i + 1
+                # If already matched, skip it
+                if (matchFound[i] == True):
+                    continue
+                    
+                xi = oi[0][0]
+                yi = oi[0][1]
+                wi = oi[1][0]
+                hi = oi[1][1]
+                hi2 = hi/2
+                ai = abs(oi[2])
+                topi = (yi - hi2)        # 0 is top of image
+                boti = (yi + hi2)
                 
-                detection.append(rect)
-                #cv2.rectangle(source0,(x,y),(x+w,y+h),(255,0,0),2)  # draw straight in blue
+                j = -1
+                for oj in other[i:]:
+                    j = j + 1
+                    # If already matched, skip it
+                    if (matchFound[j + i] == True):
+                        continue
+                
+                    # Does this pair look like they came from the same object?
+                    xj = oj[0][0]
+                    yj = oj[0][1]
+                    wj = oj[1][0]
+                    hj = oj[1][1]
+                    hj2 = hj/2
+                    aj = abs(oj[2])
+                    topj = (yj - hj2)
+                    botj = (yj + hj2)
+                    
+                    # Assuming that only objects with tilts less than
+                    # 5 deg are present we will apply the same criteria 
+                    # for proximal items... 
+                    # this means that the vertical alignment
+                    # must be within 0.5" over 5" or a factor of 0.1 based on
+                    # the sum of the heights... we will allow a little extra (0.75" --> 0.15)
+                    # as a margin against pixel granularity for object further away
+                    deltaX = abs(xj - xi)
+                    distanceRatioX = deltaX / (hi + hj)
+                    if (distanceRatioX < 0.15):
+                                            
+                        # Build a composite retangle from the two pieces
+                        # as a faux observation then apply the final ratio
+                        # criteria to determine if it is a detection
+                        x = (xi + xj)/2
+                        y = (yi + yj)/2
+                        w = (wi + wj)/2
+                        a = (ai + aj)/2
+                        
+                        # Height is composed of the upper and lower extents
+                        # of the two pieces
+                        # Remembering that (x,y) = (0,0) is top-left corner
+                        # lower values of y are above higher values of y
+                        if (topi < topj):
+                            h = (botj - topi)
+                        else:
+                            h = (boti - topj)
+                        
+                        ratio = w / h
+                        
+                        if (ratio <= 0.45):        # 2"/5" --> 0.4 + tolerance
+                        
+                            matchFound.pop(i)
+                            matchFound.insert(i,True)
+                            matchFound.pop(j + i)
+                            matchFound.insert(j + i,True)
+                            
+                            rect = ((x,y),(w,h),a)
+                            faux.append(rect)
+                        
+                            # Identify angled bounding box and display
+                            box = cv2.boxPoints(rect)
+                            box = np.int0(box)
+                            
+                            # Draw faux candidate in red
+                            cv2.drawContours(source0,[box],0,(0,0,255),2)
+                
+            # If there was no alignment match, we can consider the
+            # observation as potentially truncated.
+            # We say "potentially" because we don't normally
+            # expect a large truncation; in this case we are assuming
+            # that the spring (about 1 inch in diameter) is only slightly 
+            # obscuring the retro tape, meaning that the candidate would
+            # appear with a ratio based roughy 4 inches, rather than 5
+            # and except for extreme angles where the lift obscurs the
+            # the retro tape, the ratio would look closer to 0.5 than 0.4
+            # Since we set the limit, above, to 0.45 this "should" help
+            # identify the object that is truncated so we can indicate
+            # that we are estimating its candidacy as a target like the
+            # merged items in "faux" above.
+            i = -1
+            for match in matchFound:    # NOTE: This is where it is inefficient
+                                        # such that if we just had a list of unmatched index
+                                        # things would go faster here
+                i = i + 1
+                if (match == True):
+                    continue    # We already took care of this one, move along
+                
+                wi = other[i][1][0]
+                hi = other[i][1][1]
+                
+                ratio = wi / hi
+                
+                if (ratio > 0.55):
+                    # Either the object is really shorter than we want
+                    # or more than 1 inch is obscured
+                    # Either way, reject it
+                    continue
+                
+                
+                xi = other[i][0][0]
+                yi = other[i][0][1]
+                hi2 = hi/2
+                ai = abs(other[i][2])
+                topi = (yi - hi2)        # 0 is top of image
+                
+                # Extend the rectangle to be close to the expected size
+                # This include computing a new center value for y
+                hnew = wi / 0.4    # Desired height if this was a real target
+                ynew = topi + hnew/2
+                
+                rect = ((xi,ynew),(wi,hnew),ai)
+                faux.append(rect)
+            
+                # Identify angled bounding box and display
                 box = cv2.boxPoints(rect)
                 box = np.int0(box)
                 
-                cv2.drawContours(source0,[box],0,(0,0,255),2)   # draw rotated in red
+                # Draw faux candidate in blue
+                # so we can see the differences in the different candidates
+                cv2.drawContours(source0,[box],0,(255,0,0),2)
+                        
+        # Having exactly 2 detections is the easy case to analyze
+        # If we have more than 2 we need to throw out the
+        # ones that don't make sense to get the list down to two
+        # Examples:
+        #    1. Detections that have any part higher in the image
+        #       than some threshold
+        #    2. Detections that do not have a corresponding neighbor within
+        #       tolerances... or really just say only accept ones that
+        #      are within 1" of the expected spacing and level
+        #
+        # The process is order (N^2)/2 to make comparisons
+        #
+        # TODO: For now we will just assume two
+        
+        if (numDetections == 2):
+            # Having exactly two (2) detections is the easy case
+        
+            # Verify that the y positions are on the same level (within tolerance)
+            # and that distance between the targets (x) agrees with the documented
+            # distance of 10.25" (outer edges), again within tolerance
+            
+            x1 = detection[0][0][0]
+            y1 = detection[0][0][1]
+            w1 = detection[0][1][0]
+            h1 = detection[0][1][1]
+            
+            
+            x2 = detection[1][0][0]
+            y2 = detection[1][0][1]
+            w2 = detection[1][1][0]
+            h2 = detection[1][1][1]
+            
+            # Using abs() since we don't care which detection is right or left
+            deltaX = abs(x2 - x1)
+            distanceRatioX = deltaX / ((w1 + w2)/2)  # Distance ratio using retro tape width as common factor
+            expectedRatioX = 4.125             # (10.25 - 2.0) / 2.0 inches
+            ratioToleranceX = 0.5            # Corresponds to 1" over the 2" baseline
+            lowRatioX = expectedRatioX - ratioToleranceX
+            highRatioX = expectedRatioX + ratioToleranceX
+            
+            #self.networkTable.putNumber("GearDeltaX",deltaX)
+            #self.networkTable.putNumber("GearRatioX",distanceRatioX)
+            
+            # Expect the centers to be close to each other
+            # Allowing for up to a 5 degree camera tilt there
+            # could be as much as a 0.75" difference in center
+            #         tan(5 deg) * 8.25" = 0.72"
+            # Allowing for some tolerance anything less than 1" out of 5" (--> 0.2)
+            # is acceptable
+            deltaY = abs(y2 - y1)
+            distanceRatioY = deltaY / ((h1 + h2)/2)
+            expectedRatioY = 0.2
+            
+            #self.networkTable.putNumber("GearDeltaY",deltaY)
+            #self.networkTable.putNumber("GearRatioY",distanceRatioY)
+            
+            #self.networkTable.putNumber("GearSide1_x",x1)
+            #self.networkTable.putNumber("GearSide1_y",y1)
+            #self.networkTable.putNumber("GearSide1_w",w1)
+            #self.networkTable.putNumber("GearSide1_h",h1)
+            #self.networkTable.putNumber("GearSide1_A",h1 * w1)
+            
+            #self.networkTable.putNumber("GearSide2_x",x2)
+            #self.networkTable.putNumber("GearSide2_y",y2)
+            #self.networkTable.putNumber("GearSide2_w",w2)
+            #self.networkTable.putNumber("GearSide2_h",h2)
+            #self.networkTable.putNumber("GearSide2_A",h2 * w2)
+            
+            
+            if ((lowRatioX <= distanceRatioX <= highRatioX) and
+                (distanceRatioY <= expectedRatioY)):
+                # Target confidence is high
+                self.networkTable.putNumber("GearConfidence",1.0)
+                
+                # Estimate distance from power curve fit (R-squared = 0.9993088900150656)
+                distance_inches = 2209.78743431602 * (deltaX ** -0.987535082840163)
+                self.networkTable.putNumber("GearDistance_inches",distance_inches)
+                centerX = (x1+x2)/2
+                centerY = (y1+y2)/2
+                radius = 0.2*(h1+h2)/2      # w/h = 2/5 = 0.4 thus 1" is 0.2
+                cv2.circle(source0, (int(centerX), int(centerY)), int(radius), (0,255,0),2)
+                center = ((2.0*centerX)/320.0) - 1.0
+                self.networkTable.putNumber("GearCenterX",center) # cam res is 320, avg & scale cancel
+                self.networkTable.putNumber("GearCenter_deg",center * 55)
+            else:
+                self.networkTable.putNumber("GearConfidence",0.0)
+                self.networkTable.putNumber("GearDistance_inches",0)
+                self.networkTable.putNumber("GearCenterX",0)
+                self.networkTable.putNumber("GearCenter_deg",0)
 
-        # If there are any detections we need to sift through them for a pair
-        # that
+                # Things don't appear to be what we think they are
+                # several things could be wrong
+                #    1.    Spring could be obscuring one side splitting
+                #       the image into two smaller pieces
+        elif (numDetections == 1):
+            # Do a single target distance estimate
+            x1 = detection[0][0][0]
+            y1 = detection[0][0][1]
+            w1 = detection[0][1][0]
+            h1 = detection[0][1][1]
+            self.networkTable.putNumber("GearConfidence",0.5)
+            distance_inches = 1441.45246948352 * (h1 ** -1.014995518927)
+            self.networkTable.putNumber("GearDistance_inches",distance_inches)
+            
+            centerX = x1
+            centerY = y1
+            radius = 0.2*h1     # w/h = 2/5 = 0.4 thus 1" is 0.2
+            cv2.circle(source0, (int(centerX), int(centerY)), int(radius), (0,0,255),2)
+            center = ((2.0*centerX)/320.0) - 1.0
+            self.networkTable.putNumber("GearCenterX",center) # cam res is 320, avg & scale cancel
+            self.networkTable.putNumber("GearCenter_deg",center * 55)
+            
+        else:
+            self.networkTable.putNumber("GearConfidence",0.0)
+            self.networkTable.putNumber("GearDistance_inches",0)
+            self.networkTable.putNumber("GearCenterX",0)
+            self.networkTable.putNumber("GearCenter_deg",0)    
             
         return (self.find_contours_output, self.filter_contours_output)
 

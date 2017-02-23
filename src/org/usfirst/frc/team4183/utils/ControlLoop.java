@@ -1,9 +1,10 @@
 package org.usfirst.frc.team4183.utils;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 // Yes this is just a re-invention (very simplified) of PIDController.
 // I just don't trust the code in PIDController - overly complicated
-// and the syncronization looks VERY ad-hoc and buggy. 
+// and the synchronization looks VERY ad-hoc and buggy. 
 // My faith in WPILib is not running real high right now.
 // At least when it doesn't work, I'll have nobody else to blame! --tjw
 
@@ -23,9 +24,11 @@ package org.usfirst.frc.team4183.utils;
  */
 public class ControlLoop {
 
-	private final static long DEFAULT_MSECS = 20;
+	// This maybe should be longer - 40 or 50?
+	private final static long DEFAULT_MSECS = 20;  
 	private final long msecs;
 	private volatile double setPoint;
+	private String loggingKey = "";
 	
 	private final LoopThread loopThread;
 	private final ControlLoopUser user;
@@ -72,6 +75,12 @@ public class ControlLoop {
 		loopThread.setPriority(Thread.NORM_PRIORITY+2);		
 	}
 	
+	
+	public synchronized void enableLogging( String loggingKey) {
+		this.loggingKey = loggingKey;
+	}
+	
+	
 	/**
 	 * Set the loop setpoint (normally done in constructor)
 	 * @param setPoint
@@ -80,13 +89,6 @@ public class ControlLoop {
 		this.setPoint = setPoint;
 	}
 		
-	/**
-	 * Get the loop error
-	 * @return Loop error
-	 */
-	public synchronized double getError() {
-		return setPoint - user.getFeedback();
-	}
 	
 	/**
 	 * Start operation
@@ -116,7 +118,9 @@ public class ControlLoop {
 		user.setError(0.0);
 	}
 	
-	
+	private synchronized String getLoggingKey() {
+		return loggingKey;
+	}
 	
 	// This Thread implements the control loop
 	private class LoopThread extends Thread {
@@ -131,7 +135,12 @@ public class ControlLoop {
 			// Loop until signaled to quit
 			while( !isInterrupted()) {
 
-				user.setError( getError() );				
+				double error = setPoint - user.getFeedback();
+				
+				if( !getLoggingKey().equals(""))
+					SmartDashboard.putNumber(loggingKey, error);
+					
+				user.setError( error);				
 				
 				// Delay
 				try {

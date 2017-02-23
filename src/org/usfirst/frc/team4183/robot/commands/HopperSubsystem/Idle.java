@@ -1,8 +1,7 @@
-package org.usfirst.frc.team4183.robot.commands.BallManipSubsystem;
+package org.usfirst.frc.team4183.robot.commands.HopperSubsystem;
 
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
-import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
 import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -13,30 +12,29 @@ import edu.wpi.first.wpilibj.command.Command;
 public class Idle extends Command {
 
     public Idle() {
-        requires(Robot.ballManipSubsystem);
+        requires(Robot.hopperSubsystem);
     	setRunWhenDisabled(true);  // Idle state needs this!
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
-    	Robot.ballManipSubsystem.disable();
-    	Robot.lightingControl.setSleeping(LightingObjects.BALL_SUBSYSTEM);    	
+    protected void initialize() 
+    {
+    	Robot.hopperSubsystem.close();
     }
 
     // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    protected void execute() 
+    {
     }
 
     // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
-        if (OI.btnIntakeOn.get()){
-        	return CommandUtils.stateChange(this, new IntakeOn());
-        }
-        if (OI.btnShooterStart.get()){
-        	return CommandUtils.stateChange(this, new WaitingForShooterSpeed());
-        }
-    	return false;
-        
+    protected boolean isFinished() 
+    {
+    	if (OI.btnOpenHopper.get())
+    	{
+    		return CommandUtils.stateChange(this, new Open());
+    	}
+        return false;
     }
 
     // Called once after isFinished returns true

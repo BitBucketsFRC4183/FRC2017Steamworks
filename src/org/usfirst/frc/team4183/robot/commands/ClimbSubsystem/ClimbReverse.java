@@ -1,8 +1,10 @@
 package org.usfirst.frc.team4183.robot.commands.ClimbSubsystem;
 
 import org.usfirst.frc.team4183.robot.LightingControl;
+import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
+import org.usfirst.frc.team4183.robot.commands.GearHandlerSubsystem.Idle;
 import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -19,10 +21,10 @@ public class ClimbReverse extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.lightingControl.set(LightingObjects.CLIMB_SUBSYSTEM, 
-					              LightingControl.FUNCTION_REVERSE, 
+					              LightingControl.FUNCTION_BLINK, 
 					              LightingControl.COLOR_ORANGE,
-					              3,
-					              300);
+					              0,		// nspace - don't care
+					              300);		// period_ms
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -31,7 +33,12 @@ public class ClimbReverse extends Command {
     }
 
     // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
+    protected boolean isFinished() 
+    {
+    	if(OI.btnIdle.get()) {
+    		return CommandUtils.stateChange(this, new Idle());
+    	}
+    	
     	if ( (timeSinceInitialized() > 0.200) && 
     		( (Robot.climbSubsystem.isPastCurrentLimit()) || Robot.climbSubsystem.bumperSwitch() )
     	) {
