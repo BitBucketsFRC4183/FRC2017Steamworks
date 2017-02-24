@@ -18,7 +18,9 @@ public class BallManipSubsystem extends Subsystem {
 	
 	private final double SHOOTER_RPM = -3200.0; //speed of top roller when shooting
 	private final double INTAKE_RPM = -500.0;   //speed of top roller when intake
+	private final double UNJAM_RPM = 500.0;
 	private final double CONVEYOR_DRIVE = 0.8;	//open loop control of conveyer in fraction vbus
+	private final double CONVEYOR_UNJAM_DRIVE = -0.8;
 	private final double SWEEPER_DRIVE = 0.1;	//open loop control of sweeper in fraction vbus
 	
 	/* Used to limit range of real-time shooter RPM adjustment
@@ -36,6 +38,8 @@ public class BallManipSubsystem extends Subsystem {
 	private final double I_VALUE = 1.2*0.001;
 	private final double D_VALUE = .02*1000.0;
 	private final double F_VALUE = 0.13;
+	
+	 
 	
 	DoubleSolenoid flapSolenoid = new DoubleSolenoid(RobotMap.BALLSUB_INTAKE_PNEUMA_CHANNEL, RobotMap.BALLSUB_SHOOT_PNEUMA_CHANNEL);
 	
@@ -124,6 +128,15 @@ public class BallManipSubsystem extends Subsystem {
     public void setFlapModeShoot(){
     	flapSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
+    
+    public void setTopRollerUnjam(){
+    	topRollerMotor.set(UNJAM_RPM);
+    }
+    
+    public void setConveyerReverse(){
+    	conveyerMotor.set(CONVEYOR_UNJAM_DRIVE);
+    }
+    
     
 	/* Allows the operator to adjust the shooter RPM setpoint --
 	 * disabled for now. tjw.
