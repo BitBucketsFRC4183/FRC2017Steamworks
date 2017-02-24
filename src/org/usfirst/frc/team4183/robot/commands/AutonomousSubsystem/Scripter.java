@@ -80,7 +80,7 @@ public class Scripter extends Command {
 	
     public Scripter() {
     	// No "requires" - this one stands apart - it's a Meta-State.
-    	// This is start()-ed from Robot.autonomousInit()
+    	// This is start()-ed from Robot.autonomousInit().
     }
 
     protected void initialize() {
@@ -114,7 +114,7 @@ public class Scripter extends Command {
     	switch( tokens[0]) {
     	
     	// These are the legal Instruction Opcodes
-    	// For each opcode, following comment lists parameters
+    	// For each opcode, a following comment lists parameters if any
     	
     	case "Goto":  // label
     		doGoto(tokens[1]);
@@ -140,15 +140,15 @@ public class Scripter extends Command {
     		driveStraight( Double.parseDouble(tokens[1]));
     		break;
     	
-    	case "EnableVisionGear": 
+    	case "EnableVisionGear":
     		enableVisionGear();
     		break;
     		
-    	case "MeasureGear":
+    	case "MeasureGear":  // (Sets measuredYaw and measuredDistance from Vision samples)
     		measureGear();
     		break;
     		
-    	case "YawCorrect":  // Turns by -measuredYaw
+    	case "YawCorrect":  // (Turns by -measuredYaw)
     		yawCorrect();
     		break;
     		
@@ -156,11 +156,11 @@ public class Scripter extends Command {
     		distanceCorrect( Double.parseDouble(tokens[1]));
     		break;
     		
-    	case "DeliverGear":
+    	case "DeliverGear":  // (Spits the gear)
     		deliverGear();
     		break;
     	
-    	case "End":
+    	case "End":  // (Stops all, does not exit - must be last instruction)
     		endState();
     		break;
     		
