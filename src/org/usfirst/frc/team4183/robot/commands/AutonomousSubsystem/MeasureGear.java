@@ -22,7 +22,7 @@ public class MeasureGear extends Command {
 	// Exit tolerance;
 	// THIS MUST BE LARGER than "DEAD_ZONE_FT" in DriveStraight,
 	// or you can get stuck in an infinite state loop.
-	private final double ALLOWABLE_ERR_FT = 0.2;
+	private final double ALLOWABLE_ERR_FT = 1.5/12.0;
 	
 	// If there seems to be some systematic error, can try to correct it here.
 	// A positive value will push the overall path to the left (from behind),
@@ -98,13 +98,15 @@ public class MeasureGear extends Command {
     		// Done measuring, move on.
     		// As usual, state chain built last-to-first.
     		Command c = new DeliverGear();
+    		c = new TurnBy(-5.0, c);
+    		c = new TurnBy(5.0, c);
     		c = new TurnBy( -yaw, c);
     		return CommandUtils.stateChange(this, c);
     	}
     	else if( distance < PRETTY_CLOSE_FT) {
 
     		// Not done, but pretty close; 
-    		// drive the whole remaining distance & look again.
+    		// drive the remaining distance & look again.
     		Command c = new MeasureGear();
     		c = new DriveStraight( distance, c);
     		c = new TurnBy( -yaw + YAW_FUDGE_DEG, c);
@@ -114,7 +116,7 @@ public class MeasureGear extends Command {
 
     		// Not close yet, drive 1/2 the distance & look again
     		Command c = new MeasureGear();
-    		c = new DriveStraight( distance/2.0, c);
+    		c = new DriveStraight( distance*0.5, c);
     		c = new TurnBy( -yaw + YAW_FUDGE_DEG, c);
     		return CommandUtils.stateChange(this, c);
     	}    		

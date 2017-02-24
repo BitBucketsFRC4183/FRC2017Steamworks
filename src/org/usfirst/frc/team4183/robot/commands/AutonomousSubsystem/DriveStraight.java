@@ -29,7 +29,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	private final double MIN_DRIVE = 0.45; // Yeah this does seem high
 	
 	// Size of dead zone in feet - also used to determine when done
-	private final double DEAD_ZONE_FT = 0.1;
+	private final double DEAD_ZONE_FT = 1.0/12.0;
 	
 	// Time to settled
 	private final long SETTLED_MSECS = 1000;  // TODO try to reduce this	
