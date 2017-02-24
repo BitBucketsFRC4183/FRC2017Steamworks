@@ -37,7 +37,6 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 2.0;
 	
-	private final Command nextState;
 	private final double distanceFt;
 	
 	private ControlLoop cloop;
@@ -46,11 +45,10 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	private SettledDetector settledDetector; 
 	
 	
-	public DriveStraight( double distanceFt, Command nextState) {		
+	public DriveStraight( double distanceFt) {		
 		requires( Robot.autonomousSubsystem);
 		
 		this.distanceFt = distanceFt;
-		this.nextState = nextState;
 	}
 
 	@Override
@@ -70,17 +68,12 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		cloop = new ControlLoop( this, setPoint);
 		cloop.start();
 	}
-	
-
-	
+		
 	@Override
 	protected boolean isFinished() {
 		
 		if (settledDetector.isSettled()) {
-			if( nextState != null)
-				return CommandUtils.stateChange(this, nextState);
-			else
-				return true;
+			return true;
 		}
 		
 		return false;

@@ -2,7 +2,6 @@ package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
-import org.usfirst.frc.team4183.utils.CommandUtils;
 import org.usfirst.frc.team4183.utils.ControlLoop;
 import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
 import org.usfirst.frc.team4183.utils.RateLimit;
@@ -40,7 +39,6 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 2.0;
 	
-	private final Command nextState;
 	private final double degreesToTurn;
 	
 	private ControlLoop cloop;
@@ -49,11 +47,10 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private SettledDetector settledDetector;
 	
 
-	public TurnBy( double degreesToTurn, Command nextState) {		
+	public TurnBy( double degreesToTurn) {		
 		requires( Robot.autonomousSubsystem);
 		
 		this.degreesToTurn = degreesToTurn;
-		this.nextState = nextState;
 	}
 
 	@Override
@@ -80,10 +77,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 			&&
 			( Math.abs(Robot.imu.getRateDeg()) < SETTLED_RATE_DPS )
 		) {
-			if( nextState != null)
-				return CommandUtils.stateChange(this, nextState);
-			else
-				return true;
+			return true;
 		}
 		
 		return false;
