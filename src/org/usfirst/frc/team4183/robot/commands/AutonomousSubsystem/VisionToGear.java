@@ -1,37 +1,35 @@
 package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 
-import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
+import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- * End state - for testing
+ *
  */
-public class End extends Command {
-
-    public End() {
+public class VisionToGear extends Command {
+	
+	private final double DELAY = 0.5;
+	
+    public VisionToGear() {
     	requires( Robot.autonomousSubsystem);
     }
 
-    // Called just before this Command runs the first time
     protected void initialize() {
-    	OI.axisForward.set(0.0);
-    	OI.axisTurn.set(0.0);
-    	OI.btnIdle.push();
+    	Robot.visionSubsystem.setGearMode();
     }
 
-    // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     }
 
-    // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	// No exit from this state
-        return false;
+    	if( timeSinceInitialized() > DELAY )
+    		return CommandUtils.stateChange(this, new MeasureGear());
+    	
+    	return false;
     }
 
-    // Called once after isFinished returns true
     protected void end() {
     }
 

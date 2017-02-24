@@ -22,9 +22,13 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 
 	// Largest drive that will be applied
 	private final double MAX_DRIVE = 0.8;
+	
 	// Smallest drive that will be applied 
 	// (unless error falls within dead zone, then drive goes to 0)
-	private final double MIN_DRIVE = 0.4; // Yeah this does seem high
+	// THIS MUST BE LARGE ENOUGH TO ROTATE THE ROBOT from stopped position
+	// if it isn't, you can get stuck in this state.
+	private final double MIN_DRIVE = 0.45; // Yeah this does seem high
+	
 	// Size of dead zone in degrees
 	private final double DEAD_ZONE_DEG = 1.0;
 	

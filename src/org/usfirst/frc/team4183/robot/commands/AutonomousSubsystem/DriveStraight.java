@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 
 
-public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
+public class DriveStraight extends Command implements ControlLoop.ControlLoopUser {
 	
 	// TODO the loop gain constants & NL params need testing
 	
@@ -21,13 +21,18 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 
 	// Largest drive that will be applied
 	private final double MAX_DRIVE = 0.8;
+	
 	// Smallest drive that will be applied 
 	// (unless error falls within dead zone, then drive goes to 0)
-	private final double MIN_DRIVE = 0.4; // Yeah this does seem high
-	// Size of dead zone in degrees
+	// THIS MUST BE LARGE ENOUGH TO MOVE THE ROBOT from stopped position
+	// if it isn't, you can get stuck in this state.
+	private final double MIN_DRIVE = 0.45; // Yeah this does seem high
+	
+	// Size of dead zone in feet - also used to determine when done
 	private final double DEAD_ZONE_FT = 0.1;
-	//Time to settled
-	private final long SETTLED_MSECS = 1000;  // Hopefully can reduce	
+	
+	// Time to settled
+	private final long SETTLED_MSECS = 1000;  // TODO try to reduce this	
 	
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 2.0;
@@ -41,7 +46,7 @@ public class DriveBy extends Command implements ControlLoop.ControlLoopUser {
 	private SettledDetector settledDetector; 
 	
 	
-	public DriveBy( double distanceFt, Command nextState) {		
+	public DriveStraight( double distanceFt, Command nextState) {		
 		requires( Robot.autonomousSubsystem);
 		
 		this.distanceFt = distanceFt;

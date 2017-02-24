@@ -16,41 +16,54 @@ public class Idle extends Command {
     	setRunWhenDisabled(true);  // Idle state needs this!
     }
     
-    
-    Command location1chain() {
-    	Command c;
+    Command testChain() {
     	
-    	// Build the chain in reverse order
-    	// (last to first) for easier construction.
-    	
+    	// Note all State chains are built in reverse order,
+    	// last state listed first.
+    	// Read from bottom to top!
+
 		// These are just for testing.
-		/*
-		c = new End();
-		c = new TurnBy(45.0, c);
-		c = new DriveBy(3.0, c);
-		*/
+
+    	Command c;
+    	c = new VisionToGear();
+    	c = new TurnBy(45.0, c);
+    	c = new DriveStraight(3.0, c);
+    	
 		
 		/*
 		c = new End();
 		c = new DriveBy(3.0, c);
 		*/
-    	
-    	c = new End();
-    	c = new DriveToGearpeg(c);
-    	
+
 		/*
 		c = new End();
 		c = new TurnBy(90.0, c);
 		*/
-		return c;		
+		return c;		   	
+    }
+    
+    Command location1chain() {
+    	Command c;
+    	c = new VisionToGear();
+    	c = new TurnBy(45.0, c);  // TODO actual angle
+    	c = new DriveStraight(8.0, c);  // TODO actual distance
+    	return c;
     }
     
     private Command location2chain() {
-    	return null;
+    	Command c;
+    	c = new VisionToGear();
+    	c = new TurnBy(0.0, c);  // TODO actual angle
+    	c = new DriveStraight(8.0, c);  // TODO actual distance
+    	return c;
     }
     
     private Command location3chain() {   	
-    	return null;
+    	Command c;
+    	c = new VisionToGear();
+    	c = new TurnBy(-45.0, c);  // TODO actual angle
+    	c = new DriveStraight(8.0, c);   // TODO actual distance
+    	return c;
     }
     
     private Command buildAutoChain() {
@@ -61,7 +74,7 @@ public class Idle extends Command {
     	int location = DriverStation.getInstance().getLocation();
 
     	// FIXME for testing only!! Take this out!!
-    	location = 1;
+    	location = 4;
 
     	Command firstState = null;
     	switch(location) {
@@ -75,8 +88,8 @@ public class Idle extends Command {
     		firstState = location3chain();
     		break;
 
-    	default: 
-    		throw new IllegalArgumentException();
+    	default:
+    		firstState = testChain();
     	}
     	
     	return firstState;
