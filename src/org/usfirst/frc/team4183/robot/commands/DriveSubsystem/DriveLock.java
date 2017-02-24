@@ -39,7 +39,7 @@ public class DriveLock extends Command
     protected void execute() 
     {
     	if(OI.btnUnjam.get()){
-    		Robot.driveSubsystem.doLockDrive(.2*squareWave(0.5));
+    		Robot.driveSubsystem.doLockDrive(.2*squareWave(1.5));
     	}
     	else Robot.driveSubsystem.doLockDrive(0.0);
     }
@@ -47,13 +47,13 @@ public class DriveLock extends Command
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if( OI.btnDriveLock.get())
+    	if( OI.btnDriveLock.get() || OI.btnUnjam.get())
     	{
     		// Stay in state
     		return false; 
     	}
     	
-    	if (OI.btnAlignLock.get() && !(OI.btnDriveLock.get() || OI.btnUnjam.get())) //second part might need fix
+    	if (OI.btnAlignLock.get()) 
     	{
     		return CommandUtils.stateChange(this, new AlignLock());
     	}

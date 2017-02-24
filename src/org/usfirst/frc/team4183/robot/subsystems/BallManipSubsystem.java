@@ -18,10 +18,11 @@ public class BallManipSubsystem extends Subsystem {
 	
 	private final double SHOOTER_RPM = -3200.0; //speed of top roller when shooting
 	private final double INTAKE_RPM = -500.0;   //speed of top roller when intake
+	private final double UNJAM_RPM = 500.0;
 	private final double CONVEYOR_DRIVE = 0.8;	//open loop control of conveyer in fraction vbus
+	private final double CONVEYOR_UNJAM_DRIVE = -0.8;
 	private final double SWEEPER_DRIVE = 0.1;	//open loop control of sweeper in fraction vbus
 	
-	private final double UNJAM_SPEED = -0.9;
 	/* Used to limit range of real-time shooter RPM adjustment
 	 * not used for now (see "animate()" below) - tjw	
 	private final double MAX_SHOOTER_RPM = 4500.0;
@@ -129,12 +130,14 @@ public class BallManipSubsystem extends Subsystem {
     }
     
     public void setTopRollerUnjam(){
-    	topRollerMotor.set(UNJAM_SPEED);
+    	topRollerMotor.set(UNJAM_RPM);
     }
     
     public void setConveyerReverse(){
-    	conveyerMotor.set(UNJAM_SPEED);
+    	conveyerMotor.set(CONVEYOR_UNJAM_DRIVE);
     }
+    
+    
 	/* Allows the operator to adjust the shooter RPM setpoint --
 	 * disabled for now. tjw.
 	 * To re-enable:

@@ -10,19 +10,14 @@ import edu.wpi.first.wpilibj.command.Command;
  *
  */
 public class Unjam extends Command {
-	
-	OI.ButtonEvent btnUnjam;
-	
+		
     public Unjam() {
         requires(Robot.ballManipSubsystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	OI.btnUnjam.push();
-    	
-    	btnUnjam = OI.getBtnEvt(OI.btnUnjam);
-    	
+    	    	
     	//add lights
     }
 
@@ -34,7 +29,7 @@ public class Unjam extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        if (btnUnjam.onReleased()){
+        if (!OI.btnUnjam.get()){
         	return CommandUtils.stateChange(this, new WaitingForShooterSpeed());
         }
     	return false;
