@@ -16,7 +16,7 @@ public class BallManipSubsystem extends Subsystem {
 	private CANTalon conveyerMotor;
 	private CANTalon sweeperMotor;
 	
-	private final double SHOOTER_RPM = -3200.0; //speed of top roller when shooting
+	private final double SHOOTER_RPM = -3800.0; //speed of top roller when shooting
 	private final double INTAKE_RPM = -500.0;   //speed of top roller when intake
 	private final double UNJAM_RPM = 500.0;
 	private final double CONVEYOR_DRIVE = 0.8;	//open loop control of conveyer in fraction vbus
@@ -103,6 +103,15 @@ public class BallManipSubsystem extends Subsystem {
 		// and if loop is not closed (position sensor not connected)
 		// setting speed to 0 will not actually stop the motor.
 		topRollerMotor.disableControl();
+	}
+	
+	public double getTopRollerRpm() {
+		return topRollerMotor.get();
+	}
+	
+	public double getTopRollerErrorRpm() {
+		// Convert from Cantalon "Native Speed Units" (Ticks/100msec) to RPM
+		return 600.0/(256*4) * topRollerMotor.getError();
 	}
 	
     public void setConveyerOn(){
