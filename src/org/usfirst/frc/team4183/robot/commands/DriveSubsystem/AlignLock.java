@@ -42,7 +42,7 @@ public class AlignLock extends Command
     protected boolean isFinished() 
     {
     	
-    	if (OI.btnDriveLock.get() || OI.btnUnjam.get())
+    	if (OI.btnDriveLock.get() || OI.sbtnShake.get())
     	{
     		return CommandUtils.stateChange(this, new DriveLock());
     	}

@@ -16,9 +16,9 @@ public class Unjam extends Command {
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
-    	    	
+    protected void initialize() {   	    	
     	//add lights
+    	OI.sbtnShake.push();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -37,6 +37,7 @@ public class Unjam extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+    	OI.sbtnShake.release();
     }
 
     // Called when another command which requires one or more of the same
