@@ -25,6 +25,7 @@ import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.HopperSubsystem;
 // Non-subsystem (i.e., non-commandable) controls
 import org.usfirst.frc.team4183.robot.LightingControl;
+import org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem.Scripter;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -165,7 +166,10 @@ public class Robot extends IterativeRobot {
 		// Clear out the scheduler
 		// Will result in only Default Commands (Idle-s) running.
 		// Do this last to be sure that Idle-s see correct info when starting.
-		Scheduler.getInstance().removeAll();		
+		Scheduler.getInstance().removeAll();
+		
+		// Start the Autonomous-mode Scripter
+		(new Scripter()).start();
 	}
 
 	/**
