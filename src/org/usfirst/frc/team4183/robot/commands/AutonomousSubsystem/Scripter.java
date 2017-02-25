@@ -30,9 +30,9 @@ public class Scripter extends Command {
 	static double measuredYaw;
 	
 	private int pc = 0;
-	private final boolean debug = true;
+	private final boolean debug = false;
 	
-	// Test program
+	// Test program (does nothing useful)
 	String[][] script = {
 			{"",			"BranchOnLocation Loc1 Loc2 Loc3" },
 			{"Loc1",		"Delay 1000" },
@@ -41,7 +41,7 @@ public class Scripter extends Command {
 			{"",			"Goto Head" },
 			{"Loc3",		"Delay 3000" },
 			{"Head",		"DriveStraight 1.0" },
-			{"",			"TurnBy 10.0" },
+			{"",			"TurnBy 15" },
 			{"",			"EnableVisionGear" },
 			{"",			"Delay 1000" },
 			{"",			"DeliverGear" },
@@ -72,7 +72,6 @@ public class Scripter extends Command {
 			{"", 		"Goto Meas" },
 			{"Fini", 	"YawCorrect" },
 			{"", 		"DeliverGear" },
-			{"",		"Delay 200" },
 			{"", 		"DriveStraight -1.0" },
 			{"", 		"End" }
 	};
@@ -119,17 +118,13 @@ public class Scripter extends Command {
     	case "Goto":  // label
     		doGoto(tokens[1]);
     		break;
-    		
-    	case "BranchOnDistance":  // lblFini lblClose lblFar
-    		branchOnDistance( tokens[1], tokens[2], tokens[3]);
-    		break;
-    	
-    	case "BranchOnLocation":  // lbl_1 lbl_2 lbl_3 
-    		branchOnLocation( tokens[1], tokens[2], tokens[3]);
-    		break;
-    		
+
     	case "Delay":  // msecs
     		delay( Long.parseLong(tokens[1]));
+    		break;
+    		
+    	case "BranchOnLocation":  // lbl_1 lbl_2 lbl_3 (refers to operator location!)
+    		branchOnLocation( tokens[1], tokens[2], tokens[3]);
     		break;
     		
     	case "TurnBy": // yaw (degrees, + is CCW from top)
@@ -147,7 +142,11 @@ public class Scripter extends Command {
     	case "MeasureGear":  // (Sets measuredYaw and measuredDistance from Vision samples)
     		measureGear();
     		break;
-    		
+
+    	case "BranchOnDistance":  // lblFini lblClose lblFar
+    		branchOnDistance( tokens[1], tokens[2], tokens[3]);
+    		break;
+
     	case "YawCorrect":  // (Turns by -measuredYaw)
     		yawCorrect();
     		break;
@@ -183,19 +182,13 @@ public class Scripter extends Command {
     	throw new IllegalArgumentException(
     		String.format("Scripter.doGoto: Label %s not found\n", label));
     }
-    
-    private void branchOnDistance( String fini, String close, String far) {  
+
+    private void delay( long msecs) {
     	if(debug)
-    		System.out.format("Scripter.branchOnDistance %f %s %s %s\n", measuredDistance, fini, close, far);
- 
-    	if( Math.abs(measuredDistance) < ALLOWABLE_ERR_FT )
-    		doGoto(fini);
-    	else if( measuredDistance < PRETTY_CLOSE_FT)
-    		doGoto(close);
-    	else
-    		doGoto(far);	
+    		System.out.format("Scripter.delay %d\n", msecs);
+    	(new Delay( msecs)).start();
     }
-    
+ 
     private void branchOnLocation( String lbl1, String lbl2, String lbl3) {  	
     	if(debug)
     		System.out.format( "Scripter.branchOnLocation %s %s %s\n", lbl1, lbl2, lbl3);
@@ -216,51 +209,65 @@ public class Scripter extends Command {
     			String.format( "Scripter.branchOnLocation: unknown location %d\n", location));
     	}
     }
-    
-    private void delay( long msecs) {
-    	if(debug)
-    		System.out.format("Scripter.delay %d\n", msecs);
-    	(new Delay( msecs)).start();
-    }
-    
+     
     private void turnBy( double yaw) {
-    	System.out.format("Scripter.turnBy %f\n", yaw);
+    	if(debug)
+    		System.out.format("Scripter.turnBy %f\n", yaw);
     	(new TurnBy( yaw)).start();
     }
     
     private void driveStraight( double dist) {
-    	System.out.format( "Scripter.driveStraight %f\n", dist);
+    	if(debug)
+    		System.out.format( "Scripter.driveStraight %f\n", dist);
     	(new DriveStraight( dist)).start();
     }
 
     private void enableVisionGear() {
-    	System.out.println("Scripter.enableVisionGear");
+    	if(debug)
+    		System.out.println("Scripter.enableVisionGear");
     	Robot.visionSubsystem.setGearMode();
     }
     
     private void measureGear() {
-    	System.out.println("Scripter.measureGear");
+    	if(debug)
+    		System.out.println("Scripter.measureGear");
     	(new MeasureGear()).start();
     }
-     
+
+    private void branchOnDistance( String fini, String close, String far) {  
+    	if(debug)
+    		System.out.format("Scripter.branchOnDistance %f %s %s %s\n", measuredDistance, fini, close, far);
+ 
+    	if( Math.abs(measuredDistance) < ALLOWABLE_ERR_FT )
+    		doGoto(fini);
+    	else if( measuredDistance < PRETTY_CLOSE_FT)
+    		doGoto(close);
+    	else
+    		doGoto(far);	
+    }
+   
     private void yawCorrect() {
-    	System.out.format("Scripter.yawCorrect %f\n", measuredYaw);
+    	if(debug)
+    		System.out.format("Scripter.yawCorrect %f\n", measuredYaw);
     	(new TurnBy( -measuredYaw + YAW_FUDGE_DEG)).start();
     }
     
     private void distanceCorrect( double fract) {
-    	System.out.format( "Scripter.distanceCorrect %f\n", measuredDistance*fract);
+    	if(debug)
+    		System.out.format( "Scripter.distanceCorrect %f\n", measuredDistance*fract);
     	(new DriveStraight( measuredDistance*fract)).start();
     }
     
     private void deliverGear() {
-    	System.out.println("Scripter.deliverGear");
-    	OI.btnSpitGearA.push();
-    	OI.btnSpitGearB.push();
+    	if(debug)
+    		System.out.println("Scripter.deliverGear");
+    	OI.btnSpitGearA.hit();
+    	OI.btnSpitGearB.hit();
     }
     
     private void endState() {
-    	System.out.println("Scripter.endState");
+    	if(debug)
+    		System.out.println("Scripter.endState");
     	(new End()).start();
     }    
 }
