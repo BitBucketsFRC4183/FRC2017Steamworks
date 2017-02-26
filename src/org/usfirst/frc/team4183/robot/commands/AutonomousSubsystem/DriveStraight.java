@@ -66,7 +66,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
-		//cloop.enableLogging("DriveStraight");
+		cloop.enableLogging("DriveStraight");
 		cloop.start();
 	}
 		

@@ -64,7 +64,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
-		//cloop.enableLogging("TurnBy");
+		cloop.enableLogging("TurnBy");
 		cloop.start();
 	}
 	

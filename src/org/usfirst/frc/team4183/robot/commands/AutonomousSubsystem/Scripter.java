@@ -40,12 +40,17 @@ public class Scripter extends Command {
 			{"Loc2",		"Delay 2000" },
 			{"",			"Goto Head" },
 			{"Loc3",		"Delay 3000" },
-			{"Head",		"DriveStraight 1.0" },
-			{"",			"TurnBy 15" },
-			{"",			"EnableVisionGear" },
-			{"",			"Delay 1000" },
-			{"",			"DeliverGear" },
-			{"",			"Delay 1000" },
+			{"Head",			"EnableVisionGear" },
+			{"",			"Delay 500" },
+			{"Look",		"MeasureGear" },
+			{"", 		"BranchOnDistance Fini Close Far" },  // |d|<ALLOWABLE_ERR_FT->1st label; else d<PRETTY_CLOSE_FT->2nd label; else->3rd label
+			{"Far", 	"YawCorrect" },     		// TurnBy -measuredYaw
+			{"", 		"DistanceCorrect 0.5" },	// DriveStraight (param)*measuredDistance
+			{"", 		"Goto Look" },
+			{"Close", 	"YawCorrect" },
+			{"", 		"DistanceCorrect 1.0" },
+			{"", 		"Goto Look" },
+			{"Fini", 	"YawCorrect" },			
 			{"",			"End" }			
 	};
 	
