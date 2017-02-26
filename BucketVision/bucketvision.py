@@ -111,7 +111,7 @@ bvTable.putString("BucketVisionState","Starting")
 # A ChooserControl is also another option
 
 # Make the cameraMode an auto updating listener from the network table
-camMode = bvTable.getAutoUpdateValue('CurrentCam','rearCam') # 'frontcam' or 'rearcam'
+camMode = bvTable.getAutoUpdateValue('CurrentCam','frontCam') # 'frontcam' or 'rearcam'
 frontCamMode = bvTable.getAutoUpdateValue('FrontCamMode', 'gearLift') # 'gearLift' or 'Boiler'
 alliance = bvTable.getAutoUpdateValue('allianceColor','red')   # default until chooser returns a value
 location = bvTable.getAutoUpdateValue('allianceLocation',1)
@@ -140,18 +140,14 @@ rope = Faces()     # Temporary placeholder for rope processing
 # Our implementation is forced to use v4l2-ctl (Linux) to make the exposure control work because our OpenCV
 # port does not seem to play well with the exposure settings (produces either no answer or causes errors depending
 # on the camera used)
-FRONT_CAM_GEAR_EXPOSURE = 20   # TODO: MAKE THESE TABLE/PREFERENCE DRIVEN!
-FRONT_CAM_RED_EXPOSURE = 100
-FRONT_CAM_BLUE_EXPOSURE = 100
+FRONT_CAM_GEAR_EXPOSURE = 10   # TODO: MAKE THESE TABLE/PREFERENCE DRIVEN!
+FRONT_CAM_RED_EXPOSURE = 70
+FRONT_CAM_BLUE_EXPOSURE = 70
 
 FRONT_CAM_NORMAL_EXPOSURE = -1  # Camera default
 
-if (platform.system() == 'Windows'):
-    frontCam = BucketCapture(name="FrontCam",src=1,width=320,height=240,exposure=FRONT_CAM_GEAR_EXPOSURE).start()    # start low for gears
-    rearCam = BucketCapture(name="RearCam",src=0,width=320,height=240,exposure=-1).start()      # default for driver
-else:
-    frontCam = BucketCapture(name="FrontCam",src=0,width=320,height=240,exposure=FRONT_CAM_GEAR_EXPOSURE).start()    # start low for gears
-    rearCam = BucketCapture(name="RearCam",src=1,width=320,height=240,exposure=-1).start()      # default for driver
+frontCam = BucketCapture(name="FrontCam",src=0,width=320,height=240,exposure=FRONT_CAM_GEAR_EXPOSURE).start()    # start low for gears
+rearCam = BucketCapture(name="RearCam",src=1,width=320,height=240,exposure=-1).start()      # default for driver
 
 
 print("Waiting for BucketCapture to start...")
@@ -281,18 +277,17 @@ class CamHTTPHandler(BaseHTTPRequestHandler):
 # then place the serve_forever call into a thread so we don't block here
 print("Waiting for CamServer to start...")
 
-if (platform.system() != 'Windows'):
-    # Redirect port 80 to 8080
-    # keeping us legal on the field (i.e., requires 80)
-    # AND eliminating the need to start this script as root
-    cmd = ['sudo iptables -t nat -D PREROUTING 1']
-    call(cmd,shell=True)
-    cmd = ['sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080']
-    call(cmd,shell=True)
-    cmd = ['sudo iptables -t nat -D PREROUTING 2']
-    call(cmd,shell=True)
-    cmd = ['sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j REDIRECT --to-port 8080']
-    call(cmd,shell=True)
+# Redirect port 80 to 8080
+# keeping us legal on the field (i.e., requires 80)
+# AND eliminating the need to start this script as root
+cmd = ['sudo iptables -t nat -D PREROUTING 1']
+call(cmd,shell=True)
+cmd = ['sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080']
+call(cmd,shell=True)
+cmd = ['sudo iptables -t nat -D PREROUTING 2']
+call(cmd,shell=True)
+cmd = ['sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j REDIRECT --to-port 8080']
+call(cmd,shell=True)
 
 camHttpServer = HTTPServer(('',8080),CamHTTPHandler)
 camServer = BucketServer("CamServer", camHttpServer).start()
