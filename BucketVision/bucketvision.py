@@ -140,9 +140,9 @@ rope = Faces()     # Temporary placeholder for rope processing
 # Our implementation is forced to use v4l2-ctl (Linux) to make the exposure control work because our OpenCV
 # port does not seem to play well with the exposure settings (produces either no answer or causes errors depending
 # on the camera used)
-FRONT_CAM_GEAR_EXPOSURE = 20   # TODO: MAKE THESE TABLE/PREFERENCE DRIVEN!
-FRONT_CAM_RED_EXPOSURE = 100
-FRONT_CAM_BLUE_EXPOSURE = 100
+FRONT_CAM_GEAR_EXPOSURE = 10   # TODO: MAKE THESE TABLE/PREFERENCE DRIVEN!
+FRONT_CAM_RED_EXPOSURE = 70
+FRONT_CAM_BLUE_EXPOSURE = 70
 
 FRONT_CAM_NORMAL_EXPOSURE = -1  # Camera default
 

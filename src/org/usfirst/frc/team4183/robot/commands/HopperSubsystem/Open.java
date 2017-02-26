@@ -30,7 +30,7 @@ public class Open extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if (OI.btnCloseHopper.get() || (OI.btnUnjam.get() && timeSinceInitialized() >= 0.5))
+    	if (OI.btnCloseHopper.get() || (OI.sbtnShake.get() && timeSinceInitialized() >= 0.3))
     	{
     		return CommandUtils.stateChange(this, new Idle());
     	}

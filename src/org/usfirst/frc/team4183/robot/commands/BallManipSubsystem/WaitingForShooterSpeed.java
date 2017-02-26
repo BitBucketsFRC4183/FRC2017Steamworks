@@ -4,7 +4,9 @@ import org.usfirst.frc.team4183.robot.LightingControl;
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
+import org.usfirst.frc.team4183.robot.subsystems.BallManipSubsystem;
 import org.usfirst.frc.team4183.utils.CommandUtils;
+import org.usfirst.frc.team4183.utils.SettledDetector;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -13,6 +15,10 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class WaitingForShooterSpeed extends Command {
 
+	private final int SETTLED_MSECS = 300;
+	private final double SETTLED_ERROR = 200.0;
+	private SettledDetector settledDetector;
+	
     public WaitingForShooterSpeed() {
         requires(Robot.ballManipSubsystem);
     }
@@ -29,22 +35,23 @@ public class WaitingForShooterSpeed extends Command {
 	              0,		// nspace - don't care
 	              300);		// period_ms
     	
+    	settledDetector = new SettledDetector( SETTLED_MSECS, SETTLED_ERROR);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	settledDetector.set(Robot.ballManipSubsystem.getTopRollerErrorRpm());
     	Robot.ballManipSubsystem.setTopRollerToShootingSpeed();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
+    	
     	if(OI.btnIdle.get()) {
     		return CommandUtils.stateChange(this, new Idle());
-    	}
-    	
-    	//TODO Next transition should be top roller at shooting speed
+    	}    	
     	 
-    	if(true) {
+    	if( settledDetector.isSettled()) {
     		return CommandUtils.stateChange(this, new WaitingForTrigger());
     	}
         return false;

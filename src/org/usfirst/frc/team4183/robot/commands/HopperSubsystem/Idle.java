@@ -30,7 +30,7 @@ public class Idle extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if (OI.btnOpenHopper.get() || (OI.btnUnjam.get() && timeSinceInitialized() >= 0.5))
+    	if (OI.btnOpenHopper.get() || (OI.sbtnShake.get() && timeSinceInitialized() >= 0.3))
     	{
     		return CommandUtils.stateChange(this, new Open());
     	}
