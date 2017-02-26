@@ -119,7 +119,7 @@ public class Scripter extends Command {
     	switch( tokens[0]) {
     	
     	// These are the legal Instruction Opcodes
-    	// For case in switch, a following comment documents Opcode's parameters if any
+    	// For each case in switch, a following comment documents Opcode's parameters if any
     	
     	case "Goto":  // label
     		doGoto(tokens[1]);
