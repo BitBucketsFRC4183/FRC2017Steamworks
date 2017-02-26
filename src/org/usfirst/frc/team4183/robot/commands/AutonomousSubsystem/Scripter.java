@@ -25,9 +25,9 @@ public class Scripter extends Command {
 	// == CCW (viewed from above).
 	private final double YAW_FUDGE_DEG = 0.0;
 	
-	
-	static double measuredDistance;
-	static double measuredYaw;
+	// These values written by "MeasureGear"
+	static double measuredDistance;		// feet
+	static double measuredYaw;          // degrees, gives Robot pose in target C.S.; +val means Robot sitting CCW (viewed from top)
 	
 	private int pc = 0;
 	private final boolean debug = false;
@@ -49,31 +49,36 @@ public class Scripter extends Command {
 			{"",			"End" }			
 	};
 	
+	// To see the Scripter instruction set documentation, 
+	// scroll down to the switch() in executeNextInstruction()
+	
 	/*
 	// "Real" program (almost) - I'm sure it will need tweaking
+	// FIXME get the right vals in the dead-reckoning
 	String[][] script = {
-			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" }, 
-			{"Loc1", 	"DriveStraight 8.0" },  // FIXME get the right vals in the dead-reckoning
-			{"", 		"TurnBy -45.0" },
+			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" },  // Goto label 1,2,3 based on operator position
+			{"Loc1", 	"DriveStraight 8.0" },   // Feet
+			{"", 		"TurnBy -45.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
 			{"",		"Goto Vis" },
 			{"Loc2",	"DriveStraight 6.0" },
 			{"",		"Goto Vis" },
 			{"Loc3",	"DriveStraight 8.0" },
 			{"",		"TurnBy 45.0" },
 			{"Vis", 	"EnableVisionGear" },
-			{"", 		"Delay 500" },
-			{"Meas", 	"MeasureGear" },
-			{"", 		"BranchOnDistance Fini Close Far" },
-			{"Far", 	"YawCorrect" },
-			{"", 		"DistanceCorrect 0.5" },
-			{"", 		"Goto Meas" },
+			{"", 		"Delay 500" },			// Msec
+			{"Look", 	"MeasureGear" },		// Collects distance & yaw measures, puts estimates into measuredDistance, measuredYaw
+			{"", 		"BranchOnDistance Fini Close Far" },  // |d|<ALLOWABLE_ERR_FT->1st label; else d<PRETTY_CLOSE_FT->2nd label; else->3rd label
+			{"Far", 	"YawCorrect" },     		// TurnBy -measuredYaw
+			{"", 		"DistanceCorrect 0.5" },	// DriveStraight (param)*measuredDistance
+			{"", 		"Goto Look" },
 			{"Close", 	"YawCorrect" },
 			{"", 		"DistanceCorrect 1.0" },
-			{"", 		"Goto Meas" },
+			{"", 		"Goto Look" },
 			{"Fini", 	"YawCorrect" },
-			{"", 		"DeliverGear" },
+			{"", 		"DeliverGear" },			// Spits the gear
+			{"",		"Delay 200" },
 			{"", 		"DriveStraight -1.0" },
-			{"", 		"End" }
+			{"", 		"End" }						// MUST finish in End state
 	};
 	*/
 	
@@ -88,6 +93,7 @@ public class Scripter extends Command {
 
     protected void execute() {
     	
+    	// When Auto subsystem is Idle, we give it something to do!
     	if( "Idle".equals(Robot.autonomousSubsystem.getCurrentCommand().getName()))
     	    executeNextInstruction();   	
     }
@@ -113,7 +119,7 @@ public class Scripter extends Command {
     	switch( tokens[0]) {
     	
     	// These are the legal Instruction Opcodes
-    	// For each opcode, a following comment lists parameters if any
+    	// For case in switch, a following comment documents Opcode's parameters if any
     	
     	case "Goto":  // label
     		doGoto(tokens[1]);
@@ -123,7 +129,7 @@ public class Scripter extends Command {
     		delay( Long.parseLong(tokens[1]));
     		break;
     		
-    	case "BranchOnLocation":  // lbl_1 lbl_2 lbl_3 (refers to operator location!)
+    	case "BranchOnLocation":  // lbl_1 lbl_2 lbl_3 (refers to operator location)
     		branchOnLocation( tokens[1], tokens[2], tokens[3]);
     		break;
     		
@@ -234,16 +240,16 @@ public class Scripter extends Command {
     	(new MeasureGear()).start();
     }
 
-    private void branchOnDistance( String fini, String close, String far) {  
+    private void branchOnDistance( String lblFini, String lblClose, String lblFar) {  
     	if(debug)
-    		System.out.format("Scripter.branchOnDistance %f %s %s %s\n", measuredDistance, fini, close, far);
+    		System.out.format("Scripter.branchOnDistance %f %s %s %s\n", measuredDistance, lblFini, lblClose, lblFar);
  
     	if( Math.abs(measuredDistance) < ALLOWABLE_ERR_FT )
-    		doGoto(fini);
+    		doGoto(lblFini);
     	else if( measuredDistance < PRETTY_CLOSE_FT)
-    		doGoto(close);
+    		doGoto(lblClose);
     	else
-    		doGoto(far);	
+    		doGoto(lblFar);	
     }
    
     private void yawCorrect() {
