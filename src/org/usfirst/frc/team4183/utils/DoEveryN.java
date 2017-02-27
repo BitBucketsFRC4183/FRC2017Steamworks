@@ -17,5 +17,4 @@ public class DoEveryN {
 			runnable.run();
 		}
 	}
-
 }

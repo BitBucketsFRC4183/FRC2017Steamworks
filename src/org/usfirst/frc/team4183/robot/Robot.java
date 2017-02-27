@@ -6,16 +6,12 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.usfirst.frc.team4183.robot.subsystems.AutonomousSubsystem;
-// Subsystems
 import org.usfirst.frc.team4183.robot.subsystems.BallManipSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.VisionSubsystem;
 import org.usfirst.frc.team4183.utils.DoEveryN;
@@ -24,7 +20,6 @@ import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.HopperSubsystem;
-// Non-subsystem (i.e., non-commandable) controls
 import org.usfirst.frc.team4183.robot.LightingControl;
 import org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem.Scripter;
 
@@ -70,10 +65,6 @@ public class Robot extends IterativeRobot {
 	}
 	
 	
-	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
-	 */
 	@Override
 	public void robotInit() {
 
@@ -114,11 +105,7 @@ public class Robot extends IterativeRobot {
 		showDebugInfo();		
 	}
 
-	/**
-	 * This function is called once each time the robot enters Disabled mode.
-	 * You can use it to reset any subsystem information you want to clear when
-	 * the robot is disabled.
-	 */
+
 	@Override
 	public void disabledInit() {
 		runMode = RunMode.DISABLED;
@@ -143,17 +130,7 @@ public class Robot extends IterativeRobot {
 		runWatch.stop();
 	}
 
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString code to get the auto name from the text box below the Gyro
-	 *
-	 * You can add additional auto modes by adding additional commands to the
-	 * chooser code above (like the commented example) or additional comparisons
-	 * to the switch structure below with additional strings & commands.
-	 */
+
 	@Override
 	public void autonomousInit() {
 		runMode = RunMode.AUTO;
@@ -173,15 +150,13 @@ public class Robot extends IterativeRobot {
 		(new Scripter()).start();
 	}
 
-	/**
-	 * This function is called periodically during autonomous
-	 */
 	@Override
 	public void autonomousPeriodic() {
 		runWatch.start();
 		Scheduler.getInstance().run();
 		runWatch.stop();
 	}
+	
 
 	@Override
 	public void teleopInit() {
@@ -199,12 +174,7 @@ public class Robot extends IterativeRobot {
 		Scheduler.getInstance().removeAll();
 	}
 
-	/**
-	 * This function is called periodically during operator control
-	 */
 
-	List<Double> runTimeList = new ArrayList<>();
-	
 	@Override
 	public void teleopPeriodic() {			
 		runWatch.start();
@@ -212,9 +182,7 @@ public class Robot extends IterativeRobot {
 		runWatch.stop();
 	}
 
-	/**
-	 * This function is called periodically during test mode
-	 */
+
 	
 	@Override
 	public void testInit() {
@@ -222,9 +190,6 @@ public class Robot extends IterativeRobot {
 	}
 
 	
-	/**
-	 * This function is called periodically during test mode
-	 */
 	@Override
 	public void testPeriodic() {
 		LiveWindow.run();		
@@ -239,7 +204,9 @@ public class Robot extends IterativeRobot {
 		
 		debugLoop.update();
 	}
+	
 
+	// Some ancillary debugging stuff below here
 	
 	private Stopwatch runWatch = 
 			new Stopwatch( "Run", 
@@ -248,8 +215,8 @@ public class Robot extends IterativeRobot {
 			new Stopwatch( "Loop", 
 			(name, max, min, avg) -> SmartDashboard.putNumber( "MaxLoop", max) );
 
-	private DoEveryN debugLoop = new DoEveryN( 10, 
-			() -> putSDdebug());
+	private DoEveryN debugLoop = 
+			new DoEveryN( 10, () -> putSDdebug());
 	
 	private void putSDdebug() {
 		SmartDashboard.putNumber( "IMU_Yaw", imu.getYawDeg());
