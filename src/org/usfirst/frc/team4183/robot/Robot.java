@@ -18,6 +18,7 @@ import org.usfirst.frc.team4183.robot.subsystems.AutonomousSubsystem;
 // Subsystems
 import org.usfirst.frc.team4183.robot.subsystems.BallManipSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.VisionSubsystem;
+import org.usfirst.frc.team4183.utils.DoEveryN;
 import org.usfirst.frc.team4183.utils.Stopwatch;
 import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
@@ -230,12 +231,16 @@ public class Robot extends IterativeRobot {
 	}
 	
 	
+	// Called periodically all the time (regardless of mode)
 	@Override
 	public void robotPeriodic() {
 		loopWatch.stop();
 		loopWatch.start();
+		
+		debugLoop.update();
 	}
 
+	
 	private Stopwatch runWatch = 
 			new Stopwatch( "Run", 
 			(name, max, min, avg) -> SmartDashboard.putNumber( "MaxRun", max) );
@@ -243,6 +248,15 @@ public class Robot extends IterativeRobot {
 			new Stopwatch( "Loop", 
 			(name, max, min, avg) -> SmartDashboard.putNumber( "MaxLoop", max) );
 
+	private DoEveryN debugLoop = new DoEveryN( 10, 
+			() -> putSDdebug());
+	
+	private void putSDdebug() {
+		SmartDashboard.putNumber( "IMU_Yaw", imu.getYawDeg());
+		SmartDashboard.putNumber( "Left_Position", driveSubsystem.getLeftPositionFt());
+		SmartDashboard.putNumber( "Right_Position", driveSubsystem.getRightPositionFt());		
+	}
+	
 	
 	private Set<Subsystem> subSystems = new HashSet<>();
 

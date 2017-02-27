@@ -25,8 +25,8 @@ public class RobotMap {
 		
 
 	// Ball Manipulator
-	public static final int BALL_SUBSYSTEM_TOP_ROLLER_MOTOR_ID = 5; 
-	public static final int BALL_SUBSYSTEM_CONVEYER_MOTOR_ID = 7;
+	public static final int BALL_SUBSYSTEM_TOP_ROLLER_MOTOR_ID = 7;
+	public static final int BALL_SUBSYSTEM_CONVEYER_MOTOR_ID = 5;
 	public static final int BALL_SUBSYSTEM_SWEEPER_MOTOR_ID = 9;
 				
 	// Gear Handler

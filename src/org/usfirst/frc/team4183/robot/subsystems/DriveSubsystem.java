@@ -16,6 +16,13 @@ import org.usfirst.frc.team4183.utils.Deadzone;
  *
  */
 public class DriveSubsystem extends Subsystem {
+	
+		// TODO: calibrate this.
+		// Constant below is assuming 4" wheel
+		// 1.047 ft/rot = (4" * pi) in/rot * 1/12 ft/in
+		// Tested (briefly) 2/21 seemed within 3%
+		private final double ROT_TO_FEET = 1.047;
+	
 		private final CANTalon leftFrontMotor;
 		private final CANTalon leftRearMotor; 
 		private final CANTalon rightFrontMotor;
@@ -152,10 +159,15 @@ public class DriveSubsystem extends Subsystem {
 		
 		
 		public double getPositionFt() {
-			// TODO: calibrate this.
-			// Constant below is assuming 4" wheel
-			// 1.047 ft/rot = (4" * pi) in/rot * 1/12 ft/in		
-			return 1.047 * leftFrontMotor.getPosition();
+			return getLeftPositionFt();
+		}
+		
+		public double getLeftPositionFt() {
+			return ROT_TO_FEET * leftFrontMotor.getPosition();			
+		}
+		
+		public double getRightPositionFt() {
+			return ROT_TO_FEET * rightFrontMotor.getPosition();						
 		}
 		
 		public void initDefaultCommand() {
