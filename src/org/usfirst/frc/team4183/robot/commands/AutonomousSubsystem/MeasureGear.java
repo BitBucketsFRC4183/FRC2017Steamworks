@@ -15,9 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *
  */
 public class MeasureGear extends Command {
-	
-
-		
+			
 	// Number for non-NAN samples needed before acting
 	private final int REQUIRED_SAMPLES = 30;
 
@@ -41,9 +39,6 @@ public class MeasureGear extends Command {
     	double yawSample = Robot.visionSubsystem.getGearAngle_deg();
     	if( !Double.isNaN(yawSample)) {
     		yawSamples.add(yawSample);
-    		
-    		if( SD_DEBUG) 
-    			SmartDashboard.putNumber("GearYaw", yawSample);
     	}
     	else 
     		nanCnt++;
@@ -54,14 +49,9 @@ public class MeasureGear extends Command {
     	
     	if( !Double.isNaN(distSample)) {
     		distSamples.add(distSample);
-    		if( SD_DEBUG) 
-    			SmartDashboard.putNumber("GearDist", yawSample);
     	}
     	else
-    		nanCnt++;
-    	
-    	if( SD_DEBUG)
-    		SmartDashboard.putNumber("Pct_NaNs", (100.0*nanCnt)/totCnt);  		
+    		nanCnt++;    	
     }
 
     protected boolean isFinished() {
