@@ -82,7 +82,7 @@ else:
 # The same pipeline instance should NOT be passed to more than one image processor
 # as the results can be confused and comingled and simply does not make sense.
 
-from faces import Faces             # Useful for basic testing of driverCam/Processor pipeline
+from rope import Rope
 
 from blueboiler import BlueBoiler
 from redboiler import RedBoiler
@@ -131,7 +131,7 @@ redBoiler = RedBoiler()
 blueBoiler = BlueBoiler()
 gearLift = GearLift(bvTable)
 
-rope = Faces()     # Temporary placeholder for rope processing
+rope = Rope()     # Temporary placeholder for rope processing
 
 # NOTE: NOTE: NOTE:
 #
@@ -140,7 +140,7 @@ rope = Faces()     # Temporary placeholder for rope processing
 # Our implementation is forced to use v4l2-ctl (Linux) to make the exposure control work because our OpenCV
 # port does not seem to play well with the exposure settings (produces either no answer or causes errors depending
 # on the camera used)
-FRONT_CAM_GEAR_EXPOSURE = 10   # TODO: MAKE THESE TABLE/PREFERENCE DRIVEN!
+FRONT_CAM_GEAR_EXPOSURE = 0
 FRONT_CAM_RED_EXPOSURE = 70
 FRONT_CAM_BLUE_EXPOSURE = 70
 
@@ -330,25 +330,21 @@ while (True):
 
 #stop the bucket server and processors
 
-redBoilerProcessor.stop()      # stop this first to make the server exit
-blueBoilerProcessor.stop()
-gearProcessor.stop()
-ropeProcessor.stop()
+frontProcessor.stop()      # stop this first to make the server exit
+rearProcessor.stop()
+
 
 print("Waiting for BucketProcessors to stop...")
-while ((redBoilerProcessor.isStopped() == False) &
-       (blueBoilerProcessor.isStopped() == False) &
-       (gearProcessor.isStopped() == False) &
-       (ropeProcessor.isStopped() == False)):
+while ((frontProcessor.isStopped() == False) &
+       (rearProcessor.isStopped() == False)):
     time.sleep(0.001)
 print("BucketProcessors appear to have stopped.")
 
-frontCamServer.stop()
-rearCamServer.stop()
-print("Waiting for DriverServer and RetroServer to stop...")
-while ((frontCamServer.isStopped() == False) & (rearCamServer.isStopped() == False)):
+camServer.stop()
+print("Waiting for CamServer to stop...")
+while (camServer.isStopped() == False):
     time.sleep(0.001)
-print("DriverServer and RetroServer appears to have stopped.")
+print("CamServer appears to have stopped.")
 
 
 #stop the camera capture
