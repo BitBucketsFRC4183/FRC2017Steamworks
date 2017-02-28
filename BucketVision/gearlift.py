@@ -57,12 +57,9 @@ class GearLift:
         """
         Runs the pipeline and sets all outputs to new values.
         """
-##        # Step Blur:
-        self.__blur_image_input = source0
-        (self.blur_image_output) = self.__blur_image_input #self.__blur_image(self.__blur_image_input, self.__resize_image_width)
 
         # Step HSL_Threshold0:
-        self.__hsl_threshold_input = self.blur_image_output
+        self.__hsl_threshold_input = source0
         (self.hsl_threshold_output) = self.__hsl_threshold(self.__hsl_threshold_input, self.__hsl_threshold_hue, self.__hsl_threshold_saturation, self.__hsl_threshold_luminance)
 
         # Step Find_Contours0:
@@ -73,7 +70,7 @@ class GearLift:
         self.__filter_contours_contours = self.find_contours_output
         (self.filter_contours_output) = self.__filter_contours(self.__filter_contours_contours, self.__filter_contours_min_area, self.__filter_contours_min_perimeter, self.__filter_contours_min_width, self.__filter_contours_max_width, self.__filter_contours_min_height, self.__filter_contours_max_height, self.__filter_contours_solidity, self.__filter_contours_max_vertices, self.__filter_contours_min_vertices, self.__filter_contours_min_ratio, self.__filter_contours_max_ratio)
 
-        # TODO: Optionally draw the contours for debug
+        # Optionally draw the contours for debug
         # For now, just uncomment as needed
         #cv2.drawContours(source0, self.find_contours_output, -1, (0,255,0), 3)
 

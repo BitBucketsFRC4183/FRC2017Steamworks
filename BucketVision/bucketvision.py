@@ -86,6 +86,7 @@ from rope import Rope
 
 from blueboiler import BlueBoiler
 from redboiler import RedBoiler
+from boiler import Boiler
 from gearlift import GearLift
 from smokestack import SmokeStack
 
@@ -129,6 +130,7 @@ location = bvTable.getAutoUpdateValue('allianceLocation',1)
 
 redBoiler = RedBoiler()
 blueBoiler = BlueBoiler()
+boiler = Boiler()
 gearLift = GearLift(bvTable)
 
 rope = Rope()     # Temporary placeholder for rope processing
@@ -165,8 +167,8 @@ print("BucketCapture appears online!")
 # pipeline was defined... we can't control the use of object-specific internals
 # being run from multiple threads... so don't do it!)
 
-frontPipes = {'redBoiler' : redBoiler,
-              'blueBoiler' : blueBoiler,
+frontPipes = {'redBoiler' : boiler, #redBoiler,
+              'blueBoiler' : boiler, #blueBoiler,
               'gearLift' : gearLift}
 
 frontProcessor = BucketProcessor(frontCam,frontPipes,'gearLift').start()

@@ -48,7 +48,7 @@ img1 = cv2.imread("redBoilerTrainWhole.jpg",cv2.IMREAD_GRAYSCALE)
 #img1 = cv2.resize(img1,(int(img1.shape[1]/2),int(img1.shape[0]/2)))
 print(img1.shape)
 
-img2c = cv2.imread('redBoiler14ftRight.jpg')
+img2c = cv2.imread('redBoiler8ftLeft.jpg')
 img2c = cv2.resize(img2c,(320,240))
 #img2c = cv2.resize(img2c,(int(img2c.shape[1]/3),int(img2c.shape[0]/3)))
 img2 = cv2.cvtColor(img2c, cv2.COLOR_BGR2GRAY)
@@ -57,18 +57,18 @@ img2 = cv2.cvtColor(img2c, cv2.COLOR_BGR2GRAY)
 starttime = time.time()
 
 # Initiate SIFT detector
-sift = cv2.xfeatures2d.SIFT_create()
+#sift = cv2.xfeatures2d.SIFT_create()
 
 # find the keypoints and descriptors with SIFT
-kp1, des1 = sift.detectAndCompute(img1,None)
-kp2, des2 = sift.detectAndCompute(img2,None)
+#kp1, des1 = sift.detectAndCompute(img1,None)
+#kp2, des2 = sift.detectAndCompute(img2,None)
 norm = cv2.NORM_L2
 
 # Create SURF object. You can specify params here or later.
 # Here I set Hessian Threshold to 400
-#surf = cv2.xfeatures2d.SURF_create(400)
-#kp1, des1 = surf.detectAndCompute(img1,None)
-#kp2, des2 = surf.detectAndCompute(img2,None)
+surf = cv2.xfeatures2d.SURF_create(400)
+kp1, des1 = surf.detectAndCompute(img1,None)
+kp2, des2 = surf.detectAndCompute(img2,None)
 
 # Initiate ORB detector
 #orb = cv2.ORB_create()
@@ -126,7 +126,7 @@ if (crossCheck == False):
         r = int(math.cos(angle)*255)
         g = int(math.sin(angle)*255)
         
-        img2 = cv2.polylines(img2c,[np.int32(dst)],True,(0,g,r),2, cv2.LINE_AA)
+        cv2.polylines(img2c,[np.int32(dst)],True,(0,g,r),2, cv2.LINE_AA)
     else:
         print("Not enough matches are found - %d/%d" % (len(good),MIN_MATCH_COUNT))
         matchesMask = None
@@ -146,7 +146,7 @@ else:
 endtime = time.time()
 
 print(endtime - starttime)
-cv2.imshow("Image", img3)
+cv2.imshow("Image", img2c)
 cv2.waitKey(0)
 
 #plt.imshow(img3, 'gray'),plt.show()
