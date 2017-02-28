@@ -32,7 +32,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	private final double DEAD_ZONE_FT = 1.0/12.0;
 	
 	// Time to settled
-	private final long SETTLED_MSECS = 1000;  // TODO try to reduce this	
+	private final long SETTLED_MSECS = 800;  // TODO try to reduce this	
 	
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 2.0;

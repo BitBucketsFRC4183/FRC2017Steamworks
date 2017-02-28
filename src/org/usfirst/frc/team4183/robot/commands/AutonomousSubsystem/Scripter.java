@@ -32,6 +32,7 @@ public class Scripter extends Command {
 	private int pc = 0;
 	private final boolean debug = false;
 	
+	
 	// Test program (does nothing useful)
 	String[][] script = {
 			{"",			"BranchOnLocation Loc1 Loc2 Loc3" },
@@ -59,16 +60,19 @@ public class Scripter extends Command {
 	
 	/*
 	// "Real" program (almost) - I'm sure it will need tweaking
-	// FIXME get the right vals in the dead-reckoning
+	// Dead reckoning numbers are assuming: 
+	// positions 1 & 3 start points are 6' left & right of center line respectively,
+	// position 2 start point is on center line (directly facing gear peg)
+	// 
 	String[][] script = {
 			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" },  // Goto label 1,2,3 based on operator position
-			{"Loc1", 	"DriveStraight 8.0" },   // Feet
-			{"", 		"TurnBy -45.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
+			{"Loc1", 	"DriveStraight 8.1" },   // Feet
+			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
 			{"",		"Goto Vis" },
-			{"Loc2",	"DriveStraight 6.0" },
+			{"Loc2",	"DriveStraight 2.0" },
 			{"",		"Goto Vis" },
-			{"Loc3",	"DriveStraight 8.0" },
-			{"",		"TurnBy 45.0" },
+			{"Loc3",	"DriveStraight 8.1" },
+			{"",		"TurnBy 60.0" },
 			{"Vis", 	"EnableVisionGear" },
 			{"", 		"Delay 500" },			// Msec
 			{"Look", 	"MeasureGear" },		// Collects distance & yaw measures, puts estimates into measuredDistance, measuredYaw

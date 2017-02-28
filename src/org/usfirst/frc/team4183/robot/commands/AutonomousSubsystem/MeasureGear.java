@@ -65,16 +65,26 @@ public class MeasureGear extends Command {
 
     protected void end() {
     	
-    	// Get median value of the collected samples
+    	if( distSamples.size() == 0)
+    		distSamples.add(Double.NaN);
+    	if( yawSamples.size() == 0)
+    		yawSamples.add(Double.NaN);
+
+		// Get median value of the collected samples
     	Collections.sort(distSamples);
     	double distance = distSamples.get(distSamples.size()/2);
     	Collections.sort(yawSamples);
     	double yaw = yawSamples.get(yawSamples.size()/2);
+    	
 
     	if( SD_DEBUG) {
-    		SmartDashboard.putNumber("GearDist", distance);
-    		SmartDashboard.putNumber("GearYaw", yaw);
-    		SmartDashboard.putNumber("Pct_NaNs", (100.0*nanCnt)/totCnt);  		
+    		SmartDashboard.putString("MeasGearDist", 
+    			String.format("%.2f (%.2f<>%.2f)", 
+    					distance, Collections.min(distSamples), Collections.max(distSamples)));    		
+    		SmartDashboard.putString("MeasGearYaw",
+    			String.format("%.1f (%.1f<>%.1f)", 
+    					yaw, Collections.min(yawSamples), Collections.max(yawSamples)));
+    		SmartDashboard.putString("Pct_NaNs", String.format("%.1f", (100.0*nanCnt)/totCnt) );  		
     	}
 
     	// Stash the measured data for use by subsequent states

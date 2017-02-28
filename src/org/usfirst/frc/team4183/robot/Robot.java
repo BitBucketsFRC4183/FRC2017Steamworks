@@ -202,7 +202,7 @@ public class Robot extends IterativeRobot {
 		loopWatch.stop();
 		loopWatch.start();
 		
-		debugLoop.update();
+		periodicSDdebugLoop.update();
 	}
 	
 
@@ -215,13 +215,22 @@ public class Robot extends IterativeRobot {
 			new Stopwatch( "Loop", 
 			(name, max, min, avg) -> SmartDashboard.putNumber( "MaxLoop", max) );
 
-	private DoEveryN debugLoop = 
-			new DoEveryN( 10, () -> putSDdebug());
+	private DoEveryN periodicSDdebugLoop = 
+			new DoEveryN( 10, () -> putPeriodicSDdebug());
 	
-	private void putSDdebug() {
-		SmartDashboard.putNumber( "IMU_Yaw", imu.getYawDeg());
-		SmartDashboard.putNumber( "Left_Position", driveSubsystem.getLeftPositionFt());
-		SmartDashboard.putNumber( "Right_Position", driveSubsystem.getRightPositionFt());		
+	
+	private void putPeriodicSDdebug() {
+		
+		SmartDashboard.putString( "IMU_Yaw", 
+				String.format("%.1f", imu.getYawDeg()));
+		SmartDashboard.putString( "Left_Position", 
+				String.format("%.2f", driveSubsystem.getLeftPositionFt()));
+		SmartDashboard.putString( "Right_Position", 
+				String.format("%.2f", driveSubsystem.getRightPositionFt()));
+		SmartDashboard.putString( "VisGearYaw",
+				String.format("%.1f", visionSubsystem.getGearAngle_deg()));
+		SmartDashboard.putString( "VisGearDist", 
+				String.format("%.2f", visionSubsystem.getGearDistance_ft()));
 	}
 	
 	
