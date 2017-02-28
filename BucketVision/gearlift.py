@@ -376,7 +376,7 @@ class GearLift:
                 radius = 0.1*(h1+h2)/2      # w/h = 2/5 = 0.4 thus 0.5" is 0.1
                 
                 centerFraction = ((2.0*centerX)/320.0) - 1.0 # cam res is 320, avg & scale cancel
-                center_deg = 55 * centerFraction
+                center_deg = 31.6 * centerFraction
                 self.networkTable.putNumber("GearCenterX",centerFraction)
                 self.networkTable.putNumber("GearCenter_deg",center_deg)
 
@@ -417,7 +417,7 @@ class GearLift:
             radius = 0.1*h1     # w/h = 2/5 = 0.4 thus 0.5" is 0.1
             
             centerFraction = ((2.0*centerX)/320.0) - 1.0    # cam res is 320, avg & scale cancel
-            center_deg = 55 * centerFraction
+            center_deg = 31.6 * centerFraction
             self.networkTable.putNumber("GearCenterX",centerFraction)
             self.networkTable.putNumber("GearCenter_deg",center_deg)
 
