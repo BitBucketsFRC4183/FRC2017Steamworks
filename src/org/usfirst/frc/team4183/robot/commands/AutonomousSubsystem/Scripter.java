@@ -11,13 +11,6 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class Scripter extends Command {
 	
-	// At this distance, getting close
-	private final double PRETTY_CLOSE_FT = 2.0;
-	
-	// Exit tolerance;
-	// THIS MUST BE LARGER than "DEAD_ZONE_FT" in DriveStraight,
-	// or you can get stuck in an infinite state loop.
-	private final double ALLOWABLE_ERR_FT = 1.5/12.0;
 	
 	// If there seems to be some systematic error while approaching the target using vision, 
 	// can try to correct it here.
@@ -33,63 +26,68 @@ public class Scripter extends Command {
 	private final boolean debug = false;
 	
 	
-	// Test program (does nothing useful)
-	String[][] script = {
-			{"",			"BranchOnLocation Loc1 Loc2 Loc3" },
-			{"Loc1",		"Delay 1000" },
-			{"",			"Goto Head" },
-			{"Loc2",		"Delay 2000" },
-			{"",			"Goto Head" },
-			{"Loc3",		"Delay 3000" },
-			{"Head",			"EnableVisionGear" },
-			{"",			"Delay 500" },
-			{"Look",		"MeasureGear" },
-			{"", 		"BranchOnDistance Fini Close Far" },  // |d|<ALLOWABLE_ERR_FT->1st label; else d<PRETTY_CLOSE_FT->2nd label; else->3rd label
-			{"Far", 	"YawCorrect" },     		// TurnBy -measuredYaw
-			{"", 		"DistanceCorrect 0.5" },	// DriveStraight (param)*measuredDistance
-			{"", 		"Goto Look" },
-			{"Close", 	"YawCorrect" },
-			{"", 		"DistanceCorrect 1.0" },
-			{"", 		"Goto Look" },
-			{"Fini", 	"YawCorrect" },			
-			{"",			"End" }			
-	};
-	
 	// To see the Scripter instruction set documentation, 
 	// scroll down to the switch() in executeNextInstruction()
 	
-	/*
-	// "Real" program (almost) - I'm sure it will need tweaking
 	// Dead reckoning numbers are assuming: 
-	// positions 1 & 3 start points are 6' left & right of center line respectively,
+	// positions 1 & 3 start points are 7' left & right of center line respectively,
 	// position 2 start point is on center line (directly facing gear peg)
 	// 
 	String[][] script = {
 			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" },  // Goto label 1,2,3 based on operator position
-			{"Loc1", 	"DriveStraight 8.1" },   // Feet
+			{"Loc1", 	"DriveStraight 6.9" },   // Feet
 			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
 			{"",		"Goto Vis" },
-			{"Loc2",	"DriveStraight 2.0" },
+			{"Loc2",	"DriveStraight 2.4" },
 			{"",		"Goto Vis" },
-			{"Loc3",	"DriveStraight 8.1" },
+			{"Loc3",	"DriveStraight 6.9" },
 			{"",		"TurnBy 60.0" },
-			{"Vis", 	"EnableVisionGear" },
-			{"", 		"Delay 500" },			// Msec
-			{"Look", 	"MeasureGear" },		// Collects distance & yaw measures, puts estimates into measuredDistance, measuredYaw
-			{"", 		"BranchOnDistance Fini Close Far" },  // |d|<ALLOWABLE_ERR_FT->1st label; else d<PRETTY_CLOSE_FT->2nd label; else->3rd label
-			{"Far", 	"YawCorrect" },     		// TurnBy -measuredYaw
-			{"", 		"DistanceCorrect 0.5" },	// DriveStraight (param)*measuredDistance
-			{"", 		"Goto Look" },
-			{"Close", 	"YawCorrect" },
-			{"", 		"DistanceCorrect 1.0" },
-			{"", 		"Goto Look" },
-			{"Fini", 	"YawCorrect" },
-			{"", 		"DeliverGear" },			// Spits the gear
+			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall (~3' from drop point), looking straight at it
+			{"", 		"Delay 500" },			
+			{"", 		"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
+			{"", 		"YawCorrect" },     		// TurnBy -measuredYaw
+			{"", 		"DistanceCorrect 1.0" },	// DriveStraight measuredDistance - 1 ft
+			{"", 		"MeasureGear" },
+			{"", 		"YawCorrect" },
+			{"", 		"DistanceCorrect 0.0" },	// Drive full measureDistance
+			{"", 		"DeliverGear" },			// Spit the gear
 			{"",		"Delay 200" },
-			{"", 		"DriveStraight -1.0" },
+			{"", 		"DriveStraight -1.0" },     // Back up
 			{"", 		"End" }						// MUST finish in End state
 	};
-	*/
+	
+	/*
+	// Test just the dead-reckoning part of program
+	String[][] script = {
+			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" }, 
+			{"Loc1", 	"DriveStraight 6.9" },   
+			{"", 		"TurnBy -60.0" }, 
+			{"",		"Goto Vis" },
+			{"Loc2",	"DriveStraight 2.4" },
+			{"",		"Goto Vis" },
+			{"Loc3",	"DriveStraight 6.9" },
+			{"",		"TurnBy 60.0" },
+			{"Vis", 	"End" }
+	 };	 
+	 */
+	
+	/*
+	// Test just the Vision part of program
+	String[][] script = {
+			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall (~3' from drop point), looking straight at it
+			{"", 		"Delay 500" },			
+			{"", 		"MeasureGear" },	
+			{"", 		"YawCorrect" },  
+			{"", 		"DistanceCorrect 1.0" },	// DriveStraight measuredDistance - 1ft
+			{"", 		"MeasureGear" },
+			{"", 		"YawCorrect" },
+			{"", 		"DistanceCorrect 0.0" },	// Drive full measureDistance
+			{"", 		"DeliverGear" },
+			{"",		"Delay 200" },
+			{"", 		"DriveStraight -1.0" }, 
+			{"", 		"End" }					
+	};
+	*/	
 	
     public Scripter() {
     	// No "requires" - this one stands apart - it's a Meta-State.
@@ -158,15 +156,11 @@ public class Scripter extends Command {
     		measureGear();
     		break;
 
-    	case "BranchOnDistance":  // lblFini lblClose lblFar
-    		branchOnDistance( tokens[1], tokens[2], tokens[3]);
-    		break;
-
     	case "YawCorrect":  // (Turns by -measuredYaw)
     		yawCorrect();
     		break;
     		
-    	case "DistanceCorrect":  // fract  (drives forward fract*measuredDistance)
+    	case "DistanceCorrect":  // drives forward measuredDistance - param)
     		distanceCorrect( Double.parseDouble(tokens[1]));
     		break;
     		
@@ -248,18 +242,6 @@ public class Scripter extends Command {
     		System.out.println("Scripter.measureGear");
     	(new MeasureGear()).start();
     }
-
-    private void branchOnDistance( String lblFini, String lblClose, String lblFar) {  
-    	if(debug)
-    		System.out.format("Scripter.branchOnDistance %f %s %s %s\n", measuredDistance, lblFini, lblClose, lblFar);
- 
-    	if( Math.abs(measuredDistance) < ALLOWABLE_ERR_FT )
-    		doGoto(lblFini);
-    	else if( measuredDistance < PRETTY_CLOSE_FT)
-    		doGoto(lblClose);
-    	else
-    		doGoto(lblFar);	
-    }
    
     private void yawCorrect() {
     	if(debug)
@@ -267,10 +249,10 @@ public class Scripter extends Command {
     	(new TurnBy( -measuredYaw + YAW_FUDGE_DEG)).start();
     }
     
-    private void distanceCorrect( double fract) {
+    private void distanceCorrect( double dRemain) {
     	if(debug)
-    		System.out.format( "Scripter.distanceCorrect %f\n", measuredDistance*fract);
-    	(new DriveStraight( measuredDistance*fract)).start();
+    		System.out.format( "Scripter.distanceCorrect %f\n", measuredDistance - dRemain);
+    	(new DriveStraight( measuredDistance - dRemain)).start();
     }
     
     private void deliverGear() {
