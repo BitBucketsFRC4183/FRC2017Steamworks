@@ -42,14 +42,14 @@ public class Scripter extends Command {
 			{"",		"Goto Vis" },
 			{"Loc3",	"DriveStraight 6.9" },
 			{"",		"TurnBy 60.0" },
-			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall (~3' from drop point), looking straight at it
+			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
 			{"", 		"Delay 500" },			
 			{"", 		"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
 			{"", 		"YawCorrect" },     		// TurnBy -measuredYaw
-			{"", 		"DistanceCorrect 1.0" },	// DriveStraight measuredDistance - 1 ft
+			{"", 		"DistanceCorrect 2.0" },	// Stop short by 2 ft
 			{"", 		"MeasureGear" },
 			{"", 		"YawCorrect" },
-			{"", 		"DistanceCorrect 0.0" },	// Drive full measureDistance
+			{"", 		"DistanceCorrect 1.0" },	// Stop short by 1 ft
 			{"", 		"DeliverGear" },			// Spit the gear
 			{"",		"Delay 200" },
 			{"", 		"DriveStraight -1.0" },     // Back up

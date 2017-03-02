@@ -32,10 +32,7 @@ public class VisionSubsystem extends Subsystem
 	
 	private static String currentCam = FRONT_CAM;
 	private static String currentFrontCamMode = GEAR_LIFT_MODE;
-	
-	// Want to stop when camera distance to gear target equals this
-	private static final double GEAR_STOP_DIST_INCHES = 12.0;  // TODO value
-	
+		
 	public static DriverStation.Alliance currentAllianceColor = DriverStation.Alliance.Red;
 	public static int currentAllianceLocation = 1;
 	
@@ -83,8 +80,7 @@ public class VisionSubsystem extends Subsystem
 	}
 	public double getGearDistance_ft() 
 	{
-		return (bvtable.getNumber(GEAR_DISTANCE_KEY, Double.NaN) 
-				- GEAR_STOP_DIST_INCHES)/12.0;
+		return bvtable.getNumber(GEAR_DISTANCE_KEY, Double.NaN)/12.0;
 	}
 	
 	public double getGearAngle_deg()
