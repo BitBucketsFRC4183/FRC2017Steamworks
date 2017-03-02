@@ -12,10 +12,8 @@ import edu.wpi.first.wpilibj.command.Command;
 public class Scripter extends Command {
 	
 	
-	// If there seems to be some systematic error while approaching the target using vision, 
-	// can try to correct it here.
-	// A positive value will push the overall path to the left (viewed from behind),
-	// == CCW (viewed from above).
+	// This value added to all turn angles;
+	// might be useful for correcting some systematic error??
 	private final double YAW_FUDGE_DEG = 0.0;
 	
 	// These values written by "MeasureGear"
@@ -33,7 +31,7 @@ public class Scripter extends Command {
 	// positions 1 & 3 start points are 7' left & right of center line respectively,
 	// position 2 start point is on center line (directly facing gear peg)
 	// 
-	String[][] script = {
+	private String[][] script = {
 			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" },  // Goto label 1,2,3 based on operator position
 			{"Loc1", 	"DriveStraight 6.9" },   // Feet
 			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
@@ -57,7 +55,16 @@ public class Scripter extends Command {
 	};
 	
 	/*
-	// Test just the dead-reckoning part of program
+	// Test small moves (to see if MIN_DRIVEs big enough)
+	private String[][] script = {
+		{"", "TurnBy 5" },
+		{"", "DriveStraight 0.25"},
+		{"", "End" }    // MUST finish with End!
+	};
+	 */
+	
+	/*
+	// Test just the dead-reckoning part of Gear program
 	String[][] script = {
 			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" }, 
 			{"Loc1", 	"DriveStraight 6.9" },   
@@ -72,7 +79,7 @@ public class Scripter extends Command {
 	 */
 	
 	/*
-	// Test just the Vision part of program
+	// Test just the Vision part of Gear program
 	String[][] script = {
 			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall (~3' from drop point), looking straight at it
 			{"", 		"Delay 500" },			
@@ -89,6 +96,7 @@ public class Scripter extends Command {
 	};
 	*/	
 	
+
     public Scripter() {
     	// No "requires" - this one stands apart - it's a Meta-State.
     	// This is start()-ed from Robot.autonomousInit().
@@ -222,7 +230,7 @@ public class Scripter extends Command {
     private void turnBy( double yaw) {
     	if(debug)
     		System.out.format("Scripter.turnBy %f\n", yaw);
-    	(new TurnBy( yaw)).start();
+    	(new TurnBy( yaw + YAW_FUDGE_DEG)).start();
     }
     
     private void driveStraight( double dist) {

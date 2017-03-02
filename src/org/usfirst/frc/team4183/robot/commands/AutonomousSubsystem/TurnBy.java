@@ -26,10 +26,10 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	// (unless error falls within dead zone, then drive goes to 0)
 	// THIS MUST BE LARGE ENOUGH TO ROTATE THE ROBOT from stopped position
 	// if it isn't, you can get stuck in this state.
-	private final double MIN_DRIVE = 0.45; // Yeah this does seem high
+	private final double MIN_DRIVE = 0.4; // Yeah this does seem high
 	
 	// Size of dead zone in degrees
-	private final double DEAD_ZONE_DEG = 1.0;
+	private final double DEAD_ZONE_DEG = 1.0;  // Too tight?
 	
 	// Used (along with dead zone) to determine when turn is complete.
 	// If angular velocity (Degrees/sec) is greater than this,

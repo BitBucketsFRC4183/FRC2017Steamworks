@@ -25,10 +25,10 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	// (unless error falls within dead zone, then drive goes to 0)
 	// THIS MUST BE LARGE ENOUGH TO MOVE THE ROBOT from stopped position
 	// if it isn't, you can get stuck in this state.
-	private final double MIN_DRIVE = 0.45; // Yeah this does seem high
+	private final double MIN_DRIVE = 0.4; // Yeah this does seem high
 	
 	// Size of dead zone in feet - also used to determine when done
-	private final double DEAD_ZONE_FT = 1.0/12.0;
+	private final double DEAD_ZONE_FT = 1.0/12.0;  // Can this be reduced a bit?
 	
 	// Time to settled
 	private final long SETTLED_MSECS = 800;  // TODO try to reduce this	

@@ -1,5 +1,7 @@
 package org.usfirst.frc.team4183.robot.subsystems;
 
+// Go to 10.41.83.31/cam.mjpg
+
 import org.usfirst.frc.team4183.robot.commands.VisionSubsystem.Idle;
 
 import edu.wpi.first.wpilibj.DriverStation;

@@ -31,7 +31,7 @@ public class DriveSubsystem extends Subsystem {
 		private final RobotDrive robotDrive;
 		
 		private final double LOW_SENS_GAIN = 0.6;		
-		private final double ALIGN_LOOP_GAIN = 0.05;
+		private final double ALIGN_LOOP_GAIN = 0.05;  // See if this can be increased
 
 		// The counts-per-rev is printed on the encoder -
 		// it's the 1st number after the "E4P" or "E4T"
