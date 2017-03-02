@@ -11,11 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class Scripter extends Command {
 	
-	
-	// This value added to all turn angles;
-	// might be useful for correcting some systematic error??
-	private final double YAW_FUDGE_DEG = 0.0;
-	
+		
 	// These values written by "MeasureGear"
 	static double measuredDistance;		// feet
 	static double measuredYaw;          // degrees, gives Robot pose in target C.S.; +val means Robot sitting CCW (viewed from top)
@@ -230,7 +226,7 @@ public class Scripter extends Command {
     private void turnBy( double yaw) {
     	if(debug)
     		System.out.format("Scripter.turnBy %f\n", yaw);
-    	(new TurnBy( yaw + YAW_FUDGE_DEG)).start();
+    	(new TurnBy( yaw)).start();
     }
     
     private void driveStraight( double dist) {
@@ -254,7 +250,7 @@ public class Scripter extends Command {
     private void yawCorrect() {
     	if(debug)
     		System.out.format("Scripter.yawCorrect %f\n", measuredYaw);
-    	(new TurnBy( -measuredYaw + YAW_FUDGE_DEG)).start();
+    	(new TurnBy( -measuredYaw)).start();
     }
     
     private void distanceCorrect( double dRemain) {

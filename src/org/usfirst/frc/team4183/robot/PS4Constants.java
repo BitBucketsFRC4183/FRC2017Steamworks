@@ -1,7 +1,6 @@
 package org.usfirst.frc.team4183.robot;
 
 // These constants should be used in place of literals
-// TODO: Consider using built in classes provided by WPI
 public enum PS4Constants {
 	
 	// Axis

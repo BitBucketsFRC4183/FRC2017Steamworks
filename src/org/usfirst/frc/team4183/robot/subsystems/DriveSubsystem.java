@@ -3,7 +3,6 @@ package org.usfirst.frc.team4183.robot.subsystems;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.CANTalon;
 
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.RobotDrive;
 
 import org.usfirst.frc.team4183.robot.OI;
@@ -21,22 +20,29 @@ public class DriveSubsystem extends Subsystem {
 		// Constant below is assuming 4" wheel
 		// 1.047 ft/rot = (4" * pi) in/rot * 1/12 ft/in
 		// Tested (briefly) 2/21 seemed within 3%
-		private final double ROT_TO_FEET = 1.047;
-	
+		private final double FEET_PER_WHEEL_ROT = 1.047;
+		
+		// TODO: calibrate these
+		// Make the robot go straight when turn stick zeroed (in DriverControl).
+		// + value will inject +yaw (CCW from top, or pull to left viewed from behind).
+		private final double YAW_CORRECT_STICK = 0.0;   // Correct based on fwd stick
+		private final double YAW_CORRECT_VELOCITY = 0.0; // Correct based on fwd speed
+		
+		private final double LOW_SENS_GAIN = 0.6;		
+		private final double ALIGN_LOOP_GAIN = 0.05;  // TODO See if this can be increased
+
+		// The counts-per-rev is printed on the encoder -
+		// it's the 1st number after the "E4P" or "E4T"
+		private final int ENCODER_PULSES_PER_REV = 250; 
+		private final boolean REVERSE_SENSOR = false;   // Verified correct 2/21
+
+		
 		private final CANTalon leftFrontMotor;
 		private final CANTalon leftRearMotor; 
 		private final CANTalon rightFrontMotor;
 		private final CANTalon rightRearMotor;
 	    
 		private final RobotDrive robotDrive;
-		
-		private final double LOW_SENS_GAIN = 0.6;		
-		private final double ALIGN_LOOP_GAIN = 0.05;  // See if this can be increased
-
-		// The counts-per-rev is printed on the encoder -
-		// it's the 1st number after the "E4P" or "E4T"
-		private final int ENCODER_PULSES_PER_REV = 250; 
-		private final boolean REVERSE_SENSOR = false;   // Verified correct 2/21
 		
 		private double yawSetPoint;
 		
@@ -69,14 +75,14 @@ public class DriveSubsystem extends Subsystem {
 		}
 		
 		// +turn produces right turn (CW from above, -yaw angle)
-		public void arcadeDrive(double speed, double turn) {
+		public void arcadeDrive(double fwdStick, double turnStick) {
 			
 			if(OI.btnLowSensitiveDrive.get()) {
-				speed *= LOW_SENS_GAIN;
-				turn *= LOW_SENS_GAIN;
+				fwdStick *= LOW_SENS_GAIN;
+				turnStick *= LOW_SENS_GAIN;
 			}
 			if(OI.btnInvertAxis.get()) {
-				speed *= -1.0;
+				fwdStick *= -1.0;
 			}
 			
 			// Turn stick is + to the right;
@@ -84,7 +90,7 @@ public class DriveSubsystem extends Subsystem {
 			// (this is +yaw when yaw is defined according to right-hand-rule
 			// with z-axis up, so arguably correct).
 			// Anyhow need the - sign to make it turn correctly.
-			robotDrive.arcadeDrive(speed, -turn);
+			robotDrive.arcadeDrive(fwdStick, -turnStick + yawCorrect( fwdStick));
 		}
 		
 		
@@ -94,26 +100,26 @@ public class DriveSubsystem extends Subsystem {
 			} 
 		}
 		
-		public void doAlignDrive(double speed, double turn) {
+		public void doAlignDrive(double fwdStick, double turnStick) {
 			
 			// Turn stick is + to the right,
 			// +yaw is CCW looking down,
 			// so + stick should lower the setpoint. 
-			yawSetPoint += -0.3 * Deadzone.f(turn, .05);
+			yawSetPoint += -0.3 * Deadzone.f(turnStick, .05);
 
 			if(OI.btnLowSensitiveDrive.get())
-				speed *= LOW_SENS_GAIN;
+				fwdStick *= LOW_SENS_GAIN;
 			
 			if(OI.btnInvertAxis.get()) {
-				speed *= -1.0;
+				fwdStick *= -1.0;
 			}
 			
 			double error = ALIGN_LOOP_GAIN * (yawSetPoint - Robot.imu.getYawDeg());
 
-			robotDrive.arcadeDrive(speed, error);			
+			robotDrive.arcadeDrive(fwdStick, error + yawCorrect( fwdStick));			
 		}
 		
-		
+
 		public void setLockDrive( boolean start) {
 
 			if( start) {
@@ -157,17 +163,25 @@ public class DriveSubsystem extends Subsystem {
 			rightRearMotor.set(rightFrontMotor.getDeviceID());			
 		}
 		
+		private double yawCorrect( double fwdStick) {
+			return YAW_CORRECT_STICK * fwdStick + YAW_CORRECT_VELOCITY*getFwdVelocity_fps();
+		}	
 		
 		public double getPositionFt() {
 			return getLeftPositionFt();
 		}
 		
 		public double getLeftPositionFt() {
-			return ROT_TO_FEET * leftFrontMotor.getPosition();			
+			return FEET_PER_WHEEL_ROT * leftFrontMotor.getPosition();			
 		}
 		
 		public double getRightPositionFt() {
-			return ROT_TO_FEET * rightFrontMotor.getPosition();						
+			return FEET_PER_WHEEL_ROT * rightFrontMotor.getPosition();						
+		}
+
+		public double getFwdVelocity_fps() {
+			double fwdSpeedRpm = (leftFrontMotor.getSpeed() + rightFrontMotor.getSpeed())/2.0;
+			return FEET_PER_WHEEL_ROT / 60.0 * fwdSpeedRpm;
 		}
 		
 		public void initDefaultCommand() {
