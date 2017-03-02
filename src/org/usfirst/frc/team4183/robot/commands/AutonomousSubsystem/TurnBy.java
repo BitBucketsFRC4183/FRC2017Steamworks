@@ -29,7 +29,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private final double MIN_DRIVE = 0.4; // Yeah this does seem high
 	
 	// Size of dead zone in degrees
-	private final double DEAD_ZONE_DEG = 1.0;  // Too tight?
+	private final double DEAD_ZONE_DEG = 2.0;
 	
 	// Used (along with dead zone) to determine when turn is complete.
 	// If angular velocity (Degrees/sec) is greater than this,
