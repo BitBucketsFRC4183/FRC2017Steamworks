@@ -19,16 +19,16 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	private final static double Kp = 0.6;
 
 	// Largest drive that will be applied
-	private final double MAX_DRIVE = 0.8;
+	private final double MAX_DRIVE = 0.65;
 	
 	// Smallest drive that will be applied 
 	// (unless error falls within dead zone, then drive goes to 0)
 	// THIS MUST BE LARGE ENOUGH TO MOVE THE ROBOT from stopped position
 	// if it isn't, you can get stuck in this state.
-	private final double MIN_DRIVE = 0.4; // Yeah this does seem high
+	private final double MIN_DRIVE = 0.16;
 	
-	// Size of dead zone in feet - also used to determine when done
-	private final double DEAD_ZONE_FT = 1.0/12.0;  // Can this be reduced a bit?
+	// Size of dead zone in inches - also used to determine when done
+	private final double DEAD_ZONE_INCH = 1.0;  // Can this be reduced a bit?
 	
 	// Time to settled
 	private final long SETTLED_MSECS = 800;  // TODO try to reduce this	
@@ -36,7 +36,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 2.0;
 	
-	private final double distanceFt;
+	private final double distanceInch;
 	
 	private ControlLoop cloop;
 	private RateLimit rateLimit;
@@ -44,21 +44,24 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	private SettledDetector settledDetector; 
 	
 	
-	public DriveStraight( double distanceFt) {		
+	public DriveStraight( double distanceInch) {		
 		requires( Robot.autonomousSubsystem);
 		
-		this.distanceFt = distanceFt;
+		this.distanceInch = distanceInch;
 	}
 
 	@Override
 	protected void initialize() {
 		// Compute setPoint
-		double setPoint = distanceFt + Robot.driveSubsystem.getPositionFt();
+		double setPoint = distanceInch + Robot.driveSubsystem.getPosition_inch();
 		
 		// Make helpers
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
-		deadZone = new MinMaxDeadzone( DEAD_ZONE_FT, MIN_DRIVE, MAX_DRIVE);
-		settledDetector = new SettledDetector(SETTLED_MSECS, DEAD_ZONE_FT);
+		deadZone = new MinMaxDeadzone( DEAD_ZONE_INCH, MIN_DRIVE, MAX_DRIVE);
+		settledDetector = new SettledDetector(SETTLED_MSECS, DEAD_ZONE_INCH);
+		
+		// Set DriveSubsystem axis inputs to linear
+		Robot.driveSubsystem.setLinearAxis(true);
 		
 		// Put DriveSubsystem into "Align Lock" (drive straight)
 		OI.btnAlignLock.push();
@@ -82,11 +85,14 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	@Override
 	protected void end() {
 	
-		// Don't forget to stop the loop!
+		// Don't forget to stop the control loop!
 		cloop.stop();
 		
 		// Put DriveSubsystem out of "Align Lock"
 		OI.btnAlignLock.release();
+		
+		// Restore DriveSubsystem axis inputs to normal
+		Robot.driveSubsystem.setLinearAxis(false);
 				
 		// Set output to zero before leaving
 		OI.axisForward.set(0.0);				
@@ -100,9 +106,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	
 	@Override
 	public double getFeedback() {
-		// Debug
-		// System.out.format( "positionFt=%f\n", Robot.driveSubsystem.getPositionFt());
-		return Robot.driveSubsystem.getPositionFt();
+		return Robot.driveSubsystem.getPosition_inch();
 	}
 	
 	@Override

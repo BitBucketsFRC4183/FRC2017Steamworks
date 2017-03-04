@@ -80,9 +80,9 @@ public class VisionSubsystem extends Subsystem
 		driverStation = DriverStation.getInstance();
 		
 	}
-	public double getGearDistance_ft() 
+	public double getGearDistance_inch() 
 	{
-		return bvtable.getNumber(GEAR_DISTANCE_KEY, Double.NaN)/12.0;
+		return bvtable.getNumber(GEAR_DISTANCE_KEY, Double.NaN);
 	}
 	
 	public double getGearAngle_deg()

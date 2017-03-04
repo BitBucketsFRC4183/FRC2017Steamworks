@@ -45,7 +45,7 @@ public class MeasureGear extends Command {
     	
     	
     	double distSample 
-    		= Robot.visionSubsystem.getGearDistance_ft();
+    		= Robot.visionSubsystem.getGearDistance_inch();
     	
     	if( !Double.isNaN(distSample)) {
     		distSamples.add(distSample);
@@ -88,8 +88,8 @@ public class MeasureGear extends Command {
     	}
 
     	// Stash the measured data for use by subsequent states
-		Scripter.measuredDistance = distance;
-		Scripter.measuredYaw = yaw;		
+		Scripter.measuredDistance_inch = distance;
+		Scripter.measuredYaw_deg = yaw;		
     }
 
     // Called when another command which requires one or more of the same

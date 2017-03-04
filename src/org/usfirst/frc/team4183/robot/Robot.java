@@ -223,14 +223,20 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putString( "IMU_Yaw", 
 				String.format("%.1f", imu.getYawDeg()));
+		SmartDashboard.putString( "IMU_Yawrate", 
+				String.format("%.1f", imu.getYawRateDps()));
 		SmartDashboard.putString( "Left_Position", 
-				String.format("%.2f", driveSubsystem.getLeftPositionFt()));
+				String.format("%.1f", driveSubsystem.getLeftPosition_inch()));
 		SmartDashboard.putString( "Right_Position", 
-				String.format("%.2f", driveSubsystem.getRightPositionFt()));
+				String.format("%.1f", driveSubsystem.getRightPosition_inch()));
+		SmartDashboard.putString("Fwd_Velocity",
+				String.format("%.1f", driveSubsystem.getFwdVelocity_ips()));
+		SmartDashboard.putString( "Fwd_Current", 
+				String.format( "%.1f", driveSubsystem.getFwdCurrent()));
 		SmartDashboard.putString( "VisGearYaw",
 				String.format("%.1f", visionSubsystem.getGearAngle_deg()));
 		SmartDashboard.putString( "VisGearDist", 
-				String.format("%.2f", visionSubsystem.getGearDistance_ft()));
+				String.format("%.1f", visionSubsystem.getGearDistance_inch()));
 	}
 	
 	

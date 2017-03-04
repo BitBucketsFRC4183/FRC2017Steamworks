@@ -15,26 +15,25 @@ import org.usfirst.frc.team4183.utils.Deadzone;
  *
  */
 public class DriveSubsystem extends Subsystem {
-	
-		// TODO: calibrate this.
-		// Constant below is assuming 4" wheel
-		// 1.047 ft/rot = (4" * pi) in/rot * 1/12 ft/in
-		// Tested (briefly) 2/21 seemed within 3%
-		private final double FEET_PER_WHEEL_ROT = 1.047;
-		
-		// TODO: calibrate these
-		// Make the robot go straight when turn stick zeroed (in DriverControl).
-		// + value will inject +yaw (CCW from top, or pull to left viewed from behind).
-		private final double YAW_CORRECT_STICK = 0.0;   // Correct based on fwd stick
-		private final double YAW_CORRECT_VELOCITY = 0.0; // Correct based on fwd speed
+
+		// Calibrated this on PRACTICE robot 3/4
+		// Nominal value assuming 4" wheel:
+		// 12.57 in/rot = (4" * pi) in/rot
+		private final double INCH_PER_WHEEL_ROT = 12.65;
+
+		// TODO: adjust these to make the robot drive straight with 
+		// zero turn stick in DriverControl.
+		// +Values will add +yaw correct (CCW viewed from top) when going forward.
+		private final double YAW_CORRECT_VELOCITY = 0.0;  // Multiplied by inch/sec so value will be small!
+		private final double YAW_CORRECT_ACCEL = 0.0;
 		
 		private final double LOW_SENS_GAIN = 0.6;		
-		private final double ALIGN_LOOP_GAIN = 0.05;  // TODO See if this can be increased
+		private final double ALIGN_LOOP_GAIN = 0.08;  // TODO retest now that not squaring
 
 		// The counts-per-rev is printed on the encoder -
 		// it's the 1st number after the "E4P" or "E4T"
 		private final int ENCODER_PULSES_PER_REV = 250; 
-		private final boolean REVERSE_SENSOR = false;   // Verified correct 2/21
+		private final boolean REVERSE_SENSOR = false;  
 
 		
 		private final CANTalon leftFrontMotor;
@@ -44,7 +43,8 @@ public class DriveSubsystem extends Subsystem {
 	    
 		private final RobotDrive robotDrive;
 		
-		private double yawSetPoint;
+		private double yawSetPoint;		
+		private boolean linearAxis = false;
 		
 		public DriveSubsystem() {
 
@@ -74,7 +74,22 @@ public class DriveSubsystem extends Subsystem {
 			robotDrive.arcadeDrive(0.0, 0.0);			
 		}
 		
-		// +turn produces right turn (CW from above, -yaw angle)
+		// Human driver likes non-linear "squared controls" (easier to drive);
+		// but Autonomous "driver", since it's actually a control loop, prefers linear controls.
+		// Autonomous will set this true when executing its control loops
+		// and must restore it back to the human setting (false) when done.
+		public void setLinearAxis( boolean setting) {
+			linearAxis = setting;
+		}
+		
+		private double sqAxis( double x) {
+			if( linearAxis)
+				return x;
+			else
+				return Math.signum(x) * (x*x);
+		}
+		
+		// +turnStick produces right turn (CW from above, -yaw angle)
 		public void arcadeDrive(double fwdStick, double turnStick) {
 			
 			if(OI.btnLowSensitiveDrive.get()) {
@@ -89,8 +104,8 @@ public class DriveSubsystem extends Subsystem {
 			// but arcadeDrive 2nd arg + produces left turn
 			// (this is +yaw when yaw is defined according to right-hand-rule
 			// with z-axis up, so arguably correct).
-			// Anyhow need the - sign to make it turn correctly.
-			robotDrive.arcadeDrive(fwdStick, -turnStick + yawCorrect( fwdStick));
+			// Anyhow need the - sign on turnStick to make it turn correctly.
+			robotDrive.arcadeDrive( sqAxis(fwdStick), -sqAxis(turnStick) + yawCorrect(), false);
 		}
 		
 		
@@ -116,7 +131,7 @@ public class DriveSubsystem extends Subsystem {
 			
 			double error = ALIGN_LOOP_GAIN * (yawSetPoint - Robot.imu.getYawDeg());
 
-			robotDrive.arcadeDrive(fwdStick, error + yawCorrect( fwdStick));			
+			robotDrive.arcadeDrive( sqAxis(fwdStick), error + yawCorrect(), false);			
 		}
 		
 
@@ -152,7 +167,7 @@ public class DriveSubsystem extends Subsystem {
 			m.setIZone(0);
 			m.setCloseLoopRampRate(50.0);    // Smoothes things a bit
 			m.setAllowableClosedLoopErr(8);  // Specified in CANTalon "ticks"
-			m.configNominalOutputVoltage(+4.5, -4.5);
+			m.configNominalOutputVoltage(+4.0, -4.0);
 			m.configPeakOutputVoltage(+12.0, -12.0);			
 		}
 		
@@ -163,25 +178,38 @@ public class DriveSubsystem extends Subsystem {
 			rightRearMotor.set(rightFrontMotor.getDeviceID());			
 		}
 		
-		private double yawCorrect( double fwdStick) {
-			return YAW_CORRECT_STICK * fwdStick + YAW_CORRECT_VELOCITY*getFwdVelocity_fps();
-		}	
-		
-		public double getPositionFt() {
-			return getLeftPositionFt();
+		private double yawCorrect() {
+			return YAW_CORRECT_VELOCITY * getFwdVelocity_ips() 
+					+ YAW_CORRECT_ACCEL * getFwdCurrent();
 		}
 		
-		public double getLeftPositionFt() {
-			return FEET_PER_WHEEL_ROT * leftFrontMotor.getPosition();			
+		public double getPosition_inch() {
+			return getLeftPosition_inch();
 		}
 		
-		public double getRightPositionFt() {
-			return FEET_PER_WHEEL_ROT * rightFrontMotor.getPosition();						
+		public double getLeftPosition_inch() {
+			return INCH_PER_WHEEL_ROT * leftFrontMotor.getPosition();			
+		}
+		
+		public double getRightPosition_inch() {
+			// Right motor encoder reads -position when going forward!
+			return -INCH_PER_WHEEL_ROT * rightFrontMotor.getPosition();						
 		}
 
-		public double getFwdVelocity_fps() {
-			double fwdSpeedRpm = (leftFrontMotor.getSpeed() + rightFrontMotor.getSpeed())/2.0;
-			return FEET_PER_WHEEL_ROT / 60.0 * fwdSpeedRpm;
+		public double getFwdVelocity_ips() {
+			// Right side motor reads -velocity when going forward!
+			double fwdSpeedRpm = (leftFrontMotor.getSpeed() - rightFrontMotor.getSpeed())/2.0;
+			return (INCH_PER_WHEEL_ROT / 60.0) * fwdSpeedRpm;
+		}
+		
+		public double getFwdCurrent() {
+			// OutputCurrent always positive so apply sign of drive voltage to get real answer.
+			// Also, right side has -drive when going forward!
+			double leftFront = leftFrontMotor.getOutputCurrent() * Math.signum( leftFrontMotor.getOutputVoltage());
+			double leftRear = leftRearMotor.getOutputCurrent() * Math.signum( leftRearMotor.getOutputVoltage());
+			double rightFront = -rightFrontMotor.getOutputCurrent() * Math.signum( rightFrontMotor.getOutputVoltage());
+			double rightRear = -rightRearMotor.getOutputCurrent() * Math.signum( rightRearMotor.getOutputVoltage());
+			return (leftFront + leftRear + rightFront + rightRear)/4.0;
 		}
 		
 		public void initDefaultCommand() {

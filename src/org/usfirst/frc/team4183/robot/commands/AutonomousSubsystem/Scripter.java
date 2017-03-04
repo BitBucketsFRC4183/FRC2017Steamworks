@@ -13,8 +13,8 @@ public class Scripter extends Command {
 	
 		
 	// These values written by "MeasureGear"
-	static double measuredDistance;		// feet
-	static double measuredYaw;          // degrees, gives Robot pose in target C.S.; +val means Robot sitting CCW (viewed from top)
+	static double measuredDistance_inch;    // inch
+	static double measuredYaw_deg;          // gives Robot pose in target C.S.; +val means Robot sitting CCW (viewed from top)
 	
 	private int pc = 0;
 	private final boolean debug = false;
@@ -29,24 +29,24 @@ public class Scripter extends Command {
 	// 
 	private String[][] script = {
 			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" },  // Goto label 1,2,3 based on operator position
-			{"Loc1", 	"DriveStraight 6.9" },   // Feet
+			{"Loc1", 	"DriveStraight 84.0" },  // Inch
 			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
 			{"",		"Goto Vis" },
-			{"Loc2",	"DriveStraight 2.4" },
+			{"Loc2",	"DriveStraight 29.0" },
 			{"",		"Goto Vis" },
-			{"Loc3",	"DriveStraight 6.9" },
+			{"Loc3",	"DriveStraight 84.0" },
 			{"",		"TurnBy 60.0" },
 			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
 			{"", 		"Delay 500" },			
 			{"", 		"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
 			{"", 		"YawCorrect" },     		// TurnBy -measuredYaw
-			{"", 		"DistanceCorrect 2.0" },	// Stop short by 2 ft
+			{"", 		"DistanceCorrect 24.0" },	// Stop short by 2 ft
 			{"", 		"MeasureGear" },
 			{"", 		"YawCorrect" },
-			{"", 		"DistanceCorrect 1.0" },	// Stop short by 1 ft
+			{"", 		"DistanceCorrect 12.0" },	// Stop short by 1 ft
 			{"", 		"DeliverGear" },			// Spit the gear
 			{"",		"Delay 200" },
-			{"", 		"DriveStraight -1.0" },     // Back up
+			{"", 		"DriveStraight -12.0" },     // Back up
 			{"", 		"End" }						// MUST finish in End state
 	};
 	
@@ -54,7 +54,7 @@ public class Scripter extends Command {
 	// Test small moves (to see if MIN_DRIVEs big enough)
 	private String[][] script = {
 		{"", "TurnBy 5" },
-		{"", "DriveStraight 0.25"},
+		{"", "DriveStraight 4.0"},
 		{"", "End" }    // MUST finish with End!
 	};
 	 */
@@ -63,12 +63,12 @@ public class Scripter extends Command {
 	// Test just the dead-reckoning part of Gear program
 	String[][] script = {
 			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" }, 
-			{"Loc1", 	"DriveStraight 6.9" },   
+			{"Loc1", 	"DriveStraight 84" },   
 			{"", 		"TurnBy -60.0" }, 
 			{"",		"Goto Vis" },
-			{"Loc2",	"DriveStraight 2.4" },
+			{"Loc2",	"DriveStraight 29" },
 			{"",		"Goto Vis" },
-			{"Loc3",	"DriveStraight 6.9" },
+			{"Loc3",	"DriveStraight 84" },
 			{"",		"TurnBy 60.0" },
 			{"Vis", 	"End" }
 	 };	 
@@ -81,10 +81,10 @@ public class Scripter extends Command {
 			{"", 		"Delay 500" },			
 			{"", 		"MeasureGear" },	
 			{"", 		"YawCorrect" },  
-			{"", 		"DistanceCorrect 1.0" },	// DriveStraight measuredDistance - 1ft
+			{"", 		"DistanceCorrect 24.0" },	
 			{"", 		"MeasureGear" },
 			{"", 		"YawCorrect" },
-			{"", 		"DistanceCorrect 0.0" },	// Drive full measureDistance
+			{"", 		"DistanceCorrect 12.0" },
 			{"", 		"DeliverGear" },
 			{"",		"Delay 200" },
 			{"", 		"DriveStraight -1.0" }, 
@@ -148,7 +148,7 @@ public class Scripter extends Command {
     		turnBy( Double.parseDouble(tokens[1]));
     		break;
     		
-    	case "DriveStraight":  // distance (feet)
+    	case "DriveStraight":  // distance (inches)
     		driveStraight( Double.parseDouble(tokens[1]));
     		break;
     	
@@ -249,14 +249,14 @@ public class Scripter extends Command {
    
     private void yawCorrect() {
     	if(debug)
-    		System.out.format("Scripter.yawCorrect %f\n", measuredYaw);
-    	(new TurnBy( -measuredYaw)).start();
+    		System.out.format("Scripter.yawCorrect %f\n", measuredYaw_deg);
+    	(new TurnBy( -measuredYaw_deg)).start();
     }
     
     private void distanceCorrect( double dRemain) {
     	if(debug)
-    		System.out.format( "Scripter.distanceCorrect %f\n", measuredDistance - dRemain);
-    	(new DriveStraight( measuredDistance - dRemain)).start();
+    		System.out.format( "Scripter.distanceCorrect %f\n", measuredDistance_inch - dRemain);
+    	(new DriveStraight( measuredDistance_inch - dRemain)).start();
     }
     
     private void deliverGear() {

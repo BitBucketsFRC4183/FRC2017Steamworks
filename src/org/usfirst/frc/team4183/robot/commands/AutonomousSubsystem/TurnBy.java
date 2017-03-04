@@ -20,13 +20,13 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private final static double Kp = 0.03; // purposely low for 1st pass
 
 	// Largest drive that will be applied
-	private final double MAX_DRIVE = 0.8;
+	private final double MAX_DRIVE = 0.65;
 	
 	// Smallest drive that will be applied 
 	// (unless error falls within dead zone, then drive goes to 0)
 	// THIS MUST BE LARGE ENOUGH TO ROTATE THE ROBOT from stopped position
 	// if it isn't, you can get stuck in this state.
-	private final double MIN_DRIVE = 0.4; // Yeah this does seem high
+	private final double MIN_DRIVE = 0.16; 
 	
 	// Size of dead zone in degrees
 	private final double DEAD_ZONE_DEG = 2.0;
@@ -58,10 +58,14 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		// Compute setPoint
 		double setPoint = degreesToTurn + Robot.imu.getYawDeg();
 		
+		// Make helpers
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
 		deadZone = new MinMaxDeadzone( DEAD_ZONE_DEG, MIN_DRIVE, MAX_DRIVE);
 		settledDetector = new SettledDetector(500, DEAD_ZONE_DEG);
-		
+
+		// Set DriveSubsystem axis inputs to linear
+		Robot.driveSubsystem.setLinearAxis(true);
+
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
 		cloop.enableLogging("TurnBy");
@@ -76,7 +80,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		// We are finished when loop error and angular velocity both small
 		if( settledDetector.isSettled()
 			&&
-			( Math.abs(Robot.imu.getRateDeg()) < SETTLED_RATE_DPS )
+			( Math.abs(Robot.imu.getYawRateDps()) < SETTLED_RATE_DPS )
 		) {
 			return true;
 		}
@@ -87,9 +91,12 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	@Override
 	protected void end() {
 	
-		// Don't forget to stop the loop!
+		// Don't forget to stop the control loop!
 		cloop.stop();
-				
+
+		// Restore DriveSubsystem axis inputs to normal
+		Robot.driveSubsystem.setLinearAxis(false);
+
 		// Set output to zero before leaving
 		OI.axisTurn.set(0.0);				
 	}
