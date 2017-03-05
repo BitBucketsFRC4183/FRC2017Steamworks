@@ -19,16 +19,16 @@ public class DriveSubsystem extends Subsystem {
 		// Calibrated this on PRACTICE robot 3/4
 		// Nominal value assuming 4" wheel:
 		// 12.57 in/rot = (4" * pi) in/rot
-		private final double INCH_PER_WHEEL_ROT = 12.65;
+		private final double INCH_PER_WHEEL_ROT = 12.5;
 
-		// TODO: adjust these to make the robot drive straight with 
+		// Can adjust these to make the robot drive straight with 
 		// zero turn stick in DriverControl.
 		// +Values will add +yaw correct (CCW viewed from top) when going forward.
 		private final double YAW_CORRECT_VELOCITY = 0.0;  // Multiplied by inch/sec so value will be small!
 		private final double YAW_CORRECT_ACCEL = 0.0;
 		
 		private final double LOW_SENS_GAIN = 0.6;		
-		private final double ALIGN_LOOP_GAIN = 0.015;  // TODO retest now that not squaring
+		private final double ALIGN_LOOP_GAIN = 0.04;
 
 		// The counts-per-rev is printed on the encoder -
 		// it's the 1st number after the "E4P" or "E4T"

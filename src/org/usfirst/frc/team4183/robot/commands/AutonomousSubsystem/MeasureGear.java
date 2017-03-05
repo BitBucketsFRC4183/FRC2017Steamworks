@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class MeasureGear extends Command {
 			
 	// Number for non-NAN samples needed before acting
-	private final int REQUIRED_SAMPLES = 30;
+	private final int REQUIRED_SAMPLES = 15;
 
 	private final boolean SD_DEBUG = true;
 	private int totCnt = 0, nanCnt = 0;

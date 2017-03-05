@@ -27,6 +27,8 @@ public class Scripter extends Command {
 	// positions 1 & 3 start points are 7' left & right of center line respectively,
 	// position 2 start point is on center line (directly facing gear peg)
 	// 
+	
+	
 	private String[][] script = {
 			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" },  // Goto label 1,2,3 based on operator position
 			{"Loc1", 	"DriveStraight 84.0" },  // Inch
@@ -37,27 +39,28 @@ public class Scripter extends Command {
 			{"Loc3",	"DriveStraight 84.0" },
 			{"",		"TurnBy 60.0" },
 			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
-			{"", 		"Delay 500" },			
 			{"", 		"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
 			{"", 		"YawCorrect" },     		// TurnBy -measuredYaw
-			{"", 		"DistanceCorrect 24.0" },	// Stop short by 2 ft
+			{"", 		"DistanceCorrect 21.0" },	// Stop short by this much
 			{"", 		"MeasureGear" },
 			{"", 		"YawCorrect" },
-			{"", 		"DistanceCorrect 12.0" },	// Stop short by 1 ft
+			{"", 		"DistanceCorrect 15.0" },	
 			{"", 		"DeliverGear" },			// Spit the gear
-			{"",		"Delay 200" },
 			{"", 		"DriveStraight -12.0" },    // Back up
 			{"", 		"End" }						// MUST finish in End state
 	};
 	
+	
 	/*
-	// Test small moves (to see if MIN_DRIVEs big enough)
+	// Test small moves to make sure MIN_DRIVEs big enough.
+	// e.g. TurnBy 5, DriveStraight 3.
+	// Test big moves to make sure it behaves & settles.
+	// e.g. TurnBy 60, DriveStraight 48.
 	private String[][] script = {
-		{"", "TurnBy 5" },
-		{"", "DriveStraight 3.0"},
+		{"", "DriveStraight 84" },
 		{"", "End" }    // MUST finish with End!
 	};
-	 */
+	*/
 	
 	/*
 	// Test just the dead-reckoning part of Gear program
@@ -70,7 +73,10 @@ public class Scripter extends Command {
 			{"",		"Goto Vis" },
 			{"Loc3",	"DriveStraight 84" },
 			{"",		"TurnBy 60.0" },
-			{"Vis", 	"End" }
+			{"Vis", 	"EnableVisionGear" },
+			{"",		"Delay 500" },
+			{"",		"MeasureGear" },
+			{"", 		"End" }
 	 };	 
 	 */
 	
@@ -84,13 +90,13 @@ public class Scripter extends Command {
 			{"", 		"DistanceCorrect 24.0" },	
 			{"", 		"MeasureGear" },
 			{"", 		"YawCorrect" },
-			{"", 		"DistanceCorrect 12.0" },
+			{"", 		"DistanceCorrect 15.0" },
 			{"", 		"DeliverGear" },
 			{"",		"Delay 200" },
-			{"", 		"DriveStraight -1.0" }, 
+			{"", 		"DriveStraight -12.0" }, 
 			{"", 		"End" }					
 	};
-	*/	
+	*/
 	
 
     public Scripter() {
@@ -167,7 +173,7 @@ public class Scripter extends Command {
     	case "DistanceCorrect":  // drives forward measuredDistance - param)
     		distanceCorrect( Double.parseDouble(tokens[1]));
     		break;
-    		
+    			
     	case "DeliverGear":  // (Spits the gear)
     		deliverGear();
     		break;

@@ -12,36 +12,40 @@ import edu.wpi.first.wpilibj.command.Command;
 
 
 public class DriveStraight extends Command implements ControlLoop.ControlLoopUser {
-	
-	// TODO the loop gain constants & NL params need testing
-	
+		
 	// Proportional gain
-	private final static double Kp = 0.05;
+	private final static double Kp = 0.03;
 
 	// Largest drive that will be applied
-	private final double MAX_DRIVE = 0.65;
+	private final double MAX_DRIVE = 0.8;
 	
 	// Smallest drive that will be applied 
 	// (unless error falls within dead zone, then drive goes to 0)
 	// THIS MUST BE LARGE ENOUGH TO MOVE THE ROBOT from stopped position
 	// if it isn't, you can get stuck in this state.
-	private final double MIN_DRIVE = 0.16;
+	// But if this is TOO BIG, you'll get limit cycling, and also get stuck.
+	private final double MIN_DRIVE = 0.1;
 	
-	// Size of dead zone in inches - also used to determine when done
-	private final double DEAD_ZONE_INCH = 1.0;  // Can this be reduced a bit?
+	// Size of dead zone in inches - also used to determine when done.
+	private final double DEAD_ZONE_INCH = 0.5;
+	
+	// Used to detect if we've hit something and stopped short of final distance.
+	// If fwd velocity in inch/sec is less than this, we'll exit early.
+	private final double HANGUP_IPS = 1.0;
 	
 	// Time to settled
-	private final long SETTLED_MSECS = 800;  // TODO try to reduce this	
+	private final long SETTLED_MSECS = 300;
 	
 	// Limits ramp rate of drive signal
-	private final double RATE_LIM_PER_SEC = 2.0;
-	
+	private final double RATE_LIM_PER_SEC = 3.0;
+		
 	private final double distanceInch;
 	
 	private ControlLoop cloop;
 	private RateLimit rateLimit;
 	private MinMaxDeadzone deadZone;
 	private SettledDetector settledDetector; 
+	private SettledDetector hangupDetector;
 	
 	
 	public DriveStraight( double distanceInch) {		
@@ -58,7 +62,8 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		// Make helpers
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
 		deadZone = new MinMaxDeadzone( DEAD_ZONE_INCH, MIN_DRIVE, MAX_DRIVE);
-		settledDetector = new SettledDetector(SETTLED_MSECS, DEAD_ZONE_INCH);
+		settledDetector = new SettledDetector( SETTLED_MSECS, DEAD_ZONE_INCH);
+		hangupDetector = new SettledDetector( SETTLED_MSECS, HANGUP_IPS);
 		
 		// Set DriveSubsystem axis inputs to linear
 		Robot.driveSubsystem.setLinearAxis(true);
@@ -79,6 +84,10 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 			return true;
 		}
 		
+		if( hangupDetector.isSettled()) {
+			return true;
+		}
+
 		return false;
 	}
 	
@@ -112,8 +121,9 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	@Override
 	public void setError( double error) {
 	
-		settledDetector.set(error); 
-		
+		settledDetector.set(error);
+		hangupDetector.set( Robot.driveSubsystem.getFwdVelocity_ips());
+
 		double x1 = Kp * error;
 			
 		// Apply drive non-linearities
@@ -124,7 +134,8 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		//System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
 		
 		// Set the output
-		OI.axisForward.set( x3);						
+		OI.axisForward.set( x3);
+		
 	}
 	
 }

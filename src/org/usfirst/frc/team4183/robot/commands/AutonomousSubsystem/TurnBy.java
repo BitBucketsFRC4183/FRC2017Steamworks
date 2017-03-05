@@ -12,32 +12,31 @@ import edu.wpi.first.wpilibj.command.Command;
 
 
 public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
-	
-	// TODO the loop gain constants & NL params work
-	// but need further tuning.
-	
+		
 	// Proportional gain
-	private final static double Kp = 0.015;
+	private final static double Kp = 0.01;
 
 	// Largest drive that will be applied
-	private final double MAX_DRIVE = 0.65;
+	private final double MAX_DRIVE = 0.7;
 	
-	// Smallest drive that will be applied 
+	// Smallest drive that will be applied
 	// (unless error falls within dead zone, then drive goes to 0)
-	// THIS MUST BE LARGE ENOUGH TO ROTATE THE ROBOT from stopped position
+	// THIS MUST BE LARGE ENOUGH TO ROTATE THE ROBOT from stopped position;
 	// if it isn't, you can get stuck in this state.
-	private final double MIN_DRIVE = 0.16; 
+	// But if this is TOO BIG, you'll get limit cycling, and also get stuck.
+	private final double MIN_DRIVE = 0.1; 
 	
-	// Size of dead zone in degrees
+	// Size of dead zone in degrees - used to determine when done.
 	private final double DEAD_ZONE_DEG = 2.0;
 	
 	// Used (along with dead zone) to determine when turn is complete.
 	// If angular velocity (Degrees/sec) is greater than this,
 	// we're not done yet.
 	private final double SETTLED_RATE_DPS = 0.5;
+	private final long SETTLED_MSECS = 300;
 	
 	// Limits ramp rate of drive signal
-	private final double RATE_LIM_PER_SEC = 2.0;
+	private final double RATE_LIM_PER_SEC = 3.0;
 	
 	private final double degreesToTurn;
 	
@@ -61,7 +60,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		// Make helpers
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
 		deadZone = new MinMaxDeadzone( DEAD_ZONE_DEG, MIN_DRIVE, MAX_DRIVE);
-		settledDetector = new SettledDetector(500, DEAD_ZONE_DEG);
+		settledDetector = new SettledDetector( SETTLED_MSECS, DEAD_ZONE_DEG);
 
 		// Set DriveSubsystem axis inputs to linear
 		Robot.driveSubsystem.setLinearAxis(true);
