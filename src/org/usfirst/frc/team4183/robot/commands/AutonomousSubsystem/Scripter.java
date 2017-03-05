@@ -18,7 +18,7 @@ public class Scripter extends Command {
 	
 	private int pc = 0;
 	private final boolean debug = false;
-	
+	private final int position;
 	
 	// To see the Scripter instruction set documentation, 
 	// scroll down to the switch() in executeNextInstruction()
@@ -99,9 +99,10 @@ public class Scripter extends Command {
 	*/
 	
 
-    public Scripter() {
+    public Scripter( int position) {
     	// No "requires" - this one stands apart - it's a Meta-State.
     	// This is start()-ed from Robot.autonomousInit().
+    	this.position = position;
     }
 
     protected void initialize() {
@@ -212,8 +213,7 @@ public class Scripter extends Command {
     	if(debug)
     		System.out.format( "Scripter.branchOnLocation %s %s %s\n", lbl1, lbl2, lbl3);
     	
-    	int location = DriverStation.getInstance().getLocation();
-    	switch( location) {
+    	switch( position) {
     	case 1:
     		doGoto( lbl1);
     		break;
@@ -225,7 +225,7 @@ public class Scripter extends Command {
     		break;
     	default:
     		throw new IllegalArgumentException(
-    			String.format( "Scripter.branchOnLocation: unknown location %d\n", location));
+    			String.format( "Scripter.branchOnLocation: unknown location %d\n", position));
     	}
     }
      

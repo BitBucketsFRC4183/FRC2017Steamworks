@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.HashSet;
@@ -45,6 +46,8 @@ public class Robot extends IterativeRobot {
 	public static GearHandlerSubsystem gearHandlerSubsystem;
 	public static AutonomousSubsystem autonomousSubsystem;
 	public static VisionSubsystem visionSubsystem;
+	
+	public SendableChooser<Integer> positionChooser;
 	
 	public static OI oi;
 	
@@ -88,10 +91,18 @@ public class Robot extends IterativeRobot {
 		lightingControl = new LightingControl(); 		
 		imu = new NavxIMU();
 			
-
 		// Construction is complete
+		
+		// Make the SD autonomous-mode position chooser
+		positionChooser = new SendableChooser<Integer>();
+		positionChooser.addDefault( "None", 0);
+		positionChooser.addObject( "Left", 1);
+		positionChooser.addObject( "Center", 2);
+		positionChooser.addObject( "Right", 3);
+		SmartDashboard.putData( "AutoChooser", positionChooser);
+		
 				
-		// Start pressurizing the tanks
+		// Start pressurizing the tanks (when Robot enabled)
 		compressor.setClosedLoopControl(true);
 		
 						
@@ -147,7 +158,9 @@ public class Robot extends IterativeRobot {
 		Scheduler.getInstance().removeAll();
 		
 		// Start the Autonomous-mode Scripter
-		(new Scripter()).start();
+		int position = positionChooser.getSelected();
+		if( position != 0)
+			(new Scripter( positionChooser.getSelected())).start();
 	}
 
 	@Override
