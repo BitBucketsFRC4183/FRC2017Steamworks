@@ -16,7 +16,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	// TODO the loop gain constants & NL params need testing
 	
 	// Proportional gain
-	private final static double Kp = 0.6;
+	private final static double Kp = 0.05;
 
 	// Largest drive that will be applied
 	private final double MAX_DRIVE = 0.65;

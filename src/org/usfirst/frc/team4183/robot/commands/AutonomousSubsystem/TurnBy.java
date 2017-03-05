@@ -17,7 +17,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	// but need further tuning.
 	
 	// Proportional gain
-	private final static double Kp = 0.03; // purposely low for 1st pass
+	private final static double Kp = 0.015;
 
 	// Largest drive that will be applied
 	private final double MAX_DRIVE = 0.65;

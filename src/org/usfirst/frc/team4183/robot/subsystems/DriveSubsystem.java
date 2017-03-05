@@ -28,7 +28,7 @@ public class DriveSubsystem extends Subsystem {
 		private final double YAW_CORRECT_ACCEL = 0.0;
 		
 		private final double LOW_SENS_GAIN = 0.6;		
-		private final double ALIGN_LOOP_GAIN = 0.08;  // TODO retest now that not squaring
+		private final double ALIGN_LOOP_GAIN = 0.015;  // TODO retest now that not squaring
 
 		// The counts-per-rev is printed on the encoder -
 		// it's the 1st number after the "E4P" or "E4T"
@@ -75,7 +75,7 @@ public class DriveSubsystem extends Subsystem {
 		}
 		
 		// Human driver likes non-linear "squared controls" (easier to drive);
-		// but Autonomous "driver", since it's actually a control loop, prefers linear controls.
+		// but Autonomous "driver" (actually control loops), prefers linear controls.
 		// Autonomous will set this true when executing its control loops
 		// and must restore it back to the human setting (false) when done.
 		public void setLinearAxis( boolean setting) {
