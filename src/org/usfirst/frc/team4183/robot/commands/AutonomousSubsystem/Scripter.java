@@ -46,7 +46,7 @@ public class Scripter extends Command {
 			{"", 		"DistanceCorrect 12.0" },	// Stop short by 1 ft
 			{"", 		"DeliverGear" },			// Spit the gear
 			{"",		"Delay 200" },
-			{"", 		"DriveStraight -12.0" },     // Back up
+			{"", 		"DriveStraight -12.0" },    // Back up
 			{"", 		"End" }						// MUST finish in End state
 	};
 	
@@ -54,7 +54,7 @@ public class Scripter extends Command {
 	// Test small moves (to see if MIN_DRIVEs big enough)
 	private String[][] script = {
 		{"", "TurnBy 5" },
-		{"", "DriveStraight 4.0"},
+		{"", "DriveStraight 3.0"},
 		{"", "End" }    // MUST finish with End!
 	};
 	 */

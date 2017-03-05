@@ -7,7 +7,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- *
+ * To make Scripter work correctly, this must be the default command for Autonomous,
+ * and it must be called "Idle".
+ * This Idle state is entered and exited many times while the Auto script is run.
+ * Don't do anything useful in here, it's just a marker that tells the Scripter
+ * when it's time to execute the next command.
  */
 public class Idle extends Command {
 
