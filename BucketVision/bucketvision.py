@@ -82,6 +82,8 @@ else:
 # The same pipeline instance should NOT be passed to more than one image processor
 # as the results can be confused and comingled and simply does not make sense.
 
+from nada import Nada
+
 from rope import Rope
 
 from blueboiler import BlueBoiler
@@ -133,7 +135,9 @@ blueBoiler = BlueBoiler()
 boiler = Boiler()
 gearLift = GearLift(bvTable)
 
-rope = Rope()     # Temporary placeholder for rope processing
+rope = Rope()
+
+nada = Nada()
 
 # NOTE: NOTE: NOTE:
 #
@@ -143,8 +147,8 @@ rope = Rope()     # Temporary placeholder for rope processing
 # port does not seem to play well with the exposure settings (produces either no answer or causes errors depending
 # on the camera used)
 FRONT_CAM_GEAR_EXPOSURE = 0
-FRONT_CAM_RED_EXPOSURE = 70
-FRONT_CAM_BLUE_EXPOSURE = 70
+FRONT_CAM_RED_EXPOSURE = -1
+FRONT_CAM_BLUE_EXPOSURE = -1
 
 FRONT_CAM_NORMAL_EXPOSURE = -1  # Camera default
 
@@ -167,8 +171,8 @@ print("BucketCapture appears online!")
 # pipeline was defined... we can't control the use of object-specific internals
 # being run from multiple threads... so don't do it!)
 
-frontPipes = {'redBoiler' : boiler, #redBoiler,
-              'blueBoiler' : boiler, #blueBoiler,
+frontPipes = {'redBoiler' : nada, #boiler, #redBoiler,
+              'blueBoiler' : nada, #boiler, #blueBoiler,
               'gearLift' : gearLift}
 
 frontProcessor = BucketProcessor(frontCam,frontPipes,'gearLift').start()
