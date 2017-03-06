@@ -120,7 +120,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		settledDetector.set(error);
 		
 		if( zeroCrossCntr.setGet(error))
-			deadZone.softenMinval(0.8);  // TODO value
+			deadZone.adjustMinVal(0.8);  // TODO value
 			
 		
 		double x1 = Kp * error;
