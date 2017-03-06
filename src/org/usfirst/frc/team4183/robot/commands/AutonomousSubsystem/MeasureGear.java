@@ -79,7 +79,7 @@ public class MeasureGear extends Command {
 
     	if( SD_DEBUG) {
     		SmartDashboard.putString("MeasGearDist", 
-    			String.format("%.2f (%.2f<>%.2f)", 
+    			String.format("%.1f (%.1f<>%.1f)", 
     					distance, Collections.min(distSamples), Collections.max(distSamples)));    		
     		SmartDashboard.putString("MeasGearYaw",
     			String.format("%.1f (%.1f<>%.1f)", 
