@@ -66,8 +66,11 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		settledDetector = new SettledDetector( SETTLED_MSECS, DEAD_ZONE_DEG);
 		zeroCrossCntr = new ZeroCrossCntr();
 
-		// Set DriveSubsystem axis inputs to linear
-		Robot.driveSubsystem.setLinearAxis(true);
+		// Setup DriveSubsystem for autonomous control
+		Robot.driveSubsystem.setAutonomousControl(true);
+		
+		// Make sure forward stick is 0 (it should be, but...)
+		OI.axisForward.set(0.0);
 
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
@@ -96,11 +99,12 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		// Don't forget to stop the control loop!
 		cloop.stop();
 
-		// Restore DriveSubsystem axis inputs to normal
-		Robot.driveSubsystem.setLinearAxis(false);
+		// Restore DriveSubsystem to normal control
+		Robot.driveSubsystem.setAutonomousControl(false);
 
 		// Set output to zero before leaving
-		OI.axisTurn.set(0.0);				
+		OI.axisTurn.set(0.0);
+		OI.axisForward.set(0.0);
 	}
 	
 	@Override
@@ -147,7 +151,13 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		// - sign required because + stick produces right turn,
 		// but right turn is actually a negative yaw angle
 		// (using our yaw angle convention: right-hand-rule w/z-axis up)		
-		OI.axisTurn.set( -x3);						
+		OI.axisTurn.set( -x3);
+		
+		// Hit brake if in deadzone
+		if( x3 == 0.0)
+			OI.sbtnBrake.push();
+		else
+			OI.sbtnBrake.release();
 	}
 	
 }

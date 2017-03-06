@@ -43,7 +43,7 @@ public class DriveSubsystem extends Subsystem {
 		private final RobotDrive robotDrive;
 		
 		private double yawSetPoint;		
-		private boolean linearAxis = false;
+		private boolean linearAxis;
 		
 		public DriveSubsystem() {
 
@@ -66,6 +66,9 @@ public class DriveSubsystem extends Subsystem {
 			rightFrontMotor.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV);
 			rightFrontMotor.reverseSensor(REVERSE_SENSOR);
 			rightFrontMotor.setPosition(0.0);
+			
+			// Human control by default
+			setAutonomousControl(false);
 		}	
 
 		
@@ -73,12 +76,22 @@ public class DriveSubsystem extends Subsystem {
 			robotDrive.arcadeDrive(0.0, 0.0);			
 		}
 		
-		// Human driver likes non-linear "squared controls" (easier to drive);
-		// but Autonomous "driver" (actually control loops), prefers linear controls.
-		// Autonomous will set this true when executing its control loops
-		// and must restore it back to the human setting (false) when done.
-		public void setLinearAxis( boolean setting) {
+		// Human driver: 
+		//  -likes "squared controls" (easier to drive)
+		//  -doesn't want braking
+		// Autonomous "driver":
+		//  -hates squared controls (messes up the control loops)
+		//  -does want braking, to settle quicker
+		public void setAutonomousControl( boolean setting) {
 			linearAxis = setting;
+			enableBraking(setting);
+		}
+	
+		private void enableBraking( boolean setting) {
+			leftFrontMotor.enableBrakeMode(setting);
+			leftRearMotor.enableBrakeMode(setting);
+			rightFrontMotor.enableBrakeMode(setting);
+			rightRearMotor.enableBrakeMode(setting);
 		}
 		
 		private double sqAxis( double x) {
@@ -99,12 +112,16 @@ public class DriveSubsystem extends Subsystem {
 				fwdStick *= -1.0;
 			}
 			
-			// Turn stick is + to the right;
-			// but arcadeDrive 2nd arg + produces left turn
-			// (this is +yaw when yaw is defined according to right-hand-rule
-			// with z-axis up, so arguably correct).
-			// Anyhow need the - sign on turnStick to make it turn correctly.
-			robotDrive.arcadeDrive( sqAxis(fwdStick), -sqAxis(turnStick) + yawCorrect(), false);
+			if( !OI.sbtnBrake.get() ) {
+				// Turn stick is + to the right;
+				// but arcadeDrive 2nd arg + produces left turn
+				// (this is +yaw when yaw is defined according to right-hand-rule
+				// with z-axis up, so arguably correct).
+				// Anyhow need the - sign on turnStick to make it turn correctly.
+				robotDrive.arcadeDrive( sqAxis(fwdStick), -sqAxis(turnStick) + yawCorrect(), false);
+			}
+			else
+				setAllMotorsZero();
 		}
 		
 		
@@ -120,7 +137,7 @@ public class DriveSubsystem extends Subsystem {
 			// +yaw is CCW looking down,
 			// so + stick should lower the setpoint. 
 			yawSetPoint += -0.3 * Deadzone.f(turnStick, .05);
-
+			
 			if(OI.btnLowSensitiveDrive.get())
 				fwdStick *= LOW_SENS_GAIN;
 			
@@ -130,10 +147,13 @@ public class DriveSubsystem extends Subsystem {
 			
 			double error = ALIGN_LOOP_GAIN * (yawSetPoint - Robot.imu.getYawDeg());
 
-			robotDrive.arcadeDrive( sqAxis(fwdStick), error + yawCorrect(), false);			
+			if( !OI.sbtnBrake.get())
+				robotDrive.arcadeDrive( sqAxis(fwdStick), error + yawCorrect(), false);			
+			else
+				setAllMotorsZero();
 		}
 		
-
+		
 		public void setLockDrive( boolean start) {
 
 			if( start) {
@@ -180,6 +200,13 @@ public class DriveSubsystem extends Subsystem {
 		private double yawCorrect() {
 			return YAW_CORRECT_VELOCITY * getFwdVelocity_ips() 
 					+ YAW_CORRECT_ACCEL * getFwdCurrent();
+		}
+		
+		private void setAllMotorsZero() {
+			leftFrontMotor.set(0.0);
+			leftRearMotor.set(0.0);
+			rightFrontMotor.set(0.0);
+			rightRearMotor.set(0.0);			
 		}
 		
 		public double getPosition_inch() {
