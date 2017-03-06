@@ -29,12 +29,16 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	// Size of dead zone in inches - also used to determine when done.
 	private final double DEAD_ZONE_INCH = 0.5;
 	
-	// Used to detect if we've hit something and stopped short of final distance.
-	// If fwd velocity in inch/sec is less than this, we'll exit early.
-	private final double HANGUP_IPS = 1.0;
-	
-	// Time to settled
+	// Settled detector lookback for dead zone
 	private final long SETTLED_MSECS = 300;
+	
+	// Detect if we've hit something and stopped short of final distance.
+	// If fwd velocity in inch/sec is less than this for awhile, we'll exit early.
+	private final double HANGUP_IPS = 0.2;
+	
+	// Settled detector lookback for hangup
+	// (must be long compared to dead zone lookback to avoid spurious exit)
+	private final long HANGUP_MSECS = 800;
 	
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 3.0;
@@ -63,7 +67,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
 		deadZone = new MinMaxDeadzone( DEAD_ZONE_INCH, MIN_DRIVE, MAX_DRIVE);
 		settledDetector = new SettledDetector( SETTLED_MSECS, DEAD_ZONE_INCH);
-		hangupDetector = new SettledDetector( SETTLED_MSECS, HANGUP_IPS);
+		hangupDetector = new SettledDetector( HANGUP_MSECS, HANGUP_IPS);
 		
 		// Set DriveSubsystem axis inputs to linear
 		Robot.driveSubsystem.setLinearAxis(true);
@@ -80,7 +84,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	@Override
 	protected boolean isFinished() {
 		
-		if (settledDetector.isSettled()) {
+		if( settledDetector.isSettled()) {
 			return true;
 		}
 		

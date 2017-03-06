@@ -27,15 +27,12 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	// But if this is TOO BIG, you'll get limit cycling, and also get stuck.
 	private final double MIN_DRIVE = RobotMap.TURNBY_MIN_DRIVE; 
 	
-	// Size of dead zone in degrees - used to determine when done.
+	// Size of dead zone in degrees - also used to determine when done.
 	private final double DEAD_ZONE_DEG = 1.0;
-	
-	// Used (along with dead zone) to determine when turn is complete.
-	// If angular velocity (Degrees/sec) is greater than this,
-	// we're not done yet.
-	private final double SETTLED_RATE_DPS = 0.5;
+
+	// Settled detector lookback for dead zone
 	private final long SETTLED_MSECS = 300;
-	
+		
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 3.0;
 	
@@ -77,11 +74,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	@Override
 	protected boolean isFinished() {
 		
-		// We are finished when loop error and angular velocity both small
-		if( settledDetector.isSettled()
-			&&
-			( Math.abs(Robot.imu.getYawRateDps()) < SETTLED_RATE_DPS )
-		) {
+		if( settledDetector.isSettled() ) {
 			return true;
 		}
 		
@@ -133,8 +126,8 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		// It does seem to help a lot, but worried that dither might interfere with
 		// settledDetector and get us stuck in this state.
 		
-		// double ditherFreq = 2.0;
-		// double ditherAmpl = 0.7;
+		// double ditherFreq = 2.0;  // Maybe try something higher freq?
+		// double ditherAmpl = 0.5;
 		// x3 += ditherAmpl*Math.sin(2.0*Math.PI*ditherFreq*System.currentTimeMillis()/1000.0);
 
 		// Set the output
