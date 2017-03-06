@@ -16,10 +16,9 @@ import org.usfirst.frc.team4183.utils.Deadzone;
  */
 public class DriveSubsystem extends Subsystem {
 
-		// Calibrated this on PRACTICE robot 3/4
 		// Nominal value assuming 4" wheel:
 		// 12.57 in/rot = (4" * pi) in/rot
-		private final double INCH_PER_WHEEL_ROT = 12.5;
+		private final double INCH_PER_WHEEL_ROT = RobotMap.INCH_PER_WHEEL_ROT;
 
 		// Can adjust these to make the robot drive straight with 
 		// zero turn stick in DriverControl.

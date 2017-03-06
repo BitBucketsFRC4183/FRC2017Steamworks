@@ -2,6 +2,7 @@ package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
+import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.utils.ControlLoop;
 import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
 import org.usfirst.frc.team4183.utils.RateLimit;
@@ -24,10 +25,10 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	// THIS MUST BE LARGE ENOUGH TO ROTATE THE ROBOT from stopped position;
 	// if it isn't, you can get stuck in this state.
 	// But if this is TOO BIG, you'll get limit cycling, and also get stuck.
-	private final double MIN_DRIVE = 0.1; 
+	private final double MIN_DRIVE = RobotMap.TURNBY_MIN_DRIVE; 
 	
 	// Size of dead zone in degrees - used to determine when done.
-	private final double DEAD_ZONE_DEG = 2.0;
+	private final double DEAD_ZONE_DEG = 1.0;
 	
 	// Used (along with dead zone) to determine when turn is complete.
 	// If angular velocity (Degrees/sec) is greater than this,
@@ -125,10 +126,21 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		// Debug
 		//System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
 		
+
+		// Dither signal
+		// Commented out 'cause we didn't have enough test time to be confident
+		// with the amplitude and frequency parameters.
+		// It does seem to help a lot, but worried that dither might interfere with
+		// settledDetector and get us stuck in this state.
+		
+		// double ditherFreq = 2.0;
+		// double ditherAmpl = 0.7;
+		// x3 += ditherAmpl*Math.sin(2.0*Math.PI*ditherFreq*System.currentTimeMillis()/1000.0);
+
 		// Set the output
 		// - sign required because + stick produces right turn,
 		// but right turn is actually a negative yaw angle
-		// (using our yaw angle convention: right-hand-rule w/z-axis up)
+		// (using our yaw angle convention: right-hand-rule w/z-axis up)		
 		OI.axisTurn.set( -x3);						
 	}
 	

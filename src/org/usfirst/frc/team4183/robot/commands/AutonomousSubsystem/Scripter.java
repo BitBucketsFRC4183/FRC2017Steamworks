@@ -2,8 +2,6 @@ package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
-
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -26,9 +24,7 @@ public class Scripter extends Command {
 	// Dead reckoning numbers are assuming: 
 	// positions 1 & 3 start points are 7' left & right of center line respectively,
 	// position 2 start point is on center line (directly facing gear peg)
-	// 
-	
-	
+	// 	
 	private String[][] script = {
 			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" },  // Goto label 1,2,3 based on operator position
 			{"Loc1", 	"DriveStraight 84.0" },  // Inch
@@ -57,7 +53,7 @@ public class Scripter extends Command {
 	// Test big moves to make sure it behaves & settles.
 	// e.g. TurnBy 60, DriveStraight 48.
 	private String[][] script = {
-		{"", "DriveStraight 84" },
+		{"", "TurnBy 5" },
 		{"", "End" }    // MUST finish with End!
 	};
 	*/
