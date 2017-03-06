@@ -18,6 +18,10 @@ public class RobotMap {
 	// But if this is TOO BIG, you'll get limit cycling, and also be stuck.
 	public static final double TURNBY_MIN_DRIVE = 0.1;
 	
+	// Similar to above but for DriveStraight.
+	// Doesn't seem to be as finicky though.
+	public static final double DRIVESTRAIGHT_MIN_DRIVE = 0.1;
+		
 	// Nominal value assuming 4" wheel:
 	// (4" * pi) in/rot = 12.57
 	// The precise value must be determined by calibration.

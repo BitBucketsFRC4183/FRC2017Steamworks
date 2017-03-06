@@ -2,6 +2,7 @@ package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
+import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.utils.ControlLoop;
 import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
 import org.usfirst.frc.team4183.utils.RateLimit;
@@ -24,7 +25,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	// THIS MUST BE LARGE ENOUGH TO MOVE THE ROBOT from stopped position
 	// if it isn't, you can get stuck in this state.
 	// But if this is TOO BIG, you'll get limit cycling, and also get stuck.
-	private final double MIN_DRIVE = 0.1;
+	private final double MIN_DRIVE = RobotMap.DRIVESTRAIGHT_MIN_DRIVE;
 	
 	// Size of dead zone in inches - also used to determine when done.
 	private final double DEAD_ZONE_INCH = 0.5;
