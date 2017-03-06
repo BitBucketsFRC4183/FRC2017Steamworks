@@ -70,8 +70,11 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		settledDetector = new SettledDetector( SETTLED_MSECS, DEAD_ZONE_INCH);
 		hangupDetector = new SettledDetector( HANGUP_MSECS, STOPPED_RATE_IPS);
 		
-		// Set DriveSubsystem axis inputs to linear
-		Robot.driveSubsystem.setLinearAxis(true);
+		// Setup DriveSubsystem for autonomous control
+		Robot.driveSubsystem.setAutonomousControl(true);
+		
+		// Make sure turn stick is zero (it should be, but...)
+		OI.axisTurn.set(0.0);
 		
 		// Put DriveSubsystem into "Align Lock" (drive straight)
 		OI.btnAlignLock.push();
@@ -108,11 +111,12 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		// Put DriveSubsystem out of "Align Lock"
 		OI.btnAlignLock.release();
 		
-		// Restore DriveSubsystem axis inputs to normal
-		Robot.driveSubsystem.setLinearAxis(false);
+		// Restore DriveSubsystem to normal control
+		Robot.driveSubsystem.setAutonomousControl(false);
 				
 		// Set output to zero before leaving
-		OI.axisForward.set(0.0);				
+		OI.axisForward.set(0.0);
+		OI.axisTurn.set(0.0);
 	}
 	
 	@Override
@@ -144,6 +148,11 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		// Set the output
 		OI.axisForward.set( x3);
 		
+		// Hit brake if in deadzone
+		if( x3 == 0.0)
+			OI.sbtnBrake.push();
+		else
+			OI.sbtnBrake.release();
 	}
 	
 }
