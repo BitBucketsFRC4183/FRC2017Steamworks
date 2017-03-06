@@ -1,6 +1,6 @@
 package org.usfirst.frc.team4183.utils;
 
-public class ZeroCrossCntr {
+public class ZeroCrossDetector {
 	
 	double prev = Double.NaN;
 	

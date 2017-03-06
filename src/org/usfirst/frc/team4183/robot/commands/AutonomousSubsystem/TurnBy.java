@@ -7,7 +7,7 @@ import org.usfirst.frc.team4183.utils.ControlLoop;
 import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
 import org.usfirst.frc.team4183.utils.RateLimit;
 import org.usfirst.frc.team4183.utils.SettledDetector;
-import org.usfirst.frc.team4183.utils.ZeroCrossCntr;
+import org.usfirst.frc.team4183.utils.ZeroCrossDetector;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -39,14 +39,13 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 3.0;
-	
+		
 	private final double degreesToTurn;
 	
 	private ControlLoop cloop;
 	private RateLimit rateLimit;
 	private MinMaxDeadzone deadZone;
 	private SettledDetector settledDetector;
-	private ZeroCrossCntr zeroCrossCntr;
 	
 
 	public TurnBy( double degreesToTurn) {		
@@ -64,7 +63,6 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
 		deadZone = new MinMaxDeadzone( DEAD_ZONE_DEG, MIN_DRIVE, MAX_DRIVE);
 		settledDetector = new SettledDetector( SETTLED_MSECS, DEAD_ZONE_DEG);
-		zeroCrossCntr = new ZeroCrossCntr();
 
 		// Setup DriveSubsystem for autonomous control
 		Robot.driveSubsystem.setAutonomousControl(true);
@@ -122,11 +120,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	public void setError( double error) {
 		
 		settledDetector.set(error);
-		
-		if( zeroCrossCntr.setGet(error))
-			deadZone.adjustMinVal(0.8);  // TODO value
-			
-		
+							
 		double x1 = Kp * error;
 			
 		// Apply drive non-linearities
@@ -153,11 +147,5 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		// (using our yaw angle convention: right-hand-rule w/z-axis up)		
 		OI.axisTurn.set( -x3);
 		
-		// Hit brake if in deadzone
-		if( x3 == 0.0)
-			OI.sbtnBrake.push();
-		else
-			OI.sbtnBrake.release();
 	}
-	
 }

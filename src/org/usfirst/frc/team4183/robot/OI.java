@@ -125,7 +125,6 @@ public class OI {
 	// Permanent SoftButtons (used for inter-SM communications)
 	//****************************
 	public static LogicalButton sbtnShake = new SoftButton();
-	public static LogicalButton sbtnBrake = new SoftButton();
 	
 	// End of public interface
 

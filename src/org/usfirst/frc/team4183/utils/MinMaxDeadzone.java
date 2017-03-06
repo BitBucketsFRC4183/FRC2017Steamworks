@@ -36,9 +36,4 @@ public class MinMaxDeadzone {
 		
 		return sign*x;						
 	}
-	
-	public void adjustMinVal( double fract) {
-		minDrive *= fract;
-	}
-
 }

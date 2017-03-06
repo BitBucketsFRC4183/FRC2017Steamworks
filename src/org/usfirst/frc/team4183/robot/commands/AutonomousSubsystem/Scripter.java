@@ -24,7 +24,8 @@ public class Scripter extends Command {
 	// Dead reckoning numbers are assuming: 
 	// positions 1 & 3 start points are 7' left & right of center line respectively,
 	// position 2 start point is on center line (directly facing gear peg)
-	// 	
+	// 
+	
 	private String[][] script = {
 			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" },  // Goto label 1,2,3 based on operator position
 			{"Loc1", 	"DriveStraight 84.0" },  // Inch
@@ -47,13 +48,14 @@ public class Scripter extends Command {
 	};
 	
 	
-	/*
+	
 	// Test small moves to make sure MIN_DRIVEs big enough.
 	// e.g. TurnBy 5, DriveStraight 3.
 	// Test big moves to make sure it behaves & settles.
 	// e.g. TurnBy 60, DriveStraight 48.
+	/*
 	private String[][] script = {
-		{"", "TurnBy 5" },
+		{"", "TurnBy 60" },
 		{"", "End" }    // MUST finish with End!
 	};
 	*/

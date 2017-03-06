@@ -7,6 +7,7 @@ import org.usfirst.frc.team4183.utils.ControlLoop;
 import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
 import org.usfirst.frc.team4183.utils.RateLimit;
 import org.usfirst.frc.team4183.utils.SettledDetector;
+import org.usfirst.frc.team4183.utils.ZeroCrossDetector;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -43,7 +44,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 3.0;
-		
+			
 	private final double distanceInch;
 	
 	private ControlLoop cloop;
@@ -136,6 +137,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		settledDetector.set(error);
 		hangupDetector.set( Robot.driveSubsystem.getFwdVelocity_ips());
 
+
 		double x1 = Kp * error;
 			
 		// Apply drive non-linearities
@@ -147,12 +149,5 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		
 		// Set the output
 		OI.axisForward.set( x3);
-		
-		// Hit brake if in deadzone
-		if( x3 == 0.0)
-			OI.sbtnBrake.push();
-		else
-			OI.sbtnBrake.release();
 	}
-	
 }
