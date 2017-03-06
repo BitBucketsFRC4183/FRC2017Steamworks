@@ -32,6 +32,9 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 
 	// Settled detector lookback for dead zone
 	private final long SETTLED_MSECS = 300;
+	
+	// Also used to determine when done
+	private final double STOPPED_RATE_DPS = 0.5;
 		
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 3.0;
@@ -74,7 +77,10 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	@Override
 	protected boolean isFinished() {
 		
-		if( settledDetector.isSettled() ) {
+		if( settledDetector.isSettled() 
+			&&
+			Robot.imu.getYawRateDps() < STOPPED_RATE_DPS
+		) {
 			return true;
 		}
 		
