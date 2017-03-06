@@ -7,6 +7,7 @@ import org.usfirst.frc.team4183.utils.ControlLoop;
 import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
 import org.usfirst.frc.team4183.utils.RateLimit;
 import org.usfirst.frc.team4183.utils.SettledDetector;
+import org.usfirst.frc.team4183.utils.ZeroCrossCntr;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -42,6 +43,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private RateLimit rateLimit;
 	private MinMaxDeadzone deadZone;
 	private SettledDetector settledDetector;
+	private ZeroCrossCntr zeroCrossCntr;
 	
 
 	public TurnBy( double degreesToTurn) {		
@@ -59,6 +61,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
 		deadZone = new MinMaxDeadzone( DEAD_ZONE_DEG, MIN_DRIVE, MAX_DRIVE);
 		settledDetector = new SettledDetector( SETTLED_MSECS, DEAD_ZONE_DEG);
+		zeroCrossCntr = new ZeroCrossCntr();
 
 		// Set DriveSubsystem axis inputs to linear
 		Robot.driveSubsystem.setLinearAxis(true);
@@ -109,6 +112,10 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	public void setError( double error) {
 		
 		settledDetector.set(error);
+		
+		if( zeroCrossCntr.setGet(error))
+			deadZone.softenMinval(0.8);  // TODO value
+			
 		
 		double x1 = Kp * error;
 			
