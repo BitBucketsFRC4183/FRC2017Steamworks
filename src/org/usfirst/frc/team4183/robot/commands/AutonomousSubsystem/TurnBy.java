@@ -7,7 +7,6 @@ import org.usfirst.frc.team4183.utils.ControlLoop;
 import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
 import org.usfirst.frc.team4183.utils.RateLimit;
 import org.usfirst.frc.team4183.utils.SettledDetector;
-import org.usfirst.frc.team4183.utils.ZeroCrossDetector;
 
 import edu.wpi.first.wpilibj.command.Command;
 
