@@ -16,13 +16,19 @@ class Rope:
         """
         
         # Draw reticle for rope guide
-        s = source0.shape
-        pt1 = (int(s[0]/4),0)
-        pt2 = (int(s[0]/4),s[1])
         color = (0,255,0)
         thickness = 2
-        cv2.line(source0,pt1,pt2,color,thickness)
-        pt1 = (int(3*s[0]/4),0)
-        pt2 = (int(3*s[0]/4),s[1])
-        cv2.line(source0,pt1,pt2,color,thickness)
+
+        s = source0.shape
+        hi = 0
+        wi = 1
+
+        pt1 = (40,240)
+        pt2 = (150,100)
+        cv2.line(source0,pt1,pt2,color,thickness,cv2.LINE_AA)
+        
+        pt1 = (280,240)
+        pt2 = (170,100)
+        
+        cv2.line(source0,pt1,pt2,color,thickness,cv2.LINE_AA)
         
