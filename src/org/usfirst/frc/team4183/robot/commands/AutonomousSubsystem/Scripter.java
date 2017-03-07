@@ -28,12 +28,12 @@ public class Scripter extends Command {
 	
 	private String[][] script = {
 			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" },  // Goto label 1,2,3 based on operator position
-			{"Loc1", 	"DriveStraight 84.0" },  // Inch
+			{"Loc1", 	"DriveStraight 82.2" },  // Inch
 			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
 			{"",		"Goto Vis" },
-			{"Loc2",	"DriveStraight 29.0" },
+			{"Loc2",	"DriveStraight 26.0" },
 			{"",		"Goto Vis" },
-			{"Loc3",	"DriveStraight 84.0" },
+			{"Loc3",	"DriveStraight 82.2" },
 			{"",		"TurnBy 60.0" },
 			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
 			{"", 		"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
