@@ -4,6 +4,7 @@ import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.utils.ControlLoop;
+import org.usfirst.frc.team4183.utils.LogWriterFactory;
 import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
 import org.usfirst.frc.team4183.utils.RateLimit;
 import org.usfirst.frc.team4183.utils.SettledDetector;
@@ -46,11 +47,15 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private MinMaxDeadzone deadZone;
 	private SettledDetector settledDetector;
 	
-
+	private boolean WRITE_LOG_FILE = true;
+	private static LogWriterFactory logFactory = new LogWriterFactory("TurnBy");
+	private LogWriterFactory.Writer logWriter;
+	
+	
 	public TurnBy( double degreesToTurn) {		
 		requires( Robot.autonomousSubsystem);
 		
-		this.degreesToTurn = degreesToTurn;
+		this.degreesToTurn = degreesToTurn;		
 	}
 
 	@Override
@@ -62,7 +67,8 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
 		deadZone = new MinMaxDeadzone( DEAD_ZONE_DEG, MIN_DRIVE, MAX_DRIVE);
 		settledDetector = new SettledDetector( SETTLED_MSECS, DEAD_ZONE_DEG);
-
+		logWriter = logFactory.create( WRITE_LOG_FILE);	
+	
 		// Setup DriveSubsystem for autonomous control
 		Robot.driveSubsystem.setAutonomousControl(true);
 		
@@ -95,13 +101,15 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	
 		// Don't forget to stop the control loop!
 		cloop.stop();
+		
+		logWriter.close();
 
 		// Restore DriveSubsystem to normal control
 		Robot.driveSubsystem.setAutonomousControl(false);
 
 		// Set output to zero before leaving
 		OI.axisTurn.set(0.0);
-		OI.axisForward.set(0.0);
+		OI.axisForward.set(0.0);		
 	}
 	
 	@Override
@@ -118,6 +126,9 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	@Override
 	public void setError( double error) {
 		
+		logWriter.writeLine( 
+				String.format("%f %f", error, Robot.imu.getYawRateDps())); 
+			
 		settledDetector.set(error);
 							
 		double x1 = Kp * error;
