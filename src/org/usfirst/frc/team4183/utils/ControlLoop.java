@@ -28,7 +28,7 @@ public class ControlLoop {
 	private final static long DEFAULT_MSECS = 20;  
 	private final long msecs;
 	private volatile double setPoint;
-	private String loggingKey = "";
+	private volatile String loggingKey = "";
 	
 	private final LoopThread loopThread;
 	private final ControlLoopUser user;
@@ -76,7 +76,7 @@ public class ControlLoop {
 	}
 	
 	
-	public synchronized void enableLogging( String loggingKey) {
+	public void enableLogging( String loggingKey) {
 		this.loggingKey = loggingKey;
 	}
 	
@@ -85,7 +85,7 @@ public class ControlLoop {
 	 * Set the loop setpoint (normally done in constructor)
 	 * @param setPoint
 	 */
-	public synchronized void setSetpoint( double setPoint) {
+	public void setSetpoint( double setPoint) {
 		this.setPoint = setPoint;
 	}
 		
@@ -118,9 +118,6 @@ public class ControlLoop {
 		user.setError(0.0);
 	}
 	
-	private synchronized String getLoggingKey() {
-		return loggingKey;
-	}
 	
 	// This Thread implements the control loop
 	private class LoopThread extends Thread {
@@ -137,7 +134,7 @@ public class ControlLoop {
 
 				double error = setPoint - user.getFeedback();
 				
-				if( !getLoggingKey().equals(""))
+				if( !loggingKey.equals(""))
 					SmartDashboard.putNumber(loggingKey, error);
 					
 				user.setError( error);				
