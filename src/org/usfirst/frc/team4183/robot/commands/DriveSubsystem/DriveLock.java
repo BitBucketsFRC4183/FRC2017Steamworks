@@ -38,19 +38,22 @@ public class DriveLock extends Command
     // Called repeatedly when this Command is scheduled to run
     protected void execute() 
     {
-    	Robot.driveSubsystem.doLockDrive();
+    	if(OI.sbtnShake.get()){
+    		Robot.driveSubsystem.doLockDrive(.2*squareWave(1.5));
+    	}
+    	else Robot.driveSubsystem.doLockDrive(0.0);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if( OI.btnDriveLock.get())
+    	if( OI.btnDriveLock.get() || OI.sbtnShake.get())
     	{
     		// Stay in state
     		return false; 
     	}
     	
-    	if (OI.btnAlignLock.get())
+    	if (OI.btnAlignLock.get()) 
     	{
     		return CommandUtils.stateChange(this, new AlignLock());
     	}
@@ -72,5 +75,9 @@ public class DriveLock extends Command
     protected void interrupted() 
     {
     	end();
+    }
+    
+    protected double squareWave(double f_Hz){
+    	return ((f_Hz*( System.currentTimeMillis() / 1000.0) % 1.0 ) < 0.5 ? -1 : 1 );
     }
 }

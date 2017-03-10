@@ -2,7 +2,8 @@ package org.usfirst.frc.team4183.utils;
 
 public class MinMaxDeadzone {
 	
-	public final double minDrive, maxDrive, deadZone;
+	private double minDrive;
+	private final double maxDrive, deadZone;
 	
 	/**
 	 * Define parameters for y = f(x) below
@@ -35,5 +36,4 @@ public class MinMaxDeadzone {
 		
 		return sign*x;						
 	}
-
 }

@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class WaitingForTrigger extends Command {
 	
 	OI.ButtonEvent btnShooting;
-
+	
     public WaitingForTrigger() {
         requires(Robot.ballManipSubsystem);
     }
@@ -45,6 +45,9 @@ public class WaitingForTrigger extends Command {
     	}
     	if(btnShooting.onPressed()) {
     		return CommandUtils.stateChange(this, new Shooting());
+    	}
+    	if(OI.btnUnjam.get()){
+    		return CommandUtils.stateChange(this, new Unjam());
     	}
         return false;
     }

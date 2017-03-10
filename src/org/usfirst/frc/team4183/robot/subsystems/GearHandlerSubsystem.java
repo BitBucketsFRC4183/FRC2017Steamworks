@@ -21,8 +21,6 @@ public class GearHandlerSubsystem extends Subsystem {
 	public GearHandlerSubsystem(){
 	}
 	
-	public void enable(){
-	}
 		
 	public void disable() {
 		stopRoller();

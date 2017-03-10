@@ -9,22 +9,20 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.usfirst.frc.team4183.robot.subsystems.AutonomousSubsystem;
-// Subsystems
 import org.usfirst.frc.team4183.robot.subsystems.BallManipSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.VisionSubsystem;
+import org.usfirst.frc.team4183.utils.DoEveryN;
 import org.usfirst.frc.team4183.utils.Stopwatch;
 import org.usfirst.frc.team4183.robot.subsystems.ClimbSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.GearHandlerSubsystem;
 import org.usfirst.frc.team4183.robot.subsystems.HopperSubsystem;
-// Non-subsystem (i.e., non-commandable) controls
 import org.usfirst.frc.team4183.robot.LightingControl;
+import org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem.Scripter;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -49,6 +47,8 @@ public class Robot extends IterativeRobot {
 	public static AutonomousSubsystem autonomousSubsystem;
 	public static VisionSubsystem visionSubsystem;
 	
+	public SendableChooser<Integer> positionChooser;
+	
 	public static OI oi;
 	
 	public static LightingControl lightingControl;	
@@ -68,10 +68,6 @@ public class Robot extends IterativeRobot {
 	}
 	
 	
-	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
-	 */
 	@Override
 	public void robotInit() {
 
@@ -95,10 +91,18 @@ public class Robot extends IterativeRobot {
 		lightingControl = new LightingControl(); 		
 		imu = new NavxIMU();
 			
-
 		// Construction is complete
+		
+		// Make the SD autonomous-mode position chooser
+		positionChooser = new SendableChooser<Integer>();
+		positionChooser.addDefault( "None", 0);
+		positionChooser.addObject( "Left", 1);
+		positionChooser.addObject( "Center", 2);
+		positionChooser.addObject( "Right", 3);
+		SmartDashboard.putData( "AutoChooser", positionChooser);
+		
 				
-		// Start pressurizing the tanks
+		// Start pressurizing the tanks (when Robot enabled)
 		compressor.setClosedLoopControl(true);
 		
 						
@@ -112,14 +116,17 @@ public class Robot extends IterativeRobot {
 		showDebugInfo();		
 	}
 
-	/**
-	 * This function is called once each time the robot enters Disabled mode.
-	 * You can use it to reset any subsystem information you want to clear when
-	 * the robot is disabled.
-	 */
+
 	@Override
 	public void disabledInit() {
 		runMode = RunMode.DISABLED;
+
+		// Set up OI for teleop mode - in case there are any buttons
+		// that should work while disabled (unlikely but possible).
+		// NOTE: Must do this BEFORE clearing out scheduler!
+		// Clearing out scheduler causes Default Commands (Idle-s)
+		// to start, and we want those to see the new OI mappings.
+		oi.teleopInit();
 		
 		// Clear out the scheduler
 		// Will result in only Default Commands (Idle-s) running.
@@ -134,17 +141,7 @@ public class Robot extends IterativeRobot {
 		runWatch.stop();
 	}
 
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString code to get the auto name from the text box below the Gyro
-	 *
-	 * You can add additional auto modes by adding additional commands to the
-	 * chooser code above (like the commented example) or additional comparisons
-	 * to the switch structure below with additional strings & commands.
-	 */
+
 	@Override
 	public void autonomousInit() {
 		runMode = RunMode.AUTO;
@@ -158,18 +155,21 @@ public class Robot extends IterativeRobot {
 		// Clear out the scheduler
 		// Will result in only Default Commands (Idle-s) running.
 		// Do this last to be sure that Idle-s see correct info when starting.
-		Scheduler.getInstance().removeAll();		
+		Scheduler.getInstance().removeAll();
+		
+		// Start the Autonomous-mode Scripter
+		int position = positionChooser.getSelected();
+		if( position != 0)
+			(new Scripter( positionChooser.getSelected())).start();
 	}
 
-	/**
-	 * This function is called periodically during autonomous
-	 */
 	@Override
 	public void autonomousPeriodic() {
 		runWatch.start();
 		Scheduler.getInstance().run();
 		runWatch.stop();
 	}
+	
 
 	@Override
 	public void teleopInit() {
@@ -187,12 +187,7 @@ public class Robot extends IterativeRobot {
 		Scheduler.getInstance().removeAll();
 	}
 
-	/**
-	 * This function is called periodically during operator control
-	 */
 
-	List<Double> runTimeList = new ArrayList<>();
-	
 	@Override
 	public void teleopPeriodic() {			
 		runWatch.start();
@@ -200,9 +195,7 @@ public class Robot extends IterativeRobot {
 		runWatch.stop();
 	}
 
-	/**
-	 * This function is called periodically during test mode
-	 */
+
 	
 	@Override
 	public void testInit() {
@@ -210,21 +203,24 @@ public class Robot extends IterativeRobot {
 	}
 
 	
-	/**
-	 * This function is called periodically during test mode
-	 */
 	@Override
 	public void testPeriodic() {
 		LiveWindow.run();		
 	}
 	
 	
+	// Called periodically all the time (regardless of mode)
 	@Override
 	public void robotPeriodic() {
 		loopWatch.stop();
 		loopWatch.start();
+		
+		periodicSDdebugLoop.update();
 	}
+	
 
+	// Some ancillary debugging stuff below here
+	
 	private Stopwatch runWatch = 
 			new Stopwatch( "Run", 
 			(name, max, min, avg) -> SmartDashboard.putNumber( "MaxRun", max) );
@@ -232,6 +228,30 @@ public class Robot extends IterativeRobot {
 			new Stopwatch( "Loop", 
 			(name, max, min, avg) -> SmartDashboard.putNumber( "MaxLoop", max) );
 
+	private DoEveryN periodicSDdebugLoop = 
+			new DoEveryN( 10, () -> putPeriodicSDdebug());
+	
+	
+	private void putPeriodicSDdebug() {
+		
+		SmartDashboard.putString( "IMU_Yaw", 
+				String.format("%.1f", imu.getYawDeg()));
+		SmartDashboard.putString( "IMU_Yawrate", 
+				String.format("%.1f", imu.getYawRateDps()));
+		SmartDashboard.putString( "Left_Position", 
+				String.format("%.1f", driveSubsystem.getLeftPosition_inch()));
+		SmartDashboard.putString( "Right_Position", 
+				String.format("%.1f", driveSubsystem.getRightPosition_inch()));
+		SmartDashboard.putString("Fwd_Velocity",
+				String.format("%.1f", driveSubsystem.getFwdVelocity_ips()));
+		SmartDashboard.putString( "Fwd_Current", 
+				String.format( "%.1f", driveSubsystem.getFwdCurrent()));
+		SmartDashboard.putString( "VisGearYaw",
+				String.format("%.1f", visionSubsystem.getGearAngle_deg()));
+		SmartDashboard.putString( "VisGearDist", 
+				String.format("%.1f", visionSubsystem.getGearDistance_inch()));
+	}
+	
 	
 	private Set<Subsystem> subSystems = new HashSet<>();
 

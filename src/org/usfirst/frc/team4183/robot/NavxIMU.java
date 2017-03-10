@@ -34,7 +34,7 @@ public class NavxIMU {
 							Thread.sleep(500);
 						} catch (InterruptedException e) {}	
 						System.out.format("isConnected=%b isCalibrating=%b Yaw=%.2f Rate=%.2f\n", 
-								isConnected(), isCalibrating(), getYawDeg(), getRateDeg());						
+								isConnected(), isCalibrating(), getYawDeg(), getYawRateDps());						
 					}
 				}
 			}.start();
@@ -59,7 +59,7 @@ public class NavxIMU {
 		return -ahrs.getAngle();
 	}
 
-	public synchronized double getRateDeg() {
+	public synchronized double getYawRateDps() {
 		
 		if( !isConnected()) {
 			System.err.println( "Error, Rate requested but NavX not connected");
@@ -72,6 +72,20 @@ public class NavxIMU {
 		
 		// Need the - sign to get the Navx to agree with the yaw definition		
 		return -ahrs.getRate();
+	}
+	
+	public synchronized double getFwdAccel_G() {
+		
+		if( !isConnected()) {
+			System.err.println( "Error, Accel requested but NavX not connected");
+			return 0.0;
+		}
+		
+		if( isCalibrating()) {
+			System.err.println( "Warning, Accel requested but NavX is calibrating");
+		}
+		
+		return ahrs.getRawAccelX();
 	}
 	
 	public synchronized boolean isConnected() {

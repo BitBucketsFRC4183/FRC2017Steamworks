@@ -94,6 +94,7 @@ public class OI {
 	public static LogicalButton btnDriveLock;	
 	public static LogicalButton btnAlignAssist;
 	
+	
 	public static LogicalButton btnClimbControl;
 	
 	// Gear/ball-loading functions
@@ -111,6 +112,7 @@ public class OI {
 	
 	public static LogicalButton btnIdle;
 	
+	public static LogicalButton btnUnjam;
 	
 	//****************************
 	// LOGICAL AXIS DEFINITIONS
@@ -122,8 +124,7 @@ public class OI {
 	//****************************
 	// Permanent SoftButtons (used for inter-SM communications)
 	//****************************
-	public static LogicalButton sbtnDriveLock = new SoftButton();
-		
+	public static LogicalButton sbtnShake = new SoftButton();
 	
 	// End of public interface
 
@@ -226,7 +227,8 @@ public class OI {
 		btnCloseHopper = operatorController.bPovRight;
 		btnIntakeOn = operatorController.bL1;
 		btnShooterStart = operatorController.bR1;
-		btnShoot = operatorController.bR2;
+		btnShoot = operatorController.bR2;		
+		btnUnjam = operatorController.bSquare;
 		
 		btnIdle = operatorController.bTrackpad;		// Big easy button to make selected operator subs idle
 				

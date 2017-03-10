@@ -82,10 +82,13 @@ else:
 # The same pipeline instance should NOT be passed to more than one image processor
 # as the results can be confused and comingled and simply does not make sense.
 
-from faces import Faces             # Useful for basic testing of driverCam/Processor pipeline
+from nada import Nada
+
+from rope import Rope
 
 from blueboiler import BlueBoiler
 from redboiler import RedBoiler
+from boiler import Boiler
 from gearlift import GearLift
 from smokestack import SmokeStack
 
@@ -129,9 +132,12 @@ location = bvTable.getAutoUpdateValue('allianceLocation',1)
 
 redBoiler = RedBoiler()
 blueBoiler = BlueBoiler()
+boiler = Boiler()
 gearLift = GearLift(bvTable)
 
-rope = Faces()     # Temporary placeholder for rope processing
+rope = Rope()
+
+nada = Nada()
 
 # NOTE: NOTE: NOTE:
 #
@@ -140,11 +146,11 @@ rope = Faces()     # Temporary placeholder for rope processing
 # Our implementation is forced to use v4l2-ctl (Linux) to make the exposure control work because our OpenCV
 # port does not seem to play well with the exposure settings (produces either no answer or causes errors depending
 # on the camera used)
-FRONT_CAM_GEAR_EXPOSURE = 20   # TODO: MAKE THESE TABLE/PREFERENCE DRIVEN!
-FRONT_CAM_RED_EXPOSURE = 100
-FRONT_CAM_BLUE_EXPOSURE = 100
+FRONT_CAM_GEAR_EXPOSURE = 0
+FRONT_CAM_RED_EXPOSURE = -1
+FRONT_CAM_BLUE_EXPOSURE = -1
 
-FRONT_CAM_NORMAL_EXPOSURE = -1  # Camera default
+FRONT_CAM_NORMAL_EXPOSURE = -1   # Camera default
 
 frontCam = BucketCapture(name="FrontCam",src=0,width=320,height=240,exposure=FRONT_CAM_GEAR_EXPOSURE).start()    # start low for gears
 rearCam = BucketCapture(name="RearCam",src=1,width=320,height=240,exposure=-1).start()      # default for driver
@@ -165,8 +171,8 @@ print("BucketCapture appears online!")
 # pipeline was defined... we can't control the use of object-specific internals
 # being run from multiple threads... so don't do it!)
 
-frontPipes = {'redBoiler' : redBoiler,
-              'blueBoiler' : blueBoiler,
+frontPipes = {'redBoiler' : nada, #boiler, #redBoiler,
+              'blueBoiler' : nada, #boiler, #blueBoiler,
               'gearLift' : gearLift}
 
 frontProcessor = BucketProcessor(frontCam,frontPipes,'gearLift').start()
@@ -330,25 +336,21 @@ while (True):
 
 #stop the bucket server and processors
 
-redBoilerProcessor.stop()      # stop this first to make the server exit
-blueBoilerProcessor.stop()
-gearProcessor.stop()
-ropeProcessor.stop()
+frontProcessor.stop()      # stop this first to make the server exit
+rearProcessor.stop()
+
 
 print("Waiting for BucketProcessors to stop...")
-while ((redBoilerProcessor.isStopped() == False) &
-       (blueBoilerProcessor.isStopped() == False) &
-       (gearProcessor.isStopped() == False) &
-       (ropeProcessor.isStopped() == False)):
+while ((frontProcessor.isStopped() == False) &
+       (rearProcessor.isStopped() == False)):
     time.sleep(0.001)
 print("BucketProcessors appear to have stopped.")
 
-frontCamServer.stop()
-rearCamServer.stop()
-print("Waiting for DriverServer and RetroServer to stop...")
-while ((frontCamServer.isStopped() == False) & (rearCamServer.isStopped() == False)):
+camServer.stop()
+print("Waiting for CamServer to stop...")
+while (camServer.isStopped() == False):
     time.sleep(0.001)
-print("DriverServer and RetroServer appears to have stopped.")
+print("CamServer appears to have stopped.")
 
 
 #stop the camera capture
