@@ -19,7 +19,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	private final static double Kp = 0.03;
 
 	// Largest drive that will be applied
-	private final double MAX_DRIVE = 0.8;
+	private final double MAX_DRIVE = 1.0;
 	
 	// Smallest drive that will be applied 
 	// (unless error falls within dead zone, then drive goes to 0)
@@ -32,7 +32,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	private final double DEAD_ZONE_INCH = 0.5;
 	
 	// Settled detector lookback for dead zone
-	private final long SETTLED_MSECS = 300;
+	private final long SETTLED_MSECS = 100;
 	
 	// Used to determine when done.
 	// Also used to detect if we've hit something and stopped short of final distance.
