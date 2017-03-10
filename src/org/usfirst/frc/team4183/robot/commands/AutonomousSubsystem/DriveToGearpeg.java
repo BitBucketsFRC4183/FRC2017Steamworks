@@ -18,19 +18,17 @@ public class DriveToGearpeg extends Command {
 	
 	private static class YawLoopUser implements ControlLoop.ControlLoopUser {
 		
-		// TODO value?? Same as AlignLock? Should be if Vision feeds back degrees.
+		// TODO value?? Same as AlignLock?
 		private double Kp = 0.05;  
 
 		@Override
 		public double getFeedback() {
 			
-			// TODO Get & return yaw angle error IN DEGREES from Vision.
+			// Get & return yaw angle error IN DEGREES from Vision.
 			// This can just theta = K * Screen error, calibrate K using known angle.
-			// Might as well define the signs same as IMU.
 			// Vision should return robot yaw (pose) in target c.s. (0 -> target centered).
 			// where +yaw is CCW viewed from top (r.h.r. z-axis up).
-			//return Robot.visionSubsystem.getYawRefToTarget();
-			return 0;
+			return Robot.visionSubsystem.getGearAngle_deg();
 		}
 
 		@Override
@@ -74,9 +72,8 @@ public class DriveToGearpeg extends Command {
 		
 		@Override
 		public double getFeedback() {
-			// TODO Auto-generated method stub
 			// Get & return distance to target from Vision
-			return 0;
+			return Robot.visionSubsystem.getGearDistance_ft();
 		}
 
 		@Override
@@ -93,7 +90,7 @@ public class DriveToGearpeg extends Command {
 			//System.out.format("DistLoopUser error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
 			
 			// Set the output
-			// TODO sign? Probably negative because forward stick decreases distance
+			// TODO sign? Guessing negative because fwd stick decreases distance
 			OI.axisForward.set( -x3);			
 		}		
 	}
@@ -113,7 +110,8 @@ public class DriveToGearpeg extends Command {
     @Override
     protected void initialize() {
     	
-    	// TODO Tell Vision to look for gear
+    	//Tell Vision to look for gear
+    	Robot.visionSubsystem.setGearMode();
     	   	
     	// TODO yaw setpoint should 0.
     	// Vision yaw error value should be 0-centered.
@@ -125,6 +123,7 @@ public class DriveToGearpeg extends Command {
     	double distSetpoint = 0.0;
     	distLoopUser = new DistLoopUser();
     	distCloop = new ControlLoop( distLoopUser, distSetpoint);
+
     	distCloop.start();
     }
 
@@ -153,7 +152,6 @@ public class DriveToGearpeg extends Command {
 		OI.axisTurn.set(0.0);
 		OI.axisForward.set(0.0);
 		
-		// TODO any exit actions on Vision?
     }
 
     // Called when another command which requires one or more of the same

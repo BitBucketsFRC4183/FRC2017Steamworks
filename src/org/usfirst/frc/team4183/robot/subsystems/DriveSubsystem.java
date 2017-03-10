@@ -23,7 +23,7 @@ public class DriveSubsystem extends Subsystem {
 	    
 		private final RobotDrive robotDrive;
 		
-		private double lowSensitivityGain = 0.5;		// Half-control seems nice
+		private final double LOW_SENS_GAIN = 0.6;		
 		private final double ALIGN_LOOP_GAIN = 0.05;
 
 		// The counts-per-rev is printed on the encoder -
@@ -34,8 +34,6 @@ public class DriveSubsystem extends Subsystem {
 		private double yawSetPoint;
 		
 		public DriveSubsystem() {
-			Preferences prefs = Preferences.getInstance();
-			lowSensitivityGain = prefs.getDouble("LowSensitivityGain", lowSensitivityGain);
 
 			leftFrontMotor = new CANTalon(RobotMap.LEFT_FRONT_MOTOR_ID);
 			leftRearMotor = new CANTalon(RobotMap.LEFT_REAR_MOTOR_ID);
@@ -68,8 +66,8 @@ public class DriveSubsystem extends Subsystem {
 		public void arcadeDrive(double speed, double turn) {
 			
 			if(OI.btnLowSensitiveDrive.get()) {
-				speed *= lowSensitivityGain;
-				turn *= lowSensitivityGain;
+				speed *= LOW_SENS_GAIN;
+				turn *= LOW_SENS_GAIN;
 			}
 			if(OI.btnInvertAxis.get()) {
 				speed *= -1.0;
@@ -98,7 +96,7 @@ public class DriveSubsystem extends Subsystem {
 			yawSetPoint += -0.3 * Deadzone.f(turn, .05);
 
 			if(OI.btnLowSensitiveDrive.get())
-				speed *= lowSensitivityGain;
+				speed *= LOW_SENS_GAIN;
 			
 			if(OI.btnInvertAxis.get()) {
 				speed *= -1.0;

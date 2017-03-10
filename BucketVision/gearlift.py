@@ -341,8 +341,8 @@ class GearLift:
             lowRatioX = expectedRatioX - ratioToleranceX
             highRatioX = expectedRatioX + ratioToleranceX
             
-            self.networkTable.putNumber("GearDeltaX",deltaX)
-            self.networkTable.putNumber("GearRatioX",distanceRatioX)
+            #self.networkTable.putNumber("GearDeltaX",deltaX)
+            #self.networkTable.putNumber("GearRatioX",distanceRatioX)
             
             # Expect the centers to be close to each other
             # Allowing for up to a 5 degree camera tilt there
@@ -354,20 +354,20 @@ class GearLift:
             distanceRatioY = deltaY / ((h1 + h2)/2)
             expectedRatioY = 0.2
             
-            self.networkTable.putNumber("GearDeltaY",deltaY)
-            self.networkTable.putNumber("GearRatioY",distanceRatioY)
+            #self.networkTable.putNumber("GearDeltaY",deltaY)
+            #self.networkTable.putNumber("GearRatioY",distanceRatioY)
             
-            self.networkTable.putNumber("GearSide1_x",x1)
-            self.networkTable.putNumber("GearSide1_y",y1)
-            self.networkTable.putNumber("GearSide1_w",w1)
-            self.networkTable.putNumber("GearSide1_h",h1)
-            self.networkTable.putNumber("GearSide1_A",h1 * w1)
+            #self.networkTable.putNumber("GearSide1_x",x1)
+            #self.networkTable.putNumber("GearSide1_y",y1)
+            #self.networkTable.putNumber("GearSide1_w",w1)
+            #self.networkTable.putNumber("GearSide1_h",h1)
+            #self.networkTable.putNumber("GearSide1_A",h1 * w1)
             
-            self.networkTable.putNumber("GearSide2_x",x2)
-            self.networkTable.putNumber("GearSide2_y",y2)
-            self.networkTable.putNumber("GearSide2_w",w2)
-            self.networkTable.putNumber("GearSide2_h",h2)
-            self.networkTable.putNumber("GearSide2_A",h2 * w2)
+            #self.networkTable.putNumber("GearSide2_x",x2)
+            #self.networkTable.putNumber("GearSide2_y",y2)
+            #self.networkTable.putNumber("GearSide2_w",w2)
+            #self.networkTable.putNumber("GearSide2_h",h2)
+            #self.networkTable.putNumber("GearSide2_A",h2 * w2)
             
             
             if ((lowRatioX <= distanceRatioX <= highRatioX) and
@@ -378,8 +378,18 @@ class GearLift:
                 # Estimate distance from power curve fit (R-squared = 0.9993088900150656)
                 distance_inches = 2209.78743431602 * (deltaX ** -0.987535082840163)
                 self.networkTable.putNumber("GearDistance_inches",distance_inches)
+                centerX = (x1+x2)/2
+                centerY = (y1+y2)/2
+                radius = 0.2*(h1+h2)/2      # w/h = 2/5 = 0.4 thus 1" is 0.2
+                cv2.circle(source0, (int(centerX), int(centerY)), int(radius), (0,255,0),2)
+                center = ((2.0*centerX)/320.0) - 1.0
+                self.networkTable.putNumber("GearCenterX",center) # cam res is 320, avg & scale cancel
+                self.networkTable.putNumber("GearCenter_deg",center * 55)
             else:
                 self.networkTable.putNumber("GearConfidence",0.0)
+                self.networkTable.putNumber("GearDistance_inches",0)
+                self.networkTable.putNumber("GearCenterX",0)
+                self.networkTable.putNumber("GearCenter_deg",0)
 
                 # Things don't appear to be what we think they are
                 # several things could be wrong
@@ -394,8 +404,20 @@ class GearLift:
             self.networkTable.putNumber("GearConfidence",0.5)
             distance_inches = 1441.45246948352 * (h1 ** -1.014995518927)
             self.networkTable.putNumber("GearDistance_inches",distance_inches)
+            
+            centerX = x1
+            centerY = y1
+            radius = 0.2*h1     # w/h = 2/5 = 0.4 thus 1" is 0.2
+            cv2.circle(source0, (int(centerX), int(centerY)), int(radius), (0,0,255),2)
+            center = ((2.0*centerX)/320.0) - 1.0
+            self.networkTable.putNumber("GearCenterX",center) # cam res is 320, avg & scale cancel
+            self.networkTable.putNumber("GearCenter_deg",center * 55)
+            
         else:
             self.networkTable.putNumber("GearConfidence",0.0)
+            self.networkTable.putNumber("GearDistance_inches",0)
+            self.networkTable.putNumber("GearCenterX",0)
+            self.networkTable.putNumber("GearCenter_deg",0)    
             
         return (self.find_contours_output, self.filter_contours_output)
 
