@@ -342,6 +342,9 @@ public class Scripter extends Command {
     }
     
     private void shoot() {
-    	OI.btnShoot.hit(4000);
+    	long timeInit = System.currentTimeMillis();
+    	while(System.currentTimeMillis() - timeInit < 4000) {
+    		Robot.ballManipSubsystem.setConveyerOn();
+    	}
     }
 }

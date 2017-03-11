@@ -43,7 +43,7 @@ public class WaitingForTrigger extends Command {
     	if(OI.btnIdle.get()) {
     		return CommandUtils.stateChange(this, new Idle());
     	}
-    	if(btnShooting.onPressed()) {
+    	if(btnShooting.onPressed() || OI.sbtnShoot.get()) {
     		return CommandUtils.stateChange(this, new Shooting());
     	}
     	if(OI.btnUnjam.get()){

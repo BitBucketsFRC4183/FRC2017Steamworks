@@ -3,6 +3,7 @@ package org.usfirst.frc.team4183.robot.commands.ClimbSubsystem;
 import org.usfirst.frc.team4183.robot.LightingControl;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
+import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -33,7 +34,8 @@ public class ClimbFinish extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+//        return CommandUtils.stateChange(this, new Idle());
+    	return false;
     }
 
     // Called once after isFinished returns true
