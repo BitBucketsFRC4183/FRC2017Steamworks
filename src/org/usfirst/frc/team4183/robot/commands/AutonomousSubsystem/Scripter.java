@@ -17,6 +17,7 @@ public class Scripter extends Command {
 	private int pc = 0;
 	private final boolean debug = false;
 	private final int position;
+	private final String color = "Red";
 	
 	// To see the Scripter instruction set documentation, 
 	// scroll down to the switch() in executeNextInstruction()
@@ -29,12 +30,12 @@ public class Scripter extends Command {
 	private String[][] script = {
 			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" },  // Goto label 1,2,3 based on operator position
 			{"Loc1", 	"DriveStraight 82.2" },  // Inch
-			{"", 		"TurnBy -62.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
+			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
 			{"",		"Goto Vis" },
 			{"Loc2",	"DriveStraight 26.0" },
 			{"",		"Goto Vis" },
 			{"Loc3",	"DriveStraight 82.2" },
-			{"",		"TurnBy 62.0" },
+			{"",		"TurnBy 60.0" },
 			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
 			{"", 		"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
 			{"", 		"YawCorrect" },     		// TurnBy -measuredYaw
@@ -43,7 +44,10 @@ public class Scripter extends Command {
 			{"", 		"YawCorrect" },
 			{"", 		"DistanceCorrect 15.0" },	
 			{"", 		"DeliverGear" },			// Spit the gear
-			{"", 		"DriveStraight -12.0" },    // Back up
+			{"", 		"DriveStraight -70.2" },    // Back up (Need To add correct distance)
+			{"",        "BranchOnColor Red Blue"},
+			{"LocR",    "TurnBy 149.3"},
+			{"LocB",    "TurnBy -149.3"},
 			{"", 		"End" }						// MUST finish in End state
 	};
 	
@@ -149,6 +153,10 @@ public class Scripter extends Command {
     		branchOnLocation( tokens[1], tokens[2], tokens[3]);
     		break;
     		
+    	case "BranchOnColor":
+    		branchOnColor(tokens[1], tokens[2]);
+    		break;
+    		
     	case "TurnBy": // yaw (degrees, + is CCW from top)
     		turnBy( Double.parseDouble(tokens[1]));
     		break;
@@ -224,6 +232,20 @@ public class Scripter extends Command {
     	default:
     		throw new IllegalArgumentException(
     			String.format( "Scripter.branchOnLocation: unknown location %d\n", position));
+    	}
+    }
+    
+    private void branchOnColor(String lblB, String lblR) {
+    	if(debug)
+    		System.out.format("Scripter.branchOnColor %s %s %s\n", lblB, lblR);
+    	
+    	switch(color) {
+    	case "Red":
+    		doGoto(lblR);
+    		break;
+    	case "Blue":
+    		doGoto(lblB);
+    		break;
     	}
     }
      

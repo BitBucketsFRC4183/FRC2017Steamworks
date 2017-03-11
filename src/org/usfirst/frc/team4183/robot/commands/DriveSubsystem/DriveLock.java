@@ -39,7 +39,7 @@ public class DriveLock extends Command
     protected void execute() 
     {
     	if(OI.sbtnShake.get()){
-    		Robot.driveSubsystem.doLockDrive(.2*squareWave(1.5));
+    		Robot.driveSubsystem.doLockDrive(.1*sineWave(10.0));
     	}
     	else Robot.driveSubsystem.doLockDrive(0.0);
     }
@@ -75,6 +75,10 @@ public class DriveLock extends Command
     protected void interrupted() 
     {
     	end();
+    }
+    
+    protected double sineWave(double f_Hz) {
+    	return Math.sin(f_Hz * (2 * Math.PI) * (System.currentTimeMillis() / 1000.0));
     }
     
     protected double squareWave(double f_Hz){

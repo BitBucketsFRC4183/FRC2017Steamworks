@@ -93,6 +93,7 @@ public class OI {
 	public static LogicalButton btnAlignLock;
 	public static LogicalButton btnDriveLock;	
 	public static LogicalButton btnAlignAssist;
+	public static LogicalButton btnBackup;
 	
 	
 	public static LogicalButton btnClimbControl;
@@ -205,6 +206,7 @@ public class OI {
 		btnToggleFrontCameraView = driverController.bCross;
 		btnSelectFrontCam = driverController.bPovUp;
 		btnSelectRearCam = driverController.bPovDown;
+		btnBackup = driverController.bSquare;
 		
 		btnLowSensitiveDrive = driverController.bR1;
 		btnInvertAxis = driverController.bR2;	

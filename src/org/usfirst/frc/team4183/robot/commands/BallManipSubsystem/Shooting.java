@@ -7,6 +7,7 @@ import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
 import org.usfirst.frc.team4183.utils.CommandUtils;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -35,6 +36,7 @@ public class Shooting extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	Robot.ballManipSubsystem.setConveyerOn();
+    	//Robot.ballManipSubsystem.setTopRollerToSpeed(SmartDashboard.getNumber("Top Motor Speed", 0.0)));
     	Robot.ballManipSubsystem.setTopRollerToShootingSpeed();
     }
 

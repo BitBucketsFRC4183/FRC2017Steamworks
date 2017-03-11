@@ -3,6 +3,7 @@ package org.usfirst.frc.team4183.robot.commands.DriveSubsystem;
 
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
+import org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem.DriveStraight;
 import org.usfirst.frc.team4183.robot.LightingControl;
 import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
 import org.usfirst.frc.team4183.utils.CommandUtils;
@@ -14,7 +15,7 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class DriverControl extends Command 
 {
-
+	OI.ButtonEvent btnBackup;
 	
     public DriverControl() 
     {
@@ -31,6 +32,7 @@ public class DriverControl extends Command
     		                      LightingControl.COLOR_ORANGE,
     		                      0,	// nspace - don't care
     		                      0);	// period_msec - don't care
+    	btnBackup = OI.getBtnEvt(OI.btnBackup);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -50,6 +52,9 @@ public class DriverControl extends Command
     	else if(OI.btnAlignLock.get()) 
     	{
     		return CommandUtils.stateChange(this, new AlignLock());
+    	}
+    	else if(btnBackup.onPressed()) {
+    		CommandUtils.stateChange(this, new DriveStraight(-1.0));
     	}
         return false;
     }
