@@ -88,7 +88,9 @@ public class Robot extends IterativeRobot {
 		compressor = new Compressor(RobotMap.PNEUMATICS_CONTROL_MODULE_ID);		
 		
 		// Construct LightingControl, IMU, and vision
-		lightingControl = new LightingControl(); 		
+		lightingControl = new LightingControl();
+		// Note IMU uses DriveSubsystem (position encoders)
+		// so create after driveSubsystem.
 		imu = new NavxIMU();
 			
 		// Construction is complete
@@ -244,8 +246,9 @@ public class Robot extends IterativeRobot {
 				String.format("%.1f", driveSubsystem.getRightPosition_inch()));
 		SmartDashboard.putString("Fwd_Velocity",
 				String.format("%.1f", driveSubsystem.getFwdVelocity_ips()));
-		SmartDashboard.putString( "Fwd_Current", 
-				String.format( "%.1f", driveSubsystem.getFwdCurrent()));
+		double[] pose = imu.getRobotPose();
+		SmartDashboard.putString( "Pose", 
+				String.format("%.1f %.1f %.1f", pose[0], pose[1], pose[2]));
 		SmartDashboard.putString( "VisGearYaw",
 				String.format("%.1f", visionSubsystem.getGearAngle_deg()));
 		SmartDashboard.putString( "VisGearDist", 

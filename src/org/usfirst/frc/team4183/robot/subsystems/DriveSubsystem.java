@@ -44,6 +44,8 @@ public class DriveSubsystem extends Subsystem {
 		
 		private double yawSetPoint;		
 		private boolean linearAxis;
+		private double leftPosition, rightPosition;
+
 		
 		private final boolean HUMAN_WANTS_BRAKING = true;
 		
@@ -57,7 +59,9 @@ public class DriveSubsystem extends Subsystem {
 			robotDrive = new RobotDrive(leftFrontMotor, leftRearMotor, rightFrontMotor, rightRearMotor);
 			robotDrive.setSafetyEnabled(false);
 
-			// Set up the position encoders, can be used external to this class
+			// Set up the position encoders, can be used external to this class.
+			// The position values are used by dead-reckoning in the IMU class,
+			// so MUST NOT use setPosition() on them anywhere else but here.
 			leftFrontMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 			leftFrontMotor.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV); 
 			leftFrontMotor.reverseSensor(REVERSE_SENSOR);
@@ -168,11 +172,13 @@ public class DriveSubsystem extends Subsystem {
 				robotDrive.arcadeDrive( fwdStick, error + yawCorrect(), false);
 			}
 		}
-		
-		
+				
 		public void setLockDrive( boolean start) {
 
 			if( start) {
+				leftPosition = leftFrontMotor.getPosition();
+				rightPosition = rightFrontMotor.getPosition();
+				
 				setupClosedLoopMaster(leftFrontMotor);
 				setupClosedLoopMaster(rightFrontMotor);
 
@@ -195,7 +201,6 @@ public class DriveSubsystem extends Subsystem {
 			m.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 			m.configEncoderCodesPerRev(ENCODER_PULSES_PER_REV);
 			m.reverseSensor(REVERSE_SENSOR); 
-			m.setPosition(0.0);
 			
 			m.setPID(0.4, 0.0, 0.0); // Might be able to increase gain a bit
 			m.setF(0.0);
@@ -207,9 +212,9 @@ public class DriveSubsystem extends Subsystem {
 		}
 		
 		public void doLockDrive(double value) {
-			leftFrontMotor.set(value);
+			leftFrontMotor.set(value + leftPosition);
 			leftRearMotor.set(leftFrontMotor.getDeviceID());
-			rightFrontMotor.set(value);
+			rightFrontMotor.set(value + rightPosition);
 			rightRearMotor.set(rightFrontMotor.getDeviceID());			
 		}
 		
@@ -226,7 +231,7 @@ public class DriveSubsystem extends Subsystem {
 		}
 		
 		public double getPosition_inch() {
-			return getLeftPosition_inch();
+			return (getLeftPosition_inch() + getRightPosition_inch())/2.0;
 		}
 		
 		public double getLeftPosition_inch() {
