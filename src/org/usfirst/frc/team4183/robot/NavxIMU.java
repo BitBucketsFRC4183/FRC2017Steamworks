@@ -59,7 +59,7 @@ public class NavxIMU {
 		return -ahrs.getAngle();
 	}
 
-	// Note: this number is not accurate - it is reading maybe 5x too high?
+	// Note: this number is not accurate - it is reading maybe 9x too high?
 	// I should be able to use ahrs.getRate(), but THAT doesn't work either
 	// (it seems to be reading along the wrong axis? Who knows).
 	// So this is only good enough to use to determine when the yaw rate is

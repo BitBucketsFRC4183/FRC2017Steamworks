@@ -26,6 +26,7 @@ public class Scripter extends Command {
 	// position 2 start point is on center line (directly facing gear peg)
 	// 
 
+
 	private String[][] script = {
 			{"", 		"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
 			{"Left", 	"DriveStraight 82.2" },  // Inch
