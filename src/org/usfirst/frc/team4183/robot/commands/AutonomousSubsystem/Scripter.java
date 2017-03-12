@@ -303,10 +303,10 @@ public class Scripter extends Command {
     }  
     
     private void startShooter() {
-    	OI.btnShooterStart.hit(3000);
+    	OI.btnShooterStart.hit();
     }
     
     private void shoot() {
-    	OI.btnShoot.push();
+    	OI.btnShoot.hit(3000);
     }
 }
