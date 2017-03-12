@@ -47,6 +47,8 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private MinMaxDeadzone deadZone;
 	private SettledDetector settledDetector;
 	
+	private double zeroPoint = 0.0;
+	
 
 	public TurnBy( double degreesToTurn) {		
 		requires( Robot.autonomousSubsystem);
@@ -57,7 +59,8 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	@Override
 	protected void initialize() {
 		// Compute setPoint
-		double setPoint = degreesToTurn + Robot.imu.getYawDeg();
+		zeroPoint =  Robot.imu.getYawDeg();
+		double setPoint = degreesToTurn;
 		
 		// Make helpers
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
@@ -113,7 +116,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	
 	@Override
 	public double getFeedback() {
-		return Robot.imu.getYawDeg();
+		return (540 + Robot.imu.getYawDeg() - zeroPoint)%360 - 180;
 	}
 	
 	@Override

@@ -26,6 +26,25 @@ public class Scripter extends Command {
 	// positions 1 & 3 start points are 7' left & right of center line respectively,
 	// position 2 start point is on center line (directly facing gear peg)
 	// 
+//	private String[][] script = {
+//			{"",		"DriveStraight 12.0"},
+//			{"", 		"TurnBy -90.0"},
+//			{"",		"DriveStraight 12.0"},
+//			{"", 		"TurnBy -90.0"},
+//			{"", 		"DriveStraight 12.0"},
+//			{"", 		"TurnBy -90.0"},
+//			{"", 		"DriveStraight 12.0"},
+//			{"", 		"TurnBy 90.0"},
+//			{"", 		"DriveStraight 12.0"},
+//			{"", 		"TurnBy 90.0"},
+//			{"", 		"DriveStraight 12.0"},
+//			{"", 		"TurnBy 90.0"},
+//			{"", 		"DriveStraight 12.0"},
+//			{"", 		"TurnBy 90.0"},
+//			{"", 		"DriveStraight 12.0"},
+//			{"", 		"TurnBy -90.0"},
+//			{"", 		"End"}
+//	};
 	
 	private String[][] script = {
 			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" },  // Goto label 1,2,3 based on operator position
@@ -44,11 +63,25 @@ public class Scripter extends Command {
 			{"", 		"YawCorrect" },
 			{"", 		"DistanceCorrect 15.0" },	
 			{"", 		"DeliverGear" },			// Spit the gear
-			{"", 		"DriveStraight -70.2" },    // Back up (Need To add correct distance)
-			{"",        "BranchOnColor Red Blue"},
-			{"LocR",    "TurnBy 149.3"},
-			{"LocB",    "TurnBy -149.3"},
-			{"", 		"End" }						// MUST finish in End state
+			{"",        "BranchOnLocation Loc1B Loc2B Loc3B"},
+			{"Loc1B",   "BranchOnColor Blue1 Red1"},
+			{"Loc2B",   "DriveStraight -12.0"},//58.3"
+			{"",        "Goto End"},
+			{"Loc3B",   "BranchOnColor Blue3 Red3"},//149.3 deg Red
+			{"Red1",    "DriveStraight -12.0"},
+			{"",        "Goto End"},
+			{"Blue1",   "StartShooter"},
+			{"",   		"DriveStraight -70.2"},
+			{"",        "TurnBy -149.3"},
+			{"",        "Goto Shoot"},
+			{"Red3",    "StartShooter"},
+			{"",    	"DriveStraight -70.2"},
+			{"",        "TurnBy 149.3"},
+			{"",        "Goto Shoot"},
+			{"Blue3",   "DriveStraight -12.0"},
+			{"",        "Goto End"},
+			{"Shoot",   "Shoot"},
+			{"End", 	"End" }						// MUST finish in End state
 	};
 	
 	
@@ -184,6 +217,14 @@ public class Scripter extends Command {
     	case "DeliverGear":  // (Spits the gear)
     		deliverGear();
     		break;
+    		
+    	case "StartShooter":
+    		startShooter();
+    		break;
+    		
+    	case "Shoot":
+    		shoot();
+    		break;
     	
     	case "End":  // (Stops all, does not exit - must be last instruction)
     		endState();
@@ -239,13 +280,11 @@ public class Scripter extends Command {
     	if(debug)
     		System.out.format("Scripter.branchOnColor %s %s %s\n", lblB, lblR);
     	
-    	switch(color) {
-    	case "Red":
-    		doGoto(lblR);
-    		break;
-    	case "Blue":
+    	if(Robot.visionSubsystem.isBlueAlliance()) {
     		doGoto(lblB);
-    		break;
+    	}
+    	else {
+    		doGoto(lblR);
     	}
     }
      
@@ -296,5 +335,16 @@ public class Scripter extends Command {
     	if(debug)
     		System.out.println("Scripter.endState");
     	(new End()).start();
-    }    
+    }  
+    
+    private void startShooter() {
+    	OI.btnShooterStart.hit();
+    }
+    
+    private void shoot() {
+    	long timeInit = System.currentTimeMillis();
+    	while(System.currentTimeMillis() - timeInit < 4000) {
+    		Robot.ballManipSubsystem.setConveyerOn();
+    	}
+    }
 }

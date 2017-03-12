@@ -36,6 +36,9 @@ public class Idle extends Command {
     protected boolean isFinished() {
     	if( OI.btnClimbControl.get() )
     		return CommandUtils.stateChange(this, new WaitForBounce());
+//    	if(OI.btnResumeClimb.get()) {
+//        	return CommandUtils.stateChange(this, new ClimbForward());
+//    	}
     	
         return false;
     }
