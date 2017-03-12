@@ -4,10 +4,10 @@ import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.utils.ControlLoop;
+import org.usfirst.frc.team4183.utils.LogWriterFactory;
 import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
 import org.usfirst.frc.team4183.utils.RateLimit;
 import org.usfirst.frc.team4183.utils.SettledDetector;
-import org.usfirst.frc.team4183.utils.ZeroCrossDetector;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -53,6 +53,10 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	private SettledDetector settledDetector; 
 	private SettledDetector hangupDetector;
 	
+	private boolean WRITE_LOG_FILE = true;
+	private static LogWriterFactory logFactory = new LogWriterFactory("DriveStraight");
+	private LogWriterFactory.Writer logWriter;
+
 	
 	public DriveStraight( double distanceInch) {		
 		requires( Robot.autonomousSubsystem);
@@ -70,6 +74,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		deadZone = new MinMaxDeadzone( DEAD_ZONE_INCH, MIN_DRIVE, MAX_DRIVE);
 		settledDetector = new SettledDetector( SETTLED_MSECS, DEAD_ZONE_INCH);
 		hangupDetector = new SettledDetector( HANGUP_MSECS, STOPPED_RATE_IPS);
+		logWriter = logFactory.create( WRITE_LOG_FILE);	
 		
 		// Setup DriveSubsystem for autonomous control
 		Robot.driveSubsystem.setAutonomousControl(true);
@@ -109,6 +114,8 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		// Don't forget to stop the control loop!
 		cloop.stop();
 		
+		logWriter.close();
+		
 		// Put DriveSubsystem out of "Align Lock"
 		OI.btnAlignLock.release();
 		
@@ -133,7 +140,12 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	
 	@Override
 	public void setError( double error) {
-	
+
+		logWriter.writeLine( 
+				String.format("%f %f", 
+					error, Robot.driveSubsystem.getFwdVelocity_ips())
+				); 
+
 		settledDetector.set(error);
 		hangupDetector.set( Robot.driveSubsystem.getFwdVelocity_ips());
 

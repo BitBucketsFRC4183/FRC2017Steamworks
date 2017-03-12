@@ -84,7 +84,7 @@ public class DriveSubsystem extends Subsystem {
 		// Autonomous "driver":
 		//  -hates squared controls (messes up the control loops)
 		//  -Always wants braking, to settle quicker
-		public void setAutonomousControl( boolean auto) {
+		public void setAutonomousControl( boolean auto) {			
 			linearAxis = auto;
 			
 			if( auto)
@@ -100,8 +100,13 @@ public class DriveSubsystem extends Subsystem {
 			rightRearMotor.enableBrakeMode(setting);
 		}
 		
-		private double sqAxis( double x) {
-			return Math.signum(x) * (x*x);
+		private double shapeAxis( double x) {
+			if( linearAxis) 
+				return x;
+			else {
+				x = Deadzone.f( x, .05);
+				return Math.signum(x) * (x*x);
+			}
 		}
 		
 		// +turnStick produces right turn (CW from above, -yaw angle)
@@ -115,11 +120,9 @@ public class DriveSubsystem extends Subsystem {
 				fwdStick *= -1.0;
 			}
 			
-			if( !linearAxis) {
-				fwdStick = sqAxis(Deadzone.f(fwdStick, .05));
-				turnStick = sqAxis(Deadzone.f(turnStick, .05));
-			}
-			
+			fwdStick = shapeAxis(fwdStick);
+			turnStick = shapeAxis(turnStick);
+						
 			if( fwdStick == 0.0 && turnStick == 0.0) {
 				setAllMotorsZero();
 			}
@@ -149,13 +152,10 @@ public class DriveSubsystem extends Subsystem {
 				fwdStick *= -1.0;
 			}
 			
-			double error = ALIGN_LOOP_GAIN * (yawSetPoint - Robot.imu.getYawDeg());
-
-			if( !linearAxis) {
-				fwdStick = sqAxis(Deadzone.f(fwdStick, .05));
-			}
-			
-			if( fwdStick == 0.0) {
+			fwdStick = shapeAxis(fwdStick);
+			turnStick = shapeAxis(turnStick);
+						
+			if( fwdStick == 0.0 && turnStick == 0.0) {
 				setAllMotorsZero();
 			}
 			else {
@@ -163,8 +163,9 @@ public class DriveSubsystem extends Subsystem {
 				// Turn stick is + to the right,
 				// +yaw is CCW looking down,
 				// so + stick should lower the setpoint. 
-				yawSetPoint += -0.3 * Deadzone.f(turnStick, .05);
+				yawSetPoint += -0.3 * turnStick;
 				
+				double error = ALIGN_LOOP_GAIN * (yawSetPoint - Robot.imu.getYawDeg());				
 				robotDrive.arcadeDrive( fwdStick, error + yawCorrect(), false);
 			}
 		}
