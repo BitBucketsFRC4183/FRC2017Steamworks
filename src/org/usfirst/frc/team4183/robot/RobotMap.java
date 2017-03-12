@@ -16,16 +16,16 @@ public class RobotMap {
 	// THIS MUST BE LARGE ENOUGH TO ROTATE THE ROBOT from stopped position;
 	// if it isn't, you will get stuck in TurnBy.
 	// But if this is TOO BIG, you'll get limit cycling, and also be stuck.
-	public static final double TURNBY_MIN_DRIVE = 0.1;
+	public static final double TURNBY_MIN_DRIVE = 0.17;
 	
 	// Similar to above but for DriveStraight.
 	// Doesn't seem to be as finicky though.
-	public static final double DRIVESTRAIGHT_MIN_DRIVE = 0.1;
+	public static final double DRIVESTRAIGHT_MIN_DRIVE = 0.2;
 		
 	// Nominal value assuming 4" wheel:
 	// (4" * pi) in/rot = 12.57
 	// The precise value must be determined by calibration.
-	public static final double INCH_PER_WHEEL_ROT = 12.5;
+	public static final double INCH_PER_WHEEL_ROT = 12.5 * 1.0353360615;
 
 	
 	// Drive Subsystem

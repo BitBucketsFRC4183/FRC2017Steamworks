@@ -93,6 +93,8 @@ public class OI {
 	public static LogicalButton btnAlignLock;
 	public static LogicalButton btnDriveLock;	
 	public static LogicalButton btnAlignAssist;
+	public static LogicalButton btnBackup;
+	public static LogicalButton btnResumeClimb;
 	
 	
 	public static LogicalButton btnClimbControl;
@@ -114,6 +116,7 @@ public class OI {
 	
 	public static LogicalButton btnUnjam;
 	
+	
 	//****************************
 	// LOGICAL AXIS DEFINITIONS
 	//****************************
@@ -125,6 +128,8 @@ public class OI {
 	// Permanent SoftButtons (used for inter-SM communications)
 	//****************************
 	public static LogicalButton sbtnShake = new SoftButton();
+	public static LogicalButton sbtnShoot = new SoftButton();
+
 	
 	// End of public interface
 
@@ -205,6 +210,7 @@ public class OI {
 		btnToggleFrontCameraView = driverController.bCross;
 		btnSelectFrontCam = driverController.bPovUp;
 		btnSelectRearCam = driverController.bPovDown;
+		btnBackup = driverController.bSquare;
 		
 		btnLowSensitiveDrive = driverController.bR1;
 		btnInvertAxis = driverController.bR2;	
@@ -229,6 +235,7 @@ public class OI {
 		btnShooterStart = operatorController.bR1;
 		btnShoot = operatorController.bR2;		
 		btnUnjam = operatorController.bSquare;
+		btnResumeClimb = operatorController.bOptions;
 		
 		btnIdle = operatorController.bTrackpad;		// Big easy button to make selected operator subs idle
 				

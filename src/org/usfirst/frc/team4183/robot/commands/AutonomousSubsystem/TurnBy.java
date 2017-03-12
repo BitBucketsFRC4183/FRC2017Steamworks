@@ -32,7 +32,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private final double DEAD_ZONE_DEG = 1.0;
 
 	// Settled detector lookback for dead zone
-	private final long SETTLED_MSECS = 300;
+	private final long SETTLED_MSECS = 200;
 	
 	// Also used to determine when done
 	private final double STOPPED_RATE_DPS = 0.5;
@@ -47,6 +47,9 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private MinMaxDeadzone deadZone;
 	private SettledDetector settledDetector;
 	
+	private double zeroPoint = 0.0;
+	
+
 	private boolean WRITE_LOG_FILE = true;
 	private static LogWriterFactory logFactory = new LogWriterFactory("TurnBy");
 	private LogWriterFactory.Writer logWriter;
@@ -61,7 +64,8 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	@Override
 	protected void initialize() {
 		// Compute setPoint
-		double setPoint = degreesToTurn + Robot.imu.getYawDeg();
+		zeroPoint =  Robot.imu.getYawDeg();
+		double setPoint = degreesToTurn;
 		
 		// Make helpers
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
@@ -120,7 +124,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	
 	@Override
 	public double getFeedback() {
-		return Robot.imu.getYawDeg();
+		return (540 + Robot.imu.getYawDeg() - zeroPoint)%360 - 180;
 	}
 	
 	@Override
@@ -147,9 +151,10 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		// It does seem to help a lot, but worried that dither might interfere with
 		// settledDetector and get us stuck in this state.
 		
-		// double ditherFreq = 2.0;  // Maybe try something higher freq?
-		// double ditherAmpl = 0.5;
-		// x3 += ditherAmpl*Math.sin(2.0*Math.PI*ditherFreq*System.currentTimeMillis()/1000.0);
+		double ditherFreq = 4.0;  // Maybe try something higher freq?
+		double ditherAmpl = 0.07;
+		double s = Math.sin(2.0*Math.PI*ditherFreq*System.currentTimeMillis()/1000.0);
+		x3 += ditherAmpl*s;
 
 		// Set the output
 		// - sign required because + stick produces right turn,

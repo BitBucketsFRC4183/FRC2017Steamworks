@@ -17,6 +17,7 @@ public class Scripter extends Command {
 	private int pc = 0;
 	private final boolean debug = false;
 	private final int position;
+	private final String color = "Red";
 	
 	// To see the Scripter instruction set documentation, 
 	// scroll down to the switch() in executeNextInstruction()
@@ -25,6 +26,25 @@ public class Scripter extends Command {
 	// positions 1 & 3 start points are 7' left & right of center line respectively,
 	// position 2 start point is on center line (directly facing gear peg)
 	// 
+//	private String[][] script = {
+//			{"",		"DriveStraight 12.0"},
+//			{"", 		"TurnBy -90.0"},
+//			{"",		"DriveStraight 12.0"},
+//			{"", 		"TurnBy -90.0"},
+//			{"", 		"DriveStraight 12.0"},
+//			{"", 		"TurnBy -90.0"},
+//			{"", 		"DriveStraight 12.0"},
+//			{"", 		"TurnBy 90.0"},
+//			{"", 		"DriveStraight 12.0"},
+//			{"", 		"TurnBy 90.0"},
+//			{"", 		"DriveStraight 12.0"},
+//			{"", 		"TurnBy 90.0"},
+//			{"", 		"DriveStraight 12.0"},
+//			{"", 		"TurnBy 90.0"},
+//			{"", 		"DriveStraight 12.0"},
+//			{"", 		"TurnBy -90.0"},
+//			{"", 		"End"}
+//	};
 	
 	private String[][] script = {
 			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" },  // Goto label 1,2,3 based on operator position
@@ -43,8 +63,25 @@ public class Scripter extends Command {
 			{"", 		"YawCorrect" },
 			{"", 		"DistanceCorrect 15.0" },	
 			{"", 		"DeliverGear" },			// Spit the gear
-			{"", 		"DriveStraight -12.0" },    // Back up
-			{"", 		"End" }						// MUST finish in End state
+			{"",        "BranchOnLocation Loc1B Loc2B Loc3B"},
+			{"Loc1B",   "BranchOnColor Blue1 Red1"},
+			{"Loc2B",   "DriveStraight -12.0"},//58.3"
+			{"",        "Goto End"},
+			{"Loc3B",   "BranchOnColor Blue3 Red3"},//149.3 deg Red
+			{"Red1",    "DriveStraight -12.0"},
+			{"",        "Goto End"},
+			{"Blue1",   "StartShooter"},
+			{"",   		"DriveStraight -70.2"},
+			{"",        "TurnBy -149.3"},
+			{"",        "Goto Shoot"},
+			{"Red3",    "StartShooter"},
+			{"",    	"DriveStraight -70.2"},
+			{"",        "TurnBy 149.3"},
+			{"",        "Goto Shoot"},
+			{"Blue3",   "DriveStraight -12.0"},
+			{"",        "Goto End"},
+			{"Shoot",   "Shoot"},
+			{"End", 	"End" }						// MUST finish in End state
 	};
 	
 	
@@ -149,6 +186,10 @@ public class Scripter extends Command {
     		branchOnLocation( tokens[1], tokens[2], tokens[3]);
     		break;
     		
+    	case "BranchOnColor":
+    		branchOnColor(tokens[1], tokens[2]);
+    		break;
+    		
     	case "TurnBy": // yaw (degrees, + is CCW from top)
     		turnBy( Double.parseDouble(tokens[1]));
     		break;
@@ -175,6 +216,14 @@ public class Scripter extends Command {
     			
     	case "DeliverGear":  // (Spits the gear)
     		deliverGear();
+    		break;
+    		
+    	case "StartShooter":
+    		startShooter();
+    		break;
+    		
+    	case "Shoot":
+    		shoot();
     		break;
     	
     	case "End":  // (Stops all, does not exit - must be last instruction)
@@ -226,6 +275,18 @@ public class Scripter extends Command {
     			String.format( "Scripter.branchOnLocation: unknown location %d\n", position));
     	}
     }
+    
+    private void branchOnColor(String lblB, String lblR) {
+    	if(debug)
+    		System.out.format("Scripter.branchOnColor %s %s %s\n", lblB, lblR);
+    	
+    	if(Robot.visionSubsystem.isBlueAlliance()) {
+    		doGoto(lblB);
+    	}
+    	else {
+    		doGoto(lblR);
+    	}
+    }
      
     private void turnBy( double yaw) {
     	if(debug)
@@ -274,5 +335,21 @@ public class Scripter extends Command {
     	if(debug)
     		System.out.println("Scripter.endState");
     	(new End()).start();
-    }    
+    }  
+    
+    private void startShooter() {
+    	OI.btnShooterStart.hit();
+    }
+    
+    private void shoot() {
+    	/// TODO: The following technique was used because
+    	/// there was some trouble trying to get a logical button
+    	/// press to induce a button event at the ball subsystem state machine
+    	/// which was looking for an onPressed event (i.e., OI.btnShoot.hit() or press() did not work)
+    	/// Despite this, the technique works and we were able to shoot balls in auto
+    	long timeInit = System.currentTimeMillis();
+    	while(System.currentTimeMillis() - timeInit < 4000) {
+    		Robot.ballManipSubsystem.setConveyerOn();
+    	}
+    }
 }

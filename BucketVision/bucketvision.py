@@ -150,7 +150,7 @@ FRONT_CAM_GEAR_EXPOSURE = 0
 FRONT_CAM_RED_EXPOSURE = -1
 FRONT_CAM_BLUE_EXPOSURE = -1
 
-FRONT_CAM_NORMAL_EXPOSURE = -1  # Camera default
+FRONT_CAM_NORMAL_EXPOSURE = -1   # Camera default
 
 frontCam = BucketCapture(name="FrontCam",src=0,width=320,height=240,exposure=FRONT_CAM_GEAR_EXPOSURE).start()    # start low for gears
 rearCam = BucketCapture(name="RearCam",src=1,width=320,height=240,exposure=-1).start()      # default for driver
