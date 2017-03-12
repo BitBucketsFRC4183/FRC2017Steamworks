@@ -25,36 +25,16 @@ public class Scripter extends Command {
 	// positions 1 & 3 start points are 7' left & right of center line respectively,
 	// position 2 start point is on center line (directly facing gear peg)
 	// 
-//	private String[][] script = {
-//			{"",		"DriveStraight 12.0"},
-//			{"", 		"TurnBy -90.0"},
-//			{"",		"DriveStraight 12.0"},
-//			{"", 		"TurnBy -90.0"},
-//			{"", 		"DriveStraight 12.0"},
-//			{"", 		"TurnBy -90.0"},
-//			{"", 		"DriveStraight 12.0"},
-//			{"", 		"TurnBy 90.0"},
-//			{"", 		"DriveStraight 12.0"},
-//			{"", 		"TurnBy 90.0"},
-//			{"", 		"DriveStraight 12.0"},
-//			{"", 		"TurnBy 90.0"},
-//			{"", 		"DriveStraight 12.0"},
-//			{"", 		"TurnBy 90.0"},
-//			{"", 		"DriveStraight 12.0"},
-//			{"", 		"TurnBy -90.0"},
-//			{"", 		"End"}
-//	};
-	
 
 
 	private String[][] script = {
-			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" },  // Goto label 1,2,3 based on operator position
-			{"Loc1", 	"DriveStraight 82.2" },  // Inch
+			{"", 		"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
+			{"Left", 	"DriveStraight 82.2" },  // Inch
 			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
 			{"",		"Goto Vis" },
-			{"Loc2",	"DriveStraight 26.0" },
+			{"Center",	"DriveStraight 26.0" },
 			{"",		"Goto Vis" },
-			{"Loc3",	"DriveStraight 82.2" },
+			{"Right",	"DriveStraight 82.2" },
 			{"",		"TurnBy 60.0" },
 			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
 			{"", 		"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
@@ -64,23 +44,17 @@ public class Scripter extends Command {
 			{"", 		"YawCorrect" },
 			{"", 		"DistanceCorrect 15.0" },	
 			{"", 		"DeliverGear" },			// Spit the gear
-			{"",        "BranchOnLocation Loc1B Loc2B Loc3B"},
-			{"Loc1B",   "BranchOnColor Blue1 Red1"},
-			{"Loc2B",   "DriveStraight -12.0"},//58.3"
+			{"",        "BranchOnColorAndPosition BlueBoiler NoBoiler NoBoiler NoBoiler NoBoiler RedBoiler"},
+			{"NoBoiler",    "DriveStraight -12.0"},
 			{"",        "Goto End"},
-			{"Loc3B",   "BranchOnColor Blue3 Red3"},//149.3 deg Red
-			{"Red1",    "DriveStraight -12.0"},
-			{"",        "Goto End"},
-			{"Blue1",   "StartShooter"},
+			{"BlueBoiler",   "StartShooter"},
 			{"",   		"DriveStraight -70.2"},
 			{"",        "TurnBy -149.3"},
 			{"",        "Goto Shoot"},
-			{"Red3",    "StartShooter"},
+			{"RedBoiler",    "StartShooter"},
 			{"",    	"DriveStraight -70.2"},
 			{"",        "TurnBy 149.3"},
 			{"",        "Goto Shoot"},
-			{"Blue3",   "DriveStraight -12.0"},
-			{"",        "Goto End"},
 			{"Shoot",   "Shoot"},
 			{"",		"Delay 4000"},  // Have to Delay to allow shoot to happen!!
 			{"End", 	"End" }			// MUST finish in End state
@@ -146,12 +120,12 @@ public class Scripter extends Command {
     		delay( Long.parseLong(tokens[1]));
     		break;
     		
-    	case "BranchOnLocation":  // lbl_1 lbl_2 lbl_3 (refers to operator location)
-    		branchOnLocation( tokens[1], tokens[2], tokens[3]);
+    	case "BranchOnPosition":  // Left Center Right (refers to robot position relative to airship centerline)
+    		branchOnPosition( tokens[1], tokens[2], tokens[3]);
     		break;
     		
-    	case "BranchOnColor":
-    		branchOnColor(tokens[1], tokens[2]);
+    	case "BranchOnColorAndPosition": // lblB1, lblB2, lblB3, lblR1, ...
+    		branchOnColorAndPosition(tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[6]);
     		break;
     		
     	case "TurnBy": // yaw (degrees, + is CCW from top)
@@ -220,7 +194,7 @@ public class Scripter extends Command {
     	(new Delay( msecs)).start();
     }
  
-    private void branchOnLocation( String lbl1, String lbl2, String lbl3) {  	
+    private void branchOnPosition( String lbl1, String lbl2, String lbl3) {  	
     	if(debug)
     		System.out.format( "Scripter.branchOnLocation %s %s %s\n", lbl1, lbl2, lbl3);
     	
@@ -240,16 +214,31 @@ public class Scripter extends Command {
     	}
     }
     
-    private void branchOnColor(String lblB, String lblR) {
+    private void branchOnColorAndPosition(String lblB1, String lblB2, String lblB3, 
+    		String lblR1, String lblR2, String lblR3) {
     	if(debug)
-    		System.out.format("Scripter.branchOnColor %s %s %s\n", lblB, lblR);
+    		System.out.format("Scripter.branchOnColorAndPosition %s %s %s %s %s %s\n", 
+    				lblB1, lblB2, lblB3, lblR1, lblR2, lblR3);
     	
-    	if(Robot.visionSubsystem.isBlueAlliance()) {
-    		doGoto(lblB);
+    	if(Robot.visionSubsystem.isBlueAlliance() && position == 1) {
+    		doGoto(lblB1);
     	}
-    	else {
-    		doGoto(lblR);
+    	else if(Robot.visionSubsystem.isBlueAlliance() && position == 2){
+    		doGoto(lblB2);
     	}
+    	else if(Robot.visionSubsystem.isBlueAlliance() && position == 3){
+    		doGoto(lblB3);
+    	}
+    	else if(Robot.visionSubsystem.isRedAlliance() && position == 1){
+    		doGoto(lblR1);
+    	}
+    	else if(Robot.visionSubsystem.isRedAlliance() && position == 2){
+    		doGoto(lblR2);
+    	}
+    	else if(Robot.visionSubsystem.isRedAlliance() && position == 3){
+    		doGoto(lblR3);
+    	}
+    	else throw new IllegalArgumentException("Scripter.branchOnColorAndPosition");
     }
      
     private void turnBy( double yaw) {

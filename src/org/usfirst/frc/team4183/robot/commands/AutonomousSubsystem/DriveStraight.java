@@ -32,7 +32,8 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	private final double DEAD_ZONE_INCH = 0.5;
 	
 	// Settled detector lookback for dead zone
-	private final long SETTLED_MSECS = 100;
+	// I would NOT go lower than 150 because of Java thread jitter
+	private final long SETTLED_MSECS = 150;
 	
 	// Used to determine when done.
 	// Also used to detect if we've hit something and stopped short of final distance.
@@ -53,7 +54,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	private SettledDetector settledDetector; 
 	private SettledDetector hangupDetector;
 	
-	private boolean WRITE_LOG_FILE = true;
+	private boolean WRITE_LOG_FILE = false;
 	private static LogWriterFactory logFactory = new LogWriterFactory("DriveStraight");
 	private LogWriterFactory.Writer logWriter;
 
