@@ -25,26 +25,6 @@ public class Scripter extends Command {
 	// positions 1 & 3 start points are 7' left & right of center line respectively,
 	// position 2 start point is on center line (directly facing gear peg)
 	// 
-//	private String[][] script = {
-//			{"",		"DriveStraight 12.0"},
-//			{"", 		"TurnBy -90.0"},
-//			{"",		"DriveStraight 12.0"},
-//			{"", 		"TurnBy -90.0"},
-//			{"", 		"DriveStraight 12.0"},
-//			{"", 		"TurnBy -90.0"},
-//			{"", 		"DriveStraight 12.0"},
-//			{"", 		"TurnBy 90.0"},
-//			{"", 		"DriveStraight 12.0"},
-//			{"", 		"TurnBy 90.0"},
-//			{"", 		"DriveStraight 12.0"},
-//			{"", 		"TurnBy 90.0"},
-//			{"", 		"DriveStraight 12.0"},
-//			{"", 		"TurnBy 90.0"},
-//			{"", 		"DriveStraight 12.0"},
-//			{"", 		"TurnBy -90.0"},
-//			{"", 		"End"}
-//	};
-	
 
 
 	private String[][] script = {

@@ -32,10 +32,13 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private final double DEAD_ZONE_DEG = 1.0;
 
 	// Settled detector lookback for dead zone
-	private final long SETTLED_MSECS = 200;
+	// I would NOT go lower than 150 because of Java thread jitter
+	private final long SETTLED_MSECS = 150;
 	
 	// Also used to determine when done
-	private final double STOPPED_RATE_DPS = 0.5;
+	// (note, this isn't really as big as it looks, the IMU-reported yawrate
+	// is about 9x higher than the real yaw rate)
+	private final double STOPPED_RATE_DPS = 10.0;
 		
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 3.0;
@@ -48,7 +51,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private SettledDetector settledDetector;
 		
 
-	private boolean WRITE_LOG_FILE = true;
+	private boolean WRITE_LOG_FILE = false;
 	private static LogWriterFactory logFactory = new LogWriterFactory("TurnBy");
 	private LogWriterFactory.Writer logWriter;
 	

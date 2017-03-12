@@ -14,9 +14,7 @@ import edu.wpi.first.wpilibj.command.Command;
  *
  */
 public class DriverControl extends Command 
-{
-	OI.ButtonEvent btnBackup;
-	
+{	
     public DriverControl() 
     {
         // Use requires() here to declare subsystem dependencies
@@ -32,7 +30,6 @@ public class DriverControl extends Command
     		                      LightingControl.COLOR_ORANGE,
     		                      0,	// nspace - don't care
     		                      0);	// period_msec - don't care
-    	btnBackup = OI.getBtnEvt(OI.btnBackup);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -53,9 +50,7 @@ public class DriverControl extends Command
     	{
     		return CommandUtils.stateChange(this, new AlignLock());
     	}
-    	else if(btnBackup.onPressed()) {
-    		CommandUtils.stateChange(this, new DriveStraight(-1.0));
-    	}
+    	
         return false;
     }
 

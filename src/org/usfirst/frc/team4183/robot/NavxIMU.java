@@ -59,6 +59,12 @@ public class NavxIMU {
 		return -ahrs.getAngle();
 	}
 
+	// Note: this number is not accurate - it is reading maybe 9x too high?
+	// I should be able to use ahrs.getRate(), but THAT doesn't work either
+	// (it seems to be reading along the wrong axis? Who knows).
+	// So this is only good enough to use to determine when the yaw rate is
+	// becomes small (not moving).
+	// When stopped, it's reliably below 1.0.
 	public synchronized double getYawRateDps() {
 		
 		if( !isConnected()) {
@@ -71,7 +77,7 @@ public class NavxIMU {
 		}
 		
 		// Need the - sign to get the Navx to agree with the yaw definition		
-		return -ahrs.getRate();
+		return -ahrs.getRawGyroZ();
 	}
 	
 	public synchronized double getFwdAccel_G() {
