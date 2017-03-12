@@ -47,6 +47,14 @@ public class Scripter extends Command {
 //	};
 	
 	private String[][] script = {
+			{"",	"StartShooter"},
+			{"",	"Delay 3000"},
+			{"",	"Shoot"},
+			{"",	"End"}
+	};
+	
+	/*
+	private String[][] script = {
 			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" },  // Goto label 1,2,3 based on operator position
 			{"Loc1", 	"DriveStraight 82.2" },  // Inch
 			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
@@ -83,8 +91,7 @@ public class Scripter extends Command {
 			{"Shoot",   "Shoot"},
 			{"End", 	"End" }						// MUST finish in End state
 	};
-	
-	
+	*/
 	
 	// Test small moves to make sure MIN_DRIVEs big enough.
 	// e.g. TurnBy 5, DriveStraight 3.
@@ -342,6 +349,7 @@ public class Scripter extends Command {
     }
     
     private void shoot() {
+    	/*
     	/// TODO: The following technique was used because
     	/// there was some trouble trying to get a logical button
     	/// press to induce a button event at the ball subsystem state machine
@@ -351,5 +359,10 @@ public class Scripter extends Command {
     	while(System.currentTimeMillis() - timeInit < 4000) {
     		Robot.ballManipSubsystem.setConveyerOn();
     	}
+    	*/
+    	
+    	// Also try 
+    	// OI.btnShoot.hit(4000);
+    	OI.btnShoot.push();
     }
 }

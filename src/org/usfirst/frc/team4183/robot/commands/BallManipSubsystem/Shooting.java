@@ -46,10 +46,7 @@ public class Shooting extends Command {
     		Robot.ballManipSubsystem.setConveyerOff();
     		return CommandUtils.stateChange(this, new WaitingForTrigger());
     	}
-    	if(!OI.sbtnShoot.get() && Robot.runMode.equals(Robot.RunMode.AUTO)) {
-    		Robot.ballManipSubsystem.setConveyerOff();
-    		return CommandUtils.stateChange(this, new Idle());
-    	}
+
     	if(OI.btnIdle.get()) {
     		return CommandUtils.stateChange(this, new Idle());
     	}
