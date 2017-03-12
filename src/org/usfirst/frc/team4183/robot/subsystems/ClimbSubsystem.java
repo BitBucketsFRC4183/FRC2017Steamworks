@@ -13,7 +13,8 @@ public class ClimbSubsystem extends Subsystem {
 
 	private static final double CLIMB_MOTOR_SPEED_PVBUS = 1.0;
 	private static final double CLIMB_MOTOR_CURRENT_LIMIT_AMPS = 35.0;
-	private CANTalon climbMotor;
+	private CANTalon climbMotorA;
+	private CANTalon climbMotorB; 
 	private DigitalInput leftSwitch; 
 	private DigitalInput rightSwitch;
 	
@@ -25,9 +26,10 @@ public class ClimbSubsystem extends Subsystem {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 	public ClimbSubsystem(){
-		climbMotor = new CANTalon(RobotMap.CLIMB_MOTOR_ID);
+		climbMotorA = new CANTalon(RobotMap.CLIMB_MOTOR_A_ID);
 		leftSwitch = new DigitalInput(RobotMap.LEFT_SWITCH_PORT);
 		rightSwitch = new DigitalInput(RobotMap.RIGHT_SWITCH_PORT);
+		climbMotorB = new CANTalon(RobotMap.CLIMB_MOTOR_B_ID);
 	}
 	
 	// Only call this from an Idle state
@@ -46,22 +48,26 @@ public class ClimbSubsystem extends Subsystem {
 	
 	public void disable() {
 		climbSolenoid.set(DoubleSolenoid.Value.kForward);
-		climbMotor.set(0.0);
+		climbMotorA.set(0.0);
+		climbMotorB.set(0.0);
 	}
 	
 	public void off()
 	{
-		climbMotor.set(0.0);
+		climbMotorA.set(0.0);
+		climbMotorB.set(0.0);
 	}
 	public void onForward()
 	{
 		lastDirectionForward = true;
-		climbMotor.set(-CLIMB_MOTOR_SPEED_PVBUS);
+		climbMotorA.set(-CLIMB_MOTOR_SPEED_PVBUS);
+		climbMotorB.set(-CLIMB_MOTOR_SPEED_PVBUS);
 	}
 	public void onReverse()
 	{	
 		lastDirectionForward = false;
-		climbMotor.set(CLIMB_MOTOR_SPEED_PVBUS);
+		climbMotorA.set(CLIMB_MOTOR_SPEED_PVBUS);
+		climbMotorB.set(CLIMB_MOTOR_SPEED_PVBUS);
 	}
 	
 	public boolean isForward()
@@ -80,7 +86,16 @@ public class ClimbSubsystem extends Subsystem {
 	
 	public double getCurrent()
 	{
-		return climbMotor.getOutputCurrent();
+		double climbMotorACurrent = climbMotorA.getOutputCurrent();
+		double climbMotorBCurrent = climbMotorB.getOutputCurrent();
+		if (climbMotorACurrent > climbMotorBCurrent)
+		{
+			return climbMotorACurrent;  
+		}
+		else
+		{
+			return climbMotorBCurrent; 
+		}
 	}
 	
 	public boolean isPastCurrentLimit()
