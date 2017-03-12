@@ -46,9 +46,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private RateLimit rateLimit;
 	private MinMaxDeadzone deadZone;
 	private SettledDetector settledDetector;
-	
-	private double zeroPoint = 0.0;
-	
+		
 
 	private boolean WRITE_LOG_FILE = true;
 	private static LogWriterFactory logFactory = new LogWriterFactory("TurnBy");
@@ -64,8 +62,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	@Override
 	protected void initialize() {
 		// Compute setPoint
-		zeroPoint =  Robot.imu.getYawDeg();
-		double setPoint = degreesToTurn;
+		double setPoint = degreesToTurn + Robot.imu.getYawDeg();
 		
 		// Make helpers
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
@@ -124,7 +121,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	
 	@Override
 	public double getFeedback() {
-		return (540 + Robot.imu.getYawDeg() - zeroPoint)%360 - 180;
+		return Robot.imu.getYawDeg();
 	}
 	
 	@Override
