@@ -17,7 +17,8 @@ public class BallManipSubsystem extends Subsystem {
 	private CANTalon conveyerMotor;
 	private CANTalon sweeperMotor;
 	
-	private final double SHOOTER_RPM = -3800.0; //speed of top roller when shooting
+	private final double TELEOP_SHOOTER_RPM = -3800.0; //speed of top roller when shooting
+	private final double AUTO_SHOOTER_RPM = -5400.0;
 	private final double INTAKE_RPM = -500.0;   //speed of top roller when intake
 	private final double UNJAM_RPM = 500.0;
 	private final double CONVEYOR_DRIVE = 0.8;	//open loop control of conveyer in fraction vbus
@@ -51,6 +52,8 @@ public class BallManipSubsystem extends Subsystem {
 		topRollerMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_TOP_ROLLER_MOTOR_ID);
 		conveyerMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_CONVEYER_MOTOR_ID);
 		sweeperMotor = new CANTalon(RobotMap.BALL_SUBSYSTEM_SWEEPER_MOTOR_ID);
+		
+		SmartDashboard.putNumber("Top Motor Speed", 0.0);
 		
 		initializeMotorModes();
 	}
@@ -94,9 +97,17 @@ public class BallManipSubsystem extends Subsystem {
     public void setTopRollerToIntakeSpeed(){
     	topRollerMotor.set(INTAKE_RPM);
     }
+    
+    public void setTopRollerToAutoShootingSpeed() {
+    	topRollerMotor.set(AUTO_SHOOTER_RPM);
+    }
           
     public void setTopRollerToShootingSpeed(){
-    	topRollerMotor.set(SHOOTER_RPM);
+    	topRollerMotor.set(TELEOP_SHOOTER_RPM);
+    }
+    
+    public void setTopRollerToSpeed(double SHOOT_SPEED) {
+    	topRollerMotor.set(SHOOT_SPEED);
     }
     
 	public void setTopRollerOff(){

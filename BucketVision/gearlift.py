@@ -46,18 +46,20 @@ class GearLift:
         self.__filter_contours_max_ratio = 1000.0
 
         self.filter_contours_output = None
+        
+        self.lastCenterX = float('NaN')
+        self.lastCenterY = float('NaN')
+        self.lastDistance_inches = float('NaN')
+        self.lastCenter_deg = float('NaN')
 
 
     def process(self, source0):
         """
         Runs the pipeline and sets all outputs to new values.
         """
-##        # Step Blur:
-        self.__blur_image_input = source0
-        (self.blur_image_output) = self.__blur_image_input #self.__blur_image(self.__blur_image_input, self.__resize_image_width)
 
         # Step HSL_Threshold0:
-        self.__hsl_threshold_input = self.blur_image_output
+        self.__hsl_threshold_input = source0
         (self.hsl_threshold_output) = self.__hsl_threshold(self.__hsl_threshold_input, self.__hsl_threshold_hue, self.__hsl_threshold_saturation, self.__hsl_threshold_luminance)
 
         # Step Find_Contours0:
@@ -68,7 +70,7 @@ class GearLift:
         self.__filter_contours_contours = self.find_contours_output
         (self.filter_contours_output) = self.__filter_contours(self.__filter_contours_contours, self.__filter_contours_min_area, self.__filter_contours_min_perimeter, self.__filter_contours_min_width, self.__filter_contours_max_width, self.__filter_contours_min_height, self.__filter_contours_max_height, self.__filter_contours_solidity, self.__filter_contours_max_vertices, self.__filter_contours_min_vertices, self.__filter_contours_min_ratio, self.__filter_contours_max_ratio)
 
-        # TODO: Optionally draw the contours for debug
+        # Optionally draw the contours for debug
         # For now, just uncomment as needed
         #cv2.drawContours(source0, self.find_contours_output, -1, (0,255,0), 3)
 
@@ -79,12 +81,12 @@ class GearLift:
         # at some angle (i.e, not aligned to screen)
         # In either case we can use the information to identify
         # our intended target
-        detection = []        # List for items that have both angle and shape we want
+        detections = []        # List for items that have both angle and shape we want
         detectionType = []
         other = []            # List for other objects that have correct angle, but are wrong shape
         for cnt in self.filter_contours_output:
 
-            # Striaght rectangle thusly
+            # Straight rectangle thusly
             #x,y,w,h = cv2.boundingRect(cnt)
 
             # Minimum area rectangle (i.e., rotated)
@@ -112,7 +114,9 @@ class GearLift:
             # as the image is useless at this point
             #
             # NOTE: Limits are based on empircal data of approx 9 inches
-            if ((w >= 50) or (h >= 120)):
+            # from the camera plane, computed as follows
+            #   d ~ 1441.452/h --> h ~ 1441.452/d
+            if (h >= 160): # Which also happens to be 1/2 of current resolution
                 continue
             
             ratio = w / h
@@ -135,7 +139,7 @@ class GearLift:
             if (angle_deg <= 5.0):
                 if (0.25 <= ratio <= 0.45):        # 2"/5" --> 0.4 + tolerance
 
-                    detection.append(rect)
+                    detections.append(rect)
                     detectionType.append('Strong')
                     
                     # Identify angled bounding box and display
@@ -165,7 +169,7 @@ class GearLift:
                     ynew = top + hnew/2 # New center
                     
                     rect = ((x,ynew),(w,hnew),angle_deg)
-                    detection.append(rect)
+                    detections.append(rect)
                     detectionType.append('Truncated')
                 
                     # Identify angled bounding box and display
@@ -281,7 +285,7 @@ class GearLift:
                             matchFound.insert(j + i,True)
                             
                             rect = ((x,y),(w,h),a)
-                            detection.append(rect)
+                            detections.append(rect)
                             detectionType.append('Merged')
                         
                             # Identify angled bounding box and display
@@ -293,7 +297,7 @@ class GearLift:
 
         # If there are any detections we need to sift through them for a pair
         # that is on the same horizon but below the highest expected point on the image
-        numDetections = len(detection)
+        numDetections = len(detections)
         
 
         # If there are more than 2 candidates we need to remove items that don't
@@ -302,72 +306,143 @@ class GearLift:
         # In particular, candidates need to be within the correct ratios
         # to each other and on the same horizon (again within our 5 degree tolerance)
         #
-        # TODO: For now we will just assume two, but we may want to add this later
+        observations = []
+        observationsVerified = False
+        if (numDetections > 2):
+            i = 0
+            for di in detections:
+                i = i + 1
+                xi = di[0][0]
+                yi = di[0][1]
+                wi = di[1][0]
+                hi = di[1][1]
+                
+                for dj in detections[i:]:
+                    xj = dj[0][0]
+                    yj = dj[0][1]
+                    wj = dj[1][0]
+                    hj = dj[1][1]
+
+                    # Using abs() since we don't care which detection is right or left
+                    deltaX = abs(xi - xj)
+                    distanceRatioX = deltaX / ((wi + wj)/2)  # Distance ratio using retro tape width as common factor
+                    expectedRatioX = 4.125             # (10.25 - 2.0) / 2.0 inches
+                    ratioToleranceX = 0.5            # Corresponds to 1" over the 2" baseline
+                    lowRatioX = expectedRatioX - ratioToleranceX
+                    highRatioX = expectedRatioX + ratioToleranceX
+                    
+                    
+                    # Expect the centers to be close to each other
+                    # Allowing for up to a 5 degree camera tilt there
+                    # could be as much as a 0.75" difference in center
+                    #         tan(5 deg) * 8.25" = 0.72"
+                    # Allowing for some tolerance anything less than 1" out of 5" (--> 0.2)
+                    # is acceptable
+                    deltaY = abs(yi - yj)
+                    distanceRatioY = deltaY / ((hi + hj)/2)
+                    expectedRatioY = 0.2
+                    
+                    if ((lowRatioX <= distanceRatioX <= highRatioX) and
+                        (distanceRatioY <= expectedRatioY)):
+                        # This is the droid I am looking for
+                        observations.append(di)
+                        observations.append(dj)
+                        observationsVerified = True
+                        break
+                
+                if (observations != []):
+                    break
+        else:
+            observations = detections
+                    
+        
+        numObservations = len(observations)
         
         # Draw thin line down center of screen
         cv2.line(source0,(320/2,0),(320/2,240),(255,0,0),1)
         
-        if (numDetections == 2):
-            # Having exactly two (2) detections is the easy case
+        nan = float('NaN')
         
-            # Verify that the y positions are on the same level (within tolerance)
-            # and that distance between the targets (x) agrees with the documented
-            # distance of 10.25" (outer edges), again within tolerance
-            
-            x1 = detection[0][0][0]
-            y1 = detection[0][0][1]
-            w1 = detection[0][1][0]
-            h1 = detection[0][1][1]
-            
-            
-            x2 = detection[1][0][0]
-            y2 = detection[1][0][1]
-            w2 = detection[1][1][0]
-            h2 = detection[1][1][1]
-            
-            # Using abs() since we don't care which detection is right or left
-            deltaX = abs(x2 - x1)
-            distanceRatioX = deltaX / ((w1 + w2)/2)  # Distance ratio using retro tape width as common factor
-            expectedRatioX = 4.125             # (10.25 - 2.0) / 2.0 inches
-            ratioToleranceX = 0.5            # Corresponds to 1" over the 2" baseline
-            lowRatioX = expectedRatioX - ratioToleranceX
-            highRatioX = expectedRatioX + ratioToleranceX
-            
-            #self.networkTable.putNumber("GearDeltaX",deltaX)
-            #self.networkTable.putNumber("GearRatioX",distanceRatioX)
-            
-            # Expect the centers to be close to each other
-            # Allowing for up to a 5 degree camera tilt there
-            # could be as much as a 0.75" difference in center
-            #         tan(5 deg) * 8.25" = 0.72"
-            # Allowing for some tolerance anything less than 1" out of 5" (--> 0.2)
-            # is acceptable
-            deltaY = abs(y2 - y1)
-            distanceRatioY = deltaY / ((h1 + h2)/2)
-            expectedRatioY = 0.2
-            
-            #self.networkTable.putNumber("GearDeltaY",deltaY)
-            #self.networkTable.putNumber("GearRatioY",distanceRatioY)
-            
-            #self.networkTable.putNumber("GearSide1_x",x1)
-            #self.networkTable.putNumber("GearSide1_y",y1)
-            #self.networkTable.putNumber("GearSide1_w",w1)
-            #self.networkTable.putNumber("GearSide1_h",h1)
-            #self.networkTable.putNumber("GearSide1_A",h1 * w1)
-            
-            #self.networkTable.putNumber("GearSide2_x",x2)
-            #self.networkTable.putNumber("GearSide2_y",y2)
-            #self.networkTable.putNumber("GearSide2_w",w2)
-            #self.networkTable.putNumber("GearSide2_h",h2)
-            #self.networkTable.putNumber("GearSide2_A",h2 * w2)
+        if (numObservations == 2):
+            # Having exactly two (2) observations is the easy case
+        
+            # NOTE: If the observations were already verified there is no
+            # need to recheck the ratios
+
+            x1 = observations[0][0][0]
+            y1 = observations[0][0][1]
+            w1 = observations[0][1][0]
+            h1 = observations[0][1][1]
             
             
-            if ((lowRatioX <= distanceRatioX <= highRatioX) and
-                (distanceRatioY <= expectedRatioY)):
+            x2 = observations[1][0][0]
+            y2 = observations[1][0][1]
+            w2 = observations[1][1][0]
+            h2 = observations[1][1][1]
+            
+            if (observationsVerified == False):
+                # Verify that the y positions are on the same level (within tolerance)
+                # and that distance between the targets (x) agrees with the documented
+                # distance of 10.25" (outer edges), again within tolerance
+                
+                # Using abs() since we don't care which detection is right or left
+                deltaX = abs(x2 - x1)
+                distanceRatioX = deltaX / ((w1 + w2)/2)  # Distance ratio using retro tape width as common factor
+                expectedRatioX = 4.125             # (10.25 - 2.0) / 2.0 inches
+                ratioToleranceX = 0.5            # Corresponds to 1" over the 2" baseline
+                lowRatioX = expectedRatioX - ratioToleranceX
+                highRatioX = expectedRatioX + ratioToleranceX
+                
+                #self.networkTable.putNumber("GearDeltaX",deltaX)
+                #self.networkTable.putNumber("GearRatioX",distanceRatioX)
+                
+                # Expect the centers to be close to each other
+                # Allowing for up to a 5 degree camera tilt there
+                # could be as much as a 0.75" difference in center
+                #         tan(5 deg) * 8.25" = 0.72"
+                # Allowing for some tolerance anything less than 1" out of 5" (--> 0.2)
+                # is acceptable
+                deltaY = abs(y2 - y1)
+                distanceRatioY = deltaY / ((h1 + h2)/2)
+                expectedRatioY = 0.2
+                
+                #self.networkTable.putNumber("GearDeltaY",deltaY)
+                #self.networkTable.putNumber("GearRatioY",distanceRatioY)
+                
+                #self.networkTable.putNumber("GearSide1_x",x1)
+                #self.networkTable.putNumber("GearSide1_y",y1)
+                #self.networkTable.putNumber("GearSide1_w",w1)
+                #self.networkTable.putNumber("GearSide1_h",h1)
+                #self.networkTable.putNumber("GearSide1_A",h1 * w1)
+                
+                #self.networkTable.putNumber("GearSide2_x",x2)
+                #self.networkTable.putNumber("GearSide2_y",y2)
+                #self.networkTable.putNumber("GearSide2_w",w2)
+                #self.networkTable.putNumber("GearSide2_h",h2)
+                #self.networkTable.putNumber("GearSide2_A",h2 * w2)
+                
+                
+                if ((lowRatioX <= distanceRatioX <= highRatioX) and
+                    (distanceRatioY <= expectedRatioY)):
+                    
+                    observationsVerified = True
+            
+            # If either the original check or the check above verified
+            # the observation pair, then we can indicate high confidence
+            # and provide data
+            # Otherwise, there is probably something wrong with one or more
+            # of the observations can we can't be certain which one to use
+            # without guessing (e.g., we could assume that items closer to
+            # the center might be the real target, but it would be just a
+            # guess...albeit probably a good guess because initial positioning
+            # should have gotten it close)
+            if (observationsVerified == True):
                 # Target confidence is high
                 self.networkTable.putNumber("GearConfidence",1.0)
                 
                 # Estimate distance from power curve fit (R-squared = 0.9993088900150656)
+                # Note that this curve is NOT precisely a 1/x relationship becase the
+                # image is slightly distorted 
                 distance_inches = 2209.78743431602 * (deltaX ** -0.987535082840163)
                 self.networkTable.putNumber("GearDistance_inches",distance_inches)
                 centerX = (x1+x2)/2
@@ -376,64 +451,125 @@ class GearLift:
                 radius = 0.1*(h1+h2)/2      # w/h = 2/5 = 0.4 thus 0.5" is 0.1
                 
                 centerFraction = ((2.0*centerX)/320.0) - 1.0 # cam res is 320, avg & scale cancel
-                center_deg = 55 * centerFraction
+                center_deg = 31.6 * centerFraction
                 self.networkTable.putNumber("GearCenterX",centerFraction)
                 self.networkTable.putNumber("GearCenter_deg",center_deg)
-
+    
                 # Target center within radius if screen center will be green
                 # otherwise yellow until center is beyond middle 1/3rd of FOV
                 if (abs(320/2 - centerX) <= radius):
                     color = (0,255,0)
-                elif (abs(centerFraction) <= (1.0/3.0)):
+                elif (center_deg <= 20.0):
                     color = (0,255,255)
                 else:
                     color = (0,0,255)
-
+    
                 cv2.circle(source0, (int(centerX), int(centerY)), int(radius), color, 2)
                 
+                self.lastCenterX = centerX
+                self.lastCenterY = centerY
+                self.lastDistance_inches = distance_inches
+                self.lastCenter_deg = center_deg
+        
             else:
-                
-                self.networkTable.putNumber("GearConfidence",0.0)
-                self.networkTable.putNumber("GearDistance_inches",float('NaN'))
-                self.networkTable.putNumber("GearCenterX",float('NaN'))
-                self.networkTable.putNumber("GearCenter_deg",float('NaN'))
+                # We simply don't have any good information to go on
+                # I.e., in this case there were two observations that did not
+                # correlate to the known parameters and it would have simply
+                # been better if we only had one since now we don't know which
+                # to pick; as explained, above, anything we attempt is just
+                # a guess.
 
-                # Things don't appear to be what we think they are
-                # several things could be wrong
-                #    1.    Spring could be obscuring one side splitting
-                #       the image into two smaller pieces
+                self.networkTable.putNumber("GearConfidence",0.0)
+                self.networkTable.putNumber("GearDistance_inches",nan)
+                self.networkTable.putNumber("GearCenterX",nan)
+                self.networkTable.putNumber("GearCenter_deg",nan)
+                
+                # Reset the last known values 
+                self.lastCenterX = nan
+                self.lastCenterY = nan
+                self.lastDistance_inches = nan
+                self.lastCenter_deg = nan
+
         elif (numDetections == 1):
+            
             # Do a single target distance estimate
-            x1 = detection[0][0][0]
-            y1 = detection[0][0][1]
-            w1 = detection[0][1][0]
-            h1 = detection[0][1][1]
+            x1 = observations[0][0][0]
+            y1 = observations[0][0][1]
+            w1 = observations[0][1][0]
+            h1 = observations[0][1][1]
+            
             self.networkTable.putNumber("GearConfidence",0.5)
             distance_inches = 1441.45246948352 * (h1 ** -1.014995518927)
-            self.networkTable.putNumber("GearDistance_inches",distance_inches)
             
             centerX = x1
             centerY = y1
             radius = 0.1*h1     # w/h = 2/5 = 0.4 thus 0.5" is 0.1
             
             centerFraction = ((2.0*centerX)/320.0) - 1.0    # cam res is 320, avg & scale cancel
-            center_deg = 55 * centerFraction
-            self.networkTable.putNumber("GearCenterX",centerFraction)
-            self.networkTable.putNumber("GearCenter_deg",center_deg)
-
-            # circle with arrows
+            center_deg = 31.6 * centerFraction
+            
+            # If last known value is within tolerance of current single
+            # observation, just return the last known value and draw an arrow
+            # to the expected (last) location
+            # The expected location is 4.125 inches to the right/left of
+            # the center of the single observation... allow for falling within a 2"
+            # diameter
+            # Using the current height data as 5 inches we estimate where
+            # the previous center is expected
+            
+            # Using abs() since we don't care which detection is right or left
+            deltaX = abs(self.lastCenterX - centerX)
+            distanceRatioX = deltaX / h1  # Distance ratio using retro tape height as common factor
+            expectedRatioX = 4.125 / 5.0
+            ratioToleranceX = 0.2            # Corresponds to 1" over the 5" baseline
+            lowRatioX = expectedRatioX - ratioToleranceX
+            highRatioX = expectedRatioX + ratioToleranceX
+            
+            # circle with arrows in the direction of last known value
             centerX = int(centerX)
             centerY = int(centerY)
             cv2.circle(source0, (centerX, centerY), int(radius), (0,255,255),1)
             w1 = int(w1)
-            cv2.arrowedLine(source0, (centerX,centerY), (centerX + 2*w1, centerY), (0,255,255),2)
-            cv2.arrowedLine(source0, (centerX,centerY), (centerX - 2*w1, centerY), (0,255,255),2)
+
+            if (lowRatioX <= distanceRatioX <= highRatioX):
+                # Last known value was within tolerance of current observation
+                # Send back last observation data and draw single arrow in
+                # that direction
+                self.networkTable.putNumber("GearDistance_inches",self.lastDistance_inches)                
+                self.networkTable.putNumber("GearCenterX",self.lastCenterX)
+                self.networkTable.putNumber("GearCenter_deg",self.lastCenter_deg)
+                
+                # Target center within radius if screen center will be green
+                # otherwise yellow until center is beyond middle 1/3rd of FOV
+                if (abs(320/2 - self.lastCenterX) <= radius):
+                    color = (0,255,0)
+                elif (abs(self.lastCenter_deg) <= 20.0):
+                    color = (0,255,255)
+                else:
+                    color = (0,0,255)
+    
+                cv2.circle(source0, (int(self.lastCenterX), int(self.lastCenterY)), int(radius), color, 2)
+                cv2.line(source0, (centerX,centerY), (int(self.lastCenterX), int(self.lastCenterY)), color,2)
+            else:            
+                self.networkTable.putNumber("GearDistance_inches",distance_inches)                
+                self.networkTable.putNumber("GearCenterX",centerFraction)
+                self.networkTable.putNumber("GearCenter_deg",center_deg)
+                cv2.arrowedLine(source0, (centerX,centerY), (centerX + 2*w1, centerY), (0,255,255),2)
+                cv2.arrowedLine(source0, (centerX,centerY), (centerX - 2*w1, centerY), (0,255,255),2)
+
+
                         
         else:
             self.networkTable.putNumber("GearConfidence",0.0)
-            self.networkTable.putNumber("GearDistance_inches",float('NaN'))
-            self.networkTable.putNumber("GearCenterX",float('NaN'))
-            self.networkTable.putNumber("GearCenter_deg",float('NaN'))    
+            self.networkTable.putNumber("GearDistance_inches",nan)
+            self.networkTable.putNumber("GearCenterX",nan)
+            self.networkTable.putNumber("GearCenter_deg",nan)
+            
+            # Reset the last known values 
+            self.lastCenterX = nan
+            self.lastCenterY = nan
+            self.lastDistance_inches = nan
+            self.lastCenter_deg = nan
             
         return (self.find_contours_output, self.filter_contours_output)
 

@@ -15,11 +15,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *
  */
 public class MeasureGear extends Command {
-	
-
-		
+			
 	// Number for non-NAN samples needed before acting
-	private final int REQUIRED_SAMPLES = 30;
+	private final int REQUIRED_SAMPLES = 15;
 
 	private final boolean SD_DEBUG = true;
 	private int totCnt = 0, nanCnt = 0;
@@ -41,27 +39,19 @@ public class MeasureGear extends Command {
     	double yawSample = Robot.visionSubsystem.getGearAngle_deg();
     	if( !Double.isNaN(yawSample)) {
     		yawSamples.add(yawSample);
-    		
-    		if( SD_DEBUG) 
-    			SmartDashboard.putNumber("GearYaw", yawSample);
     	}
     	else 
     		nanCnt++;
     	
     	
     	double distSample 
-    		= Robot.visionSubsystem.getGearDistance_ft();
+    		= Robot.visionSubsystem.getGearDistance_inch();
     	
     	if( !Double.isNaN(distSample)) {
     		distSamples.add(distSample);
-    		if( SD_DEBUG) 
-    			SmartDashboard.putNumber("GearDist", yawSample);
     	}
     	else
-    		nanCnt++;
-    	
-    	if( SD_DEBUG)
-    		SmartDashboard.putNumber("Pct_NaNs", (100.0*nanCnt)/totCnt);  		
+    		nanCnt++;    	
     }
 
     protected boolean isFinished() {
@@ -75,21 +65,31 @@ public class MeasureGear extends Command {
 
     protected void end() {
     	
-    	// Get median value of the collected samples
+    	if( distSamples.size() == 0)
+    		distSamples.add(Double.NaN);
+    	if( yawSamples.size() == 0)
+    		yawSamples.add(Double.NaN);
+
+		// Get median value of the collected samples
     	Collections.sort(distSamples);
     	double distance = distSamples.get(distSamples.size()/2);
     	Collections.sort(yawSamples);
     	double yaw = yawSamples.get(yawSamples.size()/2);
+    	
 
     	if( SD_DEBUG) {
-    		SmartDashboard.putNumber("GearDist", distance);
-    		SmartDashboard.putNumber("GearYaw", yaw);
-    		SmartDashboard.putNumber("Pct_NaNs", (100.0*nanCnt)/totCnt);  		
+    		SmartDashboard.putString("MeasGearDist", 
+    			String.format("%.1f (%.1f<>%.1f)", 
+    					distance, Collections.min(distSamples), Collections.max(distSamples)));    		
+    		SmartDashboard.putString("MeasGearYaw",
+    			String.format("%.1f (%.1f<>%.1f)", 
+    					yaw, Collections.min(yawSamples), Collections.max(yawSamples)));
+    		SmartDashboard.putString("Pct_NaNs", String.format("%.1f", (100.0*nanCnt)/totCnt) );  		
     	}
 
     	// Stash the measured data for use by subsequent states
-		Scripter.measuredDistance = distance;
-		Scripter.measuredYaw = yaw;		
+		Scripter.measuredDistance_inch = distance;
+		Scripter.measuredYaw_deg = yaw;		
     }
 
     // Called when another command which requires one or more of the same

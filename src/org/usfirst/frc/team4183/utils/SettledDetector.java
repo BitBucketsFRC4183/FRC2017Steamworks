@@ -13,7 +13,7 @@ public class SettledDetector{
 	}
 	
 	public void set(double error) {
-		if (Math.abs(error) > allowedError) {
+		if (Math.abs(error) >= allowedError) {
 			tlast = System.currentTimeMillis();
 		}		
 	}

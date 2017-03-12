@@ -1,5 +1,7 @@
 package org.usfirst.frc.team4183.robot.subsystems;
 
+// Go to 10.41.83.31/cam.mjpg
+
 import org.usfirst.frc.team4183.robot.commands.VisionSubsystem.Idle;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -32,10 +34,7 @@ public class VisionSubsystem extends Subsystem
 	
 	private static String currentCam = FRONT_CAM;
 	private static String currentFrontCamMode = GEAR_LIFT_MODE;
-	
-	// Want to stop when camera distance to gear target equals this
-	private static final double GEAR_STOP_DIST_INCHES = 12.0;  // TODO value
-	
+		
 	public static DriverStation.Alliance currentAllianceColor = DriverStation.Alliance.Red;
 	public static int currentAllianceLocation = 1;
 	
@@ -81,10 +80,9 @@ public class VisionSubsystem extends Subsystem
 		driverStation = DriverStation.getInstance();
 		
 	}
-	public double getGearDistance_ft() 
+	public double getGearDistance_inch() 
 	{
-		return (bvtable.getNumber(GEAR_DISTANCE_KEY, Double.NaN) 
-				- GEAR_STOP_DIST_INCHES)/12.0;
+		return bvtable.getNumber(GEAR_DISTANCE_KEY, Double.NaN);
 	}
 	
 	public double getGearAngle_deg()
