@@ -50,11 +50,12 @@ public class WaitingForShooterSpeed extends Command {
     	if(OI.btnIdle.get()) {
     		return CommandUtils.stateChange(this, new Idle());
     	}    	
-    	 
+    
     	if( settledDetector.isSettled()) {
     		return CommandUtils.stateChange(this, new WaitingForTrigger());
     	}
-        return false;
+    	
+    	return false;
     }
 
     // Called once after isFinished returns true
