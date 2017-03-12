@@ -46,6 +46,8 @@ public class Scripter extends Command {
 //			{"", 		"End"}
 //	};
 	
+
+
 	private String[][] script = {
 			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" },  // Goto label 1,2,3 based on operator position
 			{"Loc1", 	"DriveStraight 82.2" },  // Inch
@@ -81,10 +83,10 @@ public class Scripter extends Command {
 			{"Blue3",   "DriveStraight -12.0"},
 			{"",        "Goto End"},
 			{"Shoot",   "Shoot"},
-			{"End", 	"End" }						// MUST finish in End state
+			{"",		"Delay 4000"},  // Have to Delay to allow shoot to happen!!
+			{"End", 	"End" }			// MUST finish in End state
 	};
-	
-	
+
 	
 	// Test small moves to make sure MIN_DRIVEs big enough.
 	// e.g. TurnBy 5, DriveStraight 3.
@@ -96,43 +98,6 @@ public class Scripter extends Command {
 		{"", "End" }    // MUST finish with End!
 	};
 	*/
-	
-	/*
-	// Test just the dead-reckoning part of Gear program
-	String[][] script = {
-			{"", 		"BranchOnLocation Loc1 Loc2 Loc3" }, 
-			{"Loc1", 	"DriveStraight 84" },   
-			{"", 		"TurnBy -60.0" }, 
-			{"",		"Goto Vis" },
-			{"Loc2",	"DriveStraight 29" },
-			{"",		"Goto Vis" },
-			{"Loc3",	"DriveStraight 84" },
-			{"",		"TurnBy 60.0" },
-			{"Vis", 	"EnableVisionGear" },
-			{"",		"Delay 500" },
-			{"",		"MeasureGear" },
-			{"", 		"End" }
-	 };	 
-	 */
-	
-	/*
-	// Test just the Vision part of Gear program
-	String[][] script = {
-			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall (~3' from drop point), looking straight at it
-			{"", 		"Delay 500" },			
-			{"", 		"MeasureGear" },	
-			{"", 		"YawCorrect" },  
-			{"", 		"DistanceCorrect 24.0" },	
-			{"", 		"MeasureGear" },
-			{"", 		"YawCorrect" },
-			{"", 		"DistanceCorrect 15.0" },
-			{"", 		"DeliverGear" },
-			{"",		"Delay 200" },
-			{"", 		"DriveStraight -12.0" }, 
-			{"", 		"End" }					
-	};
-	*/
-	
 
     public Scripter( int position) {
     	// No "requires" - this one stands apart - it's a Meta-State.
@@ -338,18 +303,10 @@ public class Scripter extends Command {
     }  
     
     private void startShooter() {
-    	OI.btnShooterStart.hit();
+    	OI.btnShooterStart.hit(3000);
     }
     
     private void shoot() {
-    	/// TODO: The following technique was used because
-    	/// there was some trouble trying to get a logical button
-    	/// press to induce a button event at the ball subsystem state machine
-    	/// which was looking for an onPressed event (i.e., OI.btnShoot.hit() or press() did not work)
-    	/// Despite this, the technique works and we were able to shoot balls in auto
-    	long timeInit = System.currentTimeMillis();
-    	while(System.currentTimeMillis() - timeInit < 4000) {
-    		Robot.ballManipSubsystem.setConveyerOn();
-    	}
+    	OI.btnShoot.push();
     }
 }

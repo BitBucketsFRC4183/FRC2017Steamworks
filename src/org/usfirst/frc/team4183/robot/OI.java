@@ -128,7 +128,6 @@ public class OI {
 	// Permanent SoftButtons (used for inter-SM communications)
 	//****************************
 	public static LogicalButton sbtnShake = new SoftButton();
-	public static LogicalButton sbtnShoot = new SoftButton();
 
 	
 	// End of public interface
@@ -176,6 +175,7 @@ public class OI {
 		btnAlignLock = new SoftButton();
 		btnDriveLock = new SoftButton();
 		btnAlignAssist = new SoftButton();
+		
 		
 		btnClimbControl = new SoftButton();
 		
@@ -302,7 +302,7 @@ public class OI {
 	
 	// A button that can be operated by software
 	private static class SoftButton implements LogicalButton {
-		volatile boolean state;
+		volatile boolean state = false;
 		@Override
 		public boolean get() { return state; }
 		@Override

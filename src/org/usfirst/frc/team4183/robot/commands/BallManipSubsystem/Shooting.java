@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Shooting extends Command {
 	
-	OI.ButtonEvent btnShooting;
 
     public Shooting() {
         requires(Robot.ballManipSubsystem);
@@ -29,27 +28,21 @@ public class Shooting extends Command {
                 LightingControl.COLOR_ORANGE,
                 0,		// nspace - don't care
                 0);		// period_ms - don't care 
-       	
-    	btnShooting = OI.getBtnEvt(OI.btnShoot);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	Robot.ballManipSubsystem.setConveyerOn();
-    	//Robot.ballManipSubsystem.setTopRollerToSpeed(SmartDashboard.getNumber("Top Motor Speed", 0.0)));
     	Robot.ballManipSubsystem.setTopRollerToShootingSpeed();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(btnShooting.onReleased()) {
+    	if( !OI.btnShoot.get()) {
     		Robot.ballManipSubsystem.setConveyerOff();
     		return CommandUtils.stateChange(this, new WaitingForTrigger());
     	}
-    	if(!OI.sbtnShoot.get() && Robot.runMode.equals(Robot.RunMode.AUTO)) {
-    		Robot.ballManipSubsystem.setConveyerOff();
-    		return CommandUtils.stateChange(this, new Idle());
-    	}
+
     	if(OI.btnIdle.get()) {
     		return CommandUtils.stateChange(this, new Idle());
     	}
