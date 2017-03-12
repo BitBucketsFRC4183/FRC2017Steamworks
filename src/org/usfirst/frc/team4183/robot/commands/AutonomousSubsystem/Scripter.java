@@ -17,7 +17,6 @@ public class Scripter extends Command {
 	private int pc = 0;
 	private final boolean debug = false;
 	private final int position;
-	private final String color = "Red";
 	
 	// To see the Scripter instruction set documentation, 
 	// scroll down to the switch() in executeNextInstruction()
