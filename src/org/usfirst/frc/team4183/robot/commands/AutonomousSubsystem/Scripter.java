@@ -342,6 +342,11 @@ public class Scripter extends Command {
     }
     
     private void shoot() {
+    	/// TODO: The following technique was used because
+    	/// there was some trouble trying to get a logical button
+    	/// press to induce a button event at the ball subsystem state machine
+    	/// which was looking for an onPressed event (i.e., OI.btnShoot.hit() or press() did not work)
+    	/// Despite this, the technique works and we were able to shoot balls in auto
     	long timeInit = System.currentTimeMillis();
     	while(System.currentTimeMillis() - timeInit < 4000) {
     		Robot.ballManipSubsystem.setConveyerOn();

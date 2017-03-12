@@ -17,6 +17,9 @@ public class ClimbSubsystem extends Subsystem {
 	private DigitalInput leftSwitch; 
 	private DigitalInput rightSwitch;
 	
+	private boolean lastDirectionForward = true;
+	private boolean paused = false; 	// Used to keep track of a pause condition within external commands
+	
 	private DoubleSolenoid climbSolenoid = new DoubleSolenoid(RobotMap.CLIMB_PNEUMA_RELEASE_CHANNEL, RobotMap.CLIMB_PNEUMA_HOLD_CHANNEL);
 
 	// Put methods for controlling this subsystem
@@ -25,6 +28,15 @@ public class ClimbSubsystem extends Subsystem {
 		climbMotor = new CANTalon(RobotMap.CLIMB_MOTOR_ID);
 		leftSwitch = new DigitalInput(RobotMap.LEFT_SWITCH_PORT);
 		rightSwitch = new DigitalInput(RobotMap.RIGHT_SWITCH_PORT);
+	}
+	
+	// Only call this from an Idle state
+	// It is not fool proof.. like rebooting while on the rope
+	// Seriously, think about it.
+	public void initialize()
+	{
+		lastDirectionForward = true;
+		paused = false;
 	}
 	
 	public void enable() {
@@ -43,11 +55,27 @@ public class ClimbSubsystem extends Subsystem {
 	}
 	public void onForward()
 	{
+		lastDirectionForward = true;
 		climbMotor.set(-CLIMB_MOTOR_SPEED_PVBUS);
 	}
 	public void onReverse()
-	{
+	{	
+		lastDirectionForward = false;
 		climbMotor.set(CLIMB_MOTOR_SPEED_PVBUS);
+	}
+	
+	public boolean isForward()
+	{
+		return lastDirectionForward;
+	}
+	
+	public boolean wasPaused()
+	{
+		return paused;
+	}
+	public void setPaused()
+	{
+		paused = true;
 	}
 	
 	public double getCurrent()

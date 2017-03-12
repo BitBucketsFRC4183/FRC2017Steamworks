@@ -35,14 +35,13 @@ public class ClimbReverse extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if(OI.btnIdle.get()) {
-    		return CommandUtils.stateChange(this, new Idle());
-    	}
-    	
-    	if ( (timeSinceInitialized() > 0.200) && 
-    		( (Robot.climbSubsystem.isPastCurrentLimit()) || Robot.climbSubsystem.bumperSwitch() )
+    	// Always pause when exiting so a resume is possible
+    	if ( OI.btnIdle.get() ||
+    		((timeSinceInitialized() > 0.200) && 
+    		 ((Robot.climbSubsystem.isPastCurrentLimit()) || Robot.climbSubsystem.bumperSwitch() )
+    		)
     	) {
-    		return CommandUtils.stateChange( this, new ClimbFinish() ); 
+    		return CommandUtils.stateChange( this, new ClimbPaused() ); 
     	}
     	return false;
     }
