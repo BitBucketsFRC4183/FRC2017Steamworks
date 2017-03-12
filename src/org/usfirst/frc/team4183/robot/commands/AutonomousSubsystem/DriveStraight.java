@@ -54,7 +54,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	private SettledDetector settledDetector; 
 	private SettledDetector hangupDetector;
 	
-	private boolean WRITE_LOG_FILE = true;
+	private boolean WRITE_LOG_FILE = false;
 	private static LogWriterFactory logFactory = new LogWriterFactory("DriveStraight");
 	private LogWriterFactory.Writer logWriter;
 

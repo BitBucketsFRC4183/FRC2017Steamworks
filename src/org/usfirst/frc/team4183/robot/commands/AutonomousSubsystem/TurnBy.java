@@ -51,7 +51,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private SettledDetector settledDetector;
 		
 
-	private boolean WRITE_LOG_FILE = true;
+	private boolean WRITE_LOG_FILE = false;
 	private static LogWriterFactory logFactory = new LogWriterFactory("TurnBy");
 	private LogWriterFactory.Writer logWriter;
 	
