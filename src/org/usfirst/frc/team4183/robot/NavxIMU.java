@@ -52,13 +52,24 @@ public class NavxIMU {
 		}				
 	}
 	
+	// Coordinate system postulates:
+	// Robot local coord system:
+	//   x-axis points forward
+	//   y-axis points left
+	//   z-axis points up
+	//   +yaw angle is CCW viewed from top (R.H.R)
+	//   
+	// Global coord system:
+	//   z-axis points up
+	//   +yaw angle is CCW viewed from top (R.H.R)
+
 	
 	// Returns Robot Pose in global coords
 	// Position is based on continual dead-reckoning using the shaft encoders,
 	// plus yaw from the IMU gyro.
 	// rtn[0] = x-coord, inches
 	// rtn[1] = y-coord, inches
-	// rtn[2] = yaw, degrees, + is ccw viewed from top (R.H.R. z-axis up)
+	// rtn[2] = yaw, degrees
 	public synchronized double[] getRobotPose() {		
 		double[] rtn = new double[3];
 		rtn[0] = pose_x;

@@ -6,6 +6,11 @@ public class PurePursuit {
 	
 	// All distances in inches
 	// All angles in degrees
+	// Robot local coord system:
+	//   x-axis points forward
+	//   y-axis points left
+	//   z-axis points up
+	//   +yaw is CCW viewed from top (R.H.R)
 	
 	private final Double[][] _waypts;
 	
@@ -63,7 +68,10 @@ public class PurePursuit {
 
 	// Returned by get()
 	public class Info {
-		public double curve;
+		// Curvature, degrees/inch
+		// curve * (fwd velocity inch/sec) = yawRate deg/sec
+		public double curve; 
+		// Remaining path distance to last waypoint, inches
 		public double distToEnd;
 	}
 	
