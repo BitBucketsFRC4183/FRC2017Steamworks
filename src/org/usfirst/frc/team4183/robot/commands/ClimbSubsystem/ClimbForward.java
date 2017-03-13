@@ -39,20 +39,49 @@ public class ClimbForward extends Command {
     protected boolean isFinished() 
     {
     	if(OI.btnIdle.get()) {
-    		return CommandUtils.stateChange(this, new Idle());
+    		return CommandUtils.stateChange(this, new ClimbPaused());
     	}
     	
-    	if ( (timeSinceInitialized() < 1.0) && (Robot.climbSubsystem.isPastCurrentLimit()) ) {
-    		return CommandUtils.stateChange( this, new ClimbReverse() );
+    	double timeSince = timeSinceInitialized();
+    	if (Robot.climbSubsystem.wasPaused())
+    	{
+    		// Rules for handling limits and switches are different when
+    		// entering from a previously paused state because we will
+    		// need to ignore immediate current spikes due to restarting
+    		// the motor and we no longer need to worry about reversal
+    		// I.e., if the current limit or switch is present after
+    		// 200 ms we will stop again... if there is a switch problem
+    		// or current problem but the user still needs climb then
+    		// we can inche up the rope as needed
+	    	if ( (timeSince >= 0.200) && 
+	 	    	   ( (Robot.climbSubsystem.isPastCurrentLimit()) || Robot.climbSubsystem.bumperSwitch() )
+	 	    	) 
+ 	    	{
+ 	    		return CommandUtils.stateChange( this, new ClimbPaused() );
+ 	    	}
     		
     	}
-    	if ( (timeSinceInitialized() >= 1.0) && 
-    	   ( (Robot.climbSubsystem.isPastCurrentLimit()) || Robot.climbSubsystem.bumperSwitch() )
-    	) 
+    	else
     	{
-    		return CommandUtils.stateChange( this, new ClimbFinish() );
-    	}
-    	
+    		// First time through we will assume that we've just started climing
+    		// for the first time and will just let any current error signal a
+    		// need to reverse the direction (ratched problem); this MAY protect
+    		// the drive, but can't guarantee that the chain/belt won't get damaged
+    		// but we will use this to do the best we can
+	    	if ( (timeSince < 1.0) && (Robot.climbSubsystem.isPastCurrentLimit()) ) {
+	    		return CommandUtils.stateChange( this, new ClimbReverse() );
+	    		
+	    	}
+	    	// After one second a current limit or switch definitely means
+	    	// we have a problem or are at the top... pause and wait for
+	    	// further instructions
+	    	if ( (timeSince >= 1.0) && 
+	    	   ( (Robot.climbSubsystem.isPastCurrentLimit()) || Robot.climbSubsystem.bumperSwitch() )
+	    	) 
+	    	{
+	    		return CommandUtils.stateChange( this, new ClimbPaused() );
+	    	}
+    	}    	
         return false;
     }
 

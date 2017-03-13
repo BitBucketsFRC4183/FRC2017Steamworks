@@ -12,9 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
  *
  */
 public class WaitingForTrigger extends Command {
-	
-	OI.ButtonEvent btnShooting;
-	
+		
     public WaitingForTrigger() {
         requires(Robot.ballManipSubsystem);
     }
@@ -28,8 +26,6 @@ public class WaitingForTrigger extends Command {
                 LightingControl.COLOR_ORANGE,
                 0,		// nspace - don't care
                 300);	// period_ms 
-       	
-    	btnShooting = OI.getBtnEvt(OI.btnShoot);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -43,9 +39,11 @@ public class WaitingForTrigger extends Command {
     	if(OI.btnIdle.get()) {
     		return CommandUtils.stateChange(this, new Idle());
     	}
-    	if(btnShooting.onPressed()) {
-    		return CommandUtils.stateChange(this, new Shooting());
+
+    	if( OI.btnShoot.get()) {
+    		return CommandUtils.stateChange(this, new Shooting()); 
     	}
+    	
     	if(OI.btnUnjam.get()){
     		return CommandUtils.stateChange(this, new Unjam());
     	}

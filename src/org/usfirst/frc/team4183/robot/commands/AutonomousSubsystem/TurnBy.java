@@ -4,10 +4,10 @@ import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.utils.ControlLoop;
+import org.usfirst.frc.team4183.utils.LogWriterFactory;
 import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
 import org.usfirst.frc.team4183.utils.RateLimit;
 import org.usfirst.frc.team4183.utils.SettledDetector;
-import org.usfirst.frc.team4183.utils.ZeroCrossDetector;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -32,10 +32,13 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private final double DEAD_ZONE_DEG = 1.0;
 
 	// Settled detector lookback for dead zone
-	private final long SETTLED_MSECS = 200;
+	// I would NOT go lower than 150 because of Java thread jitter
+	private final long SETTLED_MSECS = 150;
 	
 	// Also used to determine when done
-	private final double STOPPED_RATE_DPS = 0.5;
+	// (note, this isn't really as big as it looks, the IMU-reported yawrate
+	// is about 9x higher than the real yaw rate)
+	private final double STOPPED_RATE_DPS = 10.0;
 		
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 3.0;
@@ -46,12 +49,17 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private RateLimit rateLimit;
 	private MinMaxDeadzone deadZone;
 	private SettledDetector settledDetector;
-	
+		
 
+	private boolean WRITE_LOG_FILE = false;
+	private static LogWriterFactory logFactory = new LogWriterFactory("TurnBy");
+	private LogWriterFactory.Writer logWriter;
+	
+	
 	public TurnBy( double degreesToTurn) {		
 		requires( Robot.autonomousSubsystem);
 		
-		this.degreesToTurn = degreesToTurn;
+		this.degreesToTurn = degreesToTurn;		
 	}
 
 	@Override
@@ -63,7 +71,8 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
 		deadZone = new MinMaxDeadzone( DEAD_ZONE_DEG, MIN_DRIVE, MAX_DRIVE);
 		settledDetector = new SettledDetector( SETTLED_MSECS, DEAD_ZONE_DEG);
-
+		logWriter = logFactory.create( WRITE_LOG_FILE);	
+	
 		// Setup DriveSubsystem for autonomous control
 		Robot.driveSubsystem.setAutonomousControl(true);
 		
@@ -96,13 +105,15 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	
 		// Don't forget to stop the control loop!
 		cloop.stop();
+		
+		logWriter.close();
 
 		// Restore DriveSubsystem to normal control
 		Robot.driveSubsystem.setAutonomousControl(false);
 
 		// Set output to zero before leaving
 		OI.axisTurn.set(0.0);
-		OI.axisForward.set(0.0);
+		OI.axisForward.set(0.0);		
 	}
 	
 	@Override
@@ -119,6 +130,9 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	@Override
 	public void setError( double error) {
 		
+		logWriter.writeLine( 
+				String.format("%f %f", error, Robot.imu.getYawRateDps())); 
+			
 		settledDetector.set(error);
 							
 		double x1 = Kp * error;

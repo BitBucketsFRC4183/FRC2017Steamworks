@@ -13,18 +13,32 @@ public class ClimbSubsystem extends Subsystem {
 
 	private static final double CLIMB_MOTOR_SPEED_PVBUS = 1.0;
 	private static final double CLIMB_MOTOR_CURRENT_LIMIT_AMPS = 35.0;
-	private CANTalon climbMotor;
+	private CANTalon climbMotorA;
+	private CANTalon climbMotorB; 
 	private DigitalInput leftSwitch; 
 	private DigitalInput rightSwitch;
+	
+	private boolean lastDirectionForward = true;
+	private boolean paused = false; 	// Used to keep track of a pause condition within external commands
 	
 	private DoubleSolenoid climbSolenoid = new DoubleSolenoid(RobotMap.CLIMB_PNEUMA_RELEASE_CHANNEL, RobotMap.CLIMB_PNEUMA_HOLD_CHANNEL);
 
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 	public ClimbSubsystem(){
-		climbMotor = new CANTalon(RobotMap.CLIMB_MOTOR_ID);
+		climbMotorA = new CANTalon(RobotMap.CLIMB_MOTOR_A_ID);
 		leftSwitch = new DigitalInput(RobotMap.LEFT_SWITCH_PORT);
 		rightSwitch = new DigitalInput(RobotMap.RIGHT_SWITCH_PORT);
+		climbMotorB = new CANTalon(RobotMap.CLIMB_MOTOR_B_ID);
+	}
+	
+	// Only call this from an Idle state
+	// It is not fool proof.. like rebooting while on the rope
+	// Seriously, think about it.
+	public void initialize()
+	{
+		lastDirectionForward = true;
+		paused = false;
 	}
 	
 	public void enable() {
@@ -34,25 +48,54 @@ public class ClimbSubsystem extends Subsystem {
 	
 	public void disable() {
 		climbSolenoid.set(DoubleSolenoid.Value.kForward);
-		climbMotor.set(0.0);
+		climbMotorA.set(0.0);
+		climbMotorB.set(0.0);
 	}
 	
 	public void off()
 	{
-		climbMotor.set(0.0);
+		climbMotorA.set(0.0);
+		climbMotorB.set(0.0);
 	}
 	public void onForward()
 	{
-		climbMotor.set(-CLIMB_MOTOR_SPEED_PVBUS);
+		lastDirectionForward = true;
+		climbMotorA.set(-CLIMB_MOTOR_SPEED_PVBUS);
+		climbMotorB.set(-CLIMB_MOTOR_SPEED_PVBUS);
 	}
 	public void onReverse()
+	{	
+		lastDirectionForward = false;
+		climbMotorA.set(CLIMB_MOTOR_SPEED_PVBUS);
+		climbMotorB.set(CLIMB_MOTOR_SPEED_PVBUS);
+	}
+	
+	public boolean isForward()
 	{
-		climbMotor.set(CLIMB_MOTOR_SPEED_PVBUS);
+		return lastDirectionForward;
+	}
+	
+	public boolean wasPaused()
+	{
+		return paused;
+	}
+	public void setPaused()
+	{
+		paused = true;
 	}
 	
 	public double getCurrent()
 	{
-		return climbMotor.getOutputCurrent();
+		double climbMotorACurrent = climbMotorA.getOutputCurrent();
+		double climbMotorBCurrent = climbMotorB.getOutputCurrent();
+		if (climbMotorACurrent > climbMotorBCurrent)
+		{
+			return climbMotorACurrent;  
+		}
+		else
+		{
+			return climbMotorBCurrent; 
+		}
 	}
 	
 	public boolean isPastCurrentLimit()

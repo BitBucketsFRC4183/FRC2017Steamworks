@@ -1,6 +1,5 @@
 package org.usfirst.frc.team4183.robot.commands.ClimbSubsystem;
 
-import org.usfirst.frc.team4183.robot.LightingControl;
 import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
 import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
@@ -23,6 +22,7 @@ public class Idle extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	Robot.climbSubsystem.initialize(); // Reset some states when starting over (Makes it testable)
     	Robot.climbSubsystem.disable();
     	Robot.lightingControl.setSleeping(LightingObjects.CLIMB_SUBSYSTEM);
     }
@@ -35,8 +35,9 @@ public class Idle extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
     	if( OI.btnClimbControl.get() )
+    	{
     		return CommandUtils.stateChange(this, new WaitForBounce());
-    	
+    	}
         return false;
     }
 
