@@ -26,7 +26,7 @@ public class PurePursuit {
 	
 	// lookAhead is lookahead distance
 	// waypts are the path waypoints, one point per row
-	PurePursuit( double lookAhead, double[][] waypts) {
+	public PurePursuit( double lookAhead, double[][] waypts) {
 		
 		_lookAhead = lookAhead;
 		_waypts = new Double[waypts.length][2];
