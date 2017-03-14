@@ -26,7 +26,7 @@ public class Scripter extends Command {
 	// position 2 start point is on center line (directly facing gear peg)
 	// 
 
-
+/*
 	private String[][] script = {
 			{"", 		"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
 			{"Left", 	"DriveStraight 82.2" },  // Inch
@@ -59,18 +59,19 @@ public class Scripter extends Command {
 			{"",		"Delay 4000"},  // Have to Delay to allow shoot to happen!!
 			{"End", 	"End" }			// MUST finish in End state
 	};
-
+*/
 	
 	// Test small moves to make sure MIN_DRIVEs big enough.
 	// e.g. TurnBy 5, DriveStraight 3.
 	// Test big moves to make sure it behaves & settles.
 	// e.g. TurnBy 60, DriveStraight 48.
-	/*
+	
 	private String[][] script = {
-		{"", "TurnBy 60" },
+		{"", "DriveStraight 60"},
+		{"", "TurnBy -60" },
 		{"", "End" }    // MUST finish with End!
 	};
-	*/
+	
 
     public Scripter( int position) {
     	// No "requires" - this one stands apart - it's a Meta-State.

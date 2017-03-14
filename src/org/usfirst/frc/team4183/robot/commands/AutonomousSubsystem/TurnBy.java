@@ -36,9 +36,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private final long SETTLED_MSECS = 150;
 	
 	// Also used to determine when done
-	// (note, this isn't really as big as it looks, the IMU-reported yawrate
-	// is about 9x higher than the real yaw rate)
-	private final double STOPPED_RATE_DPS = 10.0;
+	private final double STOPPED_RATE_DPS = 2.0;
 		
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 3.0;
@@ -146,11 +144,6 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		
 
 		// Dither signal
-		// Commented out 'cause we didn't have enough test time to be confident
-		// with the amplitude and frequency parameters.
-		// It does seem to help a lot, but worried that dither might interfere with
-		// settledDetector and get us stuck in this state.
-		
 		double ditherFreq = 4.0;  // Maybe try something higher freq?
 		double ditherAmpl = 0.07;
 		double s = Math.sin(2.0*Math.PI*ditherFreq*System.currentTimeMillis()/1000.0);

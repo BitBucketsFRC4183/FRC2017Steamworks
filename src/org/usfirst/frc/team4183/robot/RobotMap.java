@@ -20,7 +20,7 @@ public class RobotMap {
 	
 	// Similar to above but for DriveStraight.
 	// Doesn't seem to be as finicky though.
-	public static final double DRIVESTRAIGHT_MIN_DRIVE = 0.2;
+	public static final double DRIVESTRAIGHT_MIN_DRIVE = 0.1;
 		
 	// Nominal value assuming 4" wheel:
 	// (4" * pi) in/rot = 12.57
