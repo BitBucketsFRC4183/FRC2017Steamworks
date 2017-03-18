@@ -6,6 +6,9 @@ import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.ClimbSubsystem.Idle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+
+import org.usfirst.frc.team4183.utils.TalonCurrentLoggerA;
+import org.usfirst.frc.team4183.utils.TalonCurrentLoggerB;
 /**
  *
  */
@@ -17,9 +20,12 @@ public class ClimbSubsystem extends Subsystem {
 	private CANTalon climbMotorB; 
 	private DigitalInput leftSwitch; 
 	private DigitalInput rightSwitch;
+	private TalonCurrentLoggerA loggerA = new TalonCurrentLoggerA(climbMotorA);
+	private TalonCurrentLoggerB loggerB = new TalonCurrentLoggerB(climbMotorB);
 	
 	private boolean lastDirectionForward = true;
 	private boolean paused = false; 	// Used to keep track of a pause condition within external commands
+	private boolean loggerRun = true;  //Set this to turn on or off the loggers
 	
 	private DoubleSolenoid climbSolenoid = new DoubleSolenoid(RobotMap.CLIMB_PNEUMA_RELEASE_CHANNEL, RobotMap.CLIMB_PNEUMA_HOLD_CHANNEL);
 
@@ -39,6 +45,10 @@ public class ClimbSubsystem extends Subsystem {
 	{
 		lastDirectionForward = true;
 		paused = false;
+		if (loggerRun == true ) {
+		loggerA.start();
+		loggerB.start(); 
+		}
 	}
 	
 	public void enable() {
