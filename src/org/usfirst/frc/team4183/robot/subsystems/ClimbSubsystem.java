@@ -4,8 +4,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.CANTalon;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.ClimbSubsystem.Idle;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 import org.usfirst.frc.team4183.utils.TalonCurrentLogger;
 
@@ -14,8 +12,8 @@ public class ClimbSubsystem extends Subsystem {
 	private static final double CLIMB_MOTOR_CURRENT_LIMIT_AMPS = 35.0;
 	private CANTalon climbMotorA;
 	private CANTalon climbMotorB; 
-	private TalonCurrentLogger loggerA = new TalonCurrentLogger(climbMotorA, "A");
-	private TalonCurrentLogger loggerB = new TalonCurrentLogger(climbMotorB, "B");
+	private TalonCurrentLogger loggerA = new TalonCurrentLogger(climbMotorA, "climbA");
+	private TalonCurrentLogger loggerB = new TalonCurrentLogger(climbMotorB, "climbB");
 	
 	
 	private boolean loggerRun = true;  //Set this to turn on or off the loggers
@@ -32,9 +30,9 @@ public class ClimbSubsystem extends Subsystem {
 
 	public void startLogger()
 	{
-		if (loggerRun == true ) {
-		loggerA.start();
-		loggerB.start(); 
+		if (loggerRun) {
+			loggerA.start();
+			loggerB.start(); 
 		}
 	}
 	
@@ -54,16 +52,15 @@ public class ClimbSubsystem extends Subsystem {
 	
 	public void on(double speed)
 	{
-		if (speed < 0.0){
+		if (speed < 0.0) {
 			speed = 0.0;
 		}
 		climbMotorA.set(direction*speed);
 		climbMotorB.set(direction*speed);
 	}
 	
-	public void reverse() {
-			
-		direction = -1.0;
+	public void reverse() {			
+		direction *= -1.0;
 	}
 	
 	
