@@ -2,16 +2,14 @@ package org.usfirst.frc.team4183.utils;
 
 import java.io.PrintWriter;
 
-
-
 import com.ctre.CANTalon;
 
-public class TalonCurrentLoggerB extends LoggerBase {
+public class TalonCurrentLogger extends LoggerBase {
 
 	private CANTalon motor;
 
-	public TalonCurrentLoggerB( CANTalon _motor) {
-		super( "taloncurrentB.txt", 20, 20.0);
+	public TalonCurrentLogger( CANTalon _motor, String prefix) {
+		super(prefix + "_taloncurrent.txt", 20, 20.0);
 		motor = _motor;		
 	}
 

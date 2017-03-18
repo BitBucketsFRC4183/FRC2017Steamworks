@@ -7,11 +7,8 @@ import org.usfirst.frc.team4183.robot.commands.ClimbSubsystem.Idle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
-import org.usfirst.frc.team4183.utils.TalonCurrentLoggerA;
-import org.usfirst.frc.team4183.utils.TalonCurrentLoggerB;
-/**
- *
- */
+import org.usfirst.frc.team4183.utils.TalonCurrentLogger;
+
 public class ClimbSubsystem extends Subsystem {
 
 	private static final double CLIMB_MOTOR_SPEED_PVBUS = 1.0;
@@ -20,8 +17,8 @@ public class ClimbSubsystem extends Subsystem {
 	private CANTalon climbMotorB; 
 	private DigitalInput leftSwitch; 
 	private DigitalInput rightSwitch;
-	private TalonCurrentLoggerA loggerA = new TalonCurrentLoggerA(climbMotorA);
-	private TalonCurrentLoggerB loggerB = new TalonCurrentLoggerB(climbMotorB);
+	private TalonCurrentLogger loggerA = new TalonCurrentLogger(climbMotorA, "A");
+	private TalonCurrentLogger loggerB = new TalonCurrentLogger(climbMotorB, "B");
 	
 	private boolean lastDirectionForward = true;
 	private boolean paused = false; 	// Used to keep track of a pause condition within external commands
