@@ -27,7 +27,10 @@ public class OpControl extends Command {
     
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if (Robot.climbSubsystem.isPastCurrentLimit() && timeSinceInitialized() > .2) {
+    	if (timeSinceInitialized() > .25
+    		&&
+    		Robot.climbSubsystem.isPastCurrentLimit()) {
+    		
     		return CommandUtils.stateChange(this, new ClimbPaused());
     	}
     	

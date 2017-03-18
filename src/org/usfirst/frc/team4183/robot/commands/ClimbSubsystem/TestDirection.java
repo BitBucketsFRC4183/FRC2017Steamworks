@@ -30,20 +30,23 @@ public class TestDirection extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.climbSubsystem.on(1.0);
+    	Robot.climbSubsystem.on( 1.0);
     }
     
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if (timeSinceInitialized() > .5) {
+    	// Don't mess with this timeout value! Was tested, it's right.
+    	// If it's too short, you'll false on the inrush current. 
+    	if (timeSinceInitialized() > .25) {
+    		
+    		if( Robot.climbSubsystem.isPastCurrentLimit())
+    			Robot.climbSubsystem.reverse();
+    		
     		return CommandUtils.stateChange(this, new OpControl());	
     	}
-    	if (Robot.climbSubsystem.isPastCurrentLimit()) {
-    		Robot.climbSubsystem.reverse();
-    		return CommandUtils.stateChange(this, new OpControl()); 
-    	}
+
     	return false;
     }
 

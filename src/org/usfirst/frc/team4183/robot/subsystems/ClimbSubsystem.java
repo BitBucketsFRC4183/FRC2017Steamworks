@@ -9,15 +9,15 @@ import org.usfirst.frc.team4183.utils.TalonCurrentLogger;
 
 public class ClimbSubsystem extends Subsystem {
 
-	private static final double CLIMB_MOTOR_CURRENT_LIMIT_AMPS = 35.0;
+	private static final double CLIMB_MOTOR_CURRENT_LIMIT_AMPS = 40.0;
 	private CANTalon climbMotorA;
 	private CANTalon climbMotorB; 
-	private TalonCurrentLogger loggerA = new TalonCurrentLogger(climbMotorA, "climbA");
-	private TalonCurrentLogger loggerB = new TalonCurrentLogger(climbMotorB, "climbB");
+	private TalonCurrentLogger loggerA;
+	private TalonCurrentLogger loggerB;
 	
 	
 	private boolean loggerRun = true;  //Set this to turn on or off the loggers
-	private double direction = 1.0; 
+	private double direction = -1.0; 
 	
 
 	// Put methods for controlling this subsystem
@@ -25,6 +25,9 @@ public class ClimbSubsystem extends Subsystem {
 	public ClimbSubsystem(){
 		climbMotorA = new CANTalon(RobotMap.CLIMB_MOTOR_A_ID);
 		climbMotorB = new CANTalon(RobotMap.CLIMB_MOTOR_B_ID);
+		
+		loggerA = new TalonCurrentLogger(climbMotorA, "climbA");
+		loggerB = new TalonCurrentLogger(climbMotorB, "climbB");
 	}
 	
 
