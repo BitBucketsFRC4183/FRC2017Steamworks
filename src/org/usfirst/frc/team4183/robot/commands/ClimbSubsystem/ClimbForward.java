@@ -54,7 +54,7 @@ public class ClimbForward extends Command {
     		// or current problem but the user still needs climb then
     		// we can inche up the rope as needed
 	    	if ( (timeSince >= 0.200) && 
-	 	    	   ( (Robot.climbSubsystem.isPastCurrentLimit()) || Robot.climbSubsystem.bumperSwitch() )
+	 	    	   ( (Robot.climbSubsystem.isPastCurrentLimit())/* || Robot.climbSubsystem.bumperSwitch()*/ )
 	 	    	) 
  	    	{
  	    		return CommandUtils.stateChange( this, new ClimbPaused() );
@@ -76,7 +76,7 @@ public class ClimbForward extends Command {
 	    	// we have a problem or are at the top... pause and wait for
 	    	// further instructions
 	    	if ( (timeSince >= 1.0) && 
-	    	   ( (Robot.climbSubsystem.isPastCurrentLimit()) || Robot.climbSubsystem.bumperSwitch() )
+	    	   ( (Robot.climbSubsystem.isPastCurrentLimit()) /*|| Robot.climbSubsystem.bumperSwitch() */)
 	    	) 
 	    	{
 	    		return CommandUtils.stateChange( this, new ClimbPaused() );

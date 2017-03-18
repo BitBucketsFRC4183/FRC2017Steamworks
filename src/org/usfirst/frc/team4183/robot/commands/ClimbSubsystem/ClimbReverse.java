@@ -38,7 +38,7 @@ public class ClimbReverse extends Command {
     	// Always pause when exiting so a resume is possible
     	if ( OI.btnIdle.get() ||
     		((timeSinceInitialized() > 0.200) && 
-    		 ((Robot.climbSubsystem.isPastCurrentLimit()) || Robot.climbSubsystem.bumperSwitch() )
+    		 ((Robot.climbSubsystem.isPastCurrentLimit())/* || Robot.climbSubsystem.bumperSwitch() */ )
     		)
     	) {
     		return CommandUtils.stateChange( this, new ClimbPaused() ); 
