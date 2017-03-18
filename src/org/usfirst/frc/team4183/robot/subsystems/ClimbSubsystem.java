@@ -11,37 +11,27 @@ import org.usfirst.frc.team4183.utils.TalonCurrentLogger;
 
 public class ClimbSubsystem extends Subsystem {
 
-	private static final double CLIMB_MOTOR_SPEED_PVBUS = 1.0;
 	private static final double CLIMB_MOTOR_CURRENT_LIMIT_AMPS = 35.0;
 	private CANTalon climbMotorA;
 	private CANTalon climbMotorB; 
-	private DigitalInput leftSwitch; 
-	private DigitalInput rightSwitch;
 	private TalonCurrentLogger loggerA = new TalonCurrentLogger(climbMotorA, "A");
 	private TalonCurrentLogger loggerB = new TalonCurrentLogger(climbMotorB, "B");
 	
-	private boolean lastDirectionForward = true;
-	private boolean paused = false; 	// Used to keep track of a pause condition within external commands
-	private boolean loggerRun = true;  //Set this to turn on or off the loggers
 	
-	private DoubleSolenoid climbSolenoid = new DoubleSolenoid(RobotMap.CLIMB_PNEUMA_RELEASE_CHANNEL, RobotMap.CLIMB_PNEUMA_HOLD_CHANNEL);
+	private boolean loggerRun = true;  //Set this to turn on or off the loggers
+	private double direction = 1.0; 
+	
 
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 	public ClimbSubsystem(){
 		climbMotorA = new CANTalon(RobotMap.CLIMB_MOTOR_A_ID);
-		leftSwitch = new DigitalInput(RobotMap.LEFT_SWITCH_PORT);
-		rightSwitch = new DigitalInput(RobotMap.RIGHT_SWITCH_PORT);
 		climbMotorB = new CANTalon(RobotMap.CLIMB_MOTOR_B_ID);
 	}
 	
-	// Only call this from an Idle state
-	// It is not fool proof.. like rebooting while on the rope
-	// Seriously, think about it.
-	public void initialize()
+
+	public void startLogger()
 	{
-		lastDirectionForward = true;
-		paused = false;
 		if (loggerRun == true ) {
 		loggerA.start();
 		loggerB.start(); 
@@ -49,12 +39,9 @@ public class ClimbSubsystem extends Subsystem {
 	}
 	
 	public void enable() {
-		// Deploy
-		climbSolenoid.set(DoubleSolenoid.Value.kReverse);
 	}
 	
 	public void disable() {
-		climbSolenoid.set(DoubleSolenoid.Value.kForward);
 		climbMotorA.set(0.0);
 		climbMotorB.set(0.0);
 	}
@@ -64,32 +51,21 @@ public class ClimbSubsystem extends Subsystem {
 		climbMotorA.set(0.0);
 		climbMotorB.set(0.0);
 	}
-	public void onForward()
+	
+	public void on(double speed)
 	{
-		lastDirectionForward = true;
-		climbMotorA.set(-CLIMB_MOTOR_SPEED_PVBUS);
-		climbMotorB.set(-CLIMB_MOTOR_SPEED_PVBUS);
-	}
-	public void onReverse()
-	{	
-		lastDirectionForward = false;
-		climbMotorA.set(CLIMB_MOTOR_SPEED_PVBUS);
-		climbMotorB.set(CLIMB_MOTOR_SPEED_PVBUS);
+		if (speed < 0.0){
+			speed = 0.0;
+		}
+		climbMotorA.set(direction*speed);
+		climbMotorB.set(direction*speed);
 	}
 	
-	public boolean isForward()
-	{
-		return lastDirectionForward;
+	public void reverse() {
+			
+		direction = -1.0;
 	}
 	
-	public boolean wasPaused()
-	{
-		return paused;
-	}
-	public void setPaused()
-	{
-		paused = true;
-	}
 	
 	public double getCurrent()
 	{
@@ -108,10 +84,6 @@ public class ClimbSubsystem extends Subsystem {
 	public boolean isPastCurrentLimit()
 	{
 		return (getCurrent() >= CLIMB_MOTOR_CURRENT_LIMIT_AMPS);
-	}
-	public boolean bumperSwitch() {	
-		boolean invertSwitch = RobotMap.INVERT_BUMPER_SWITCH;
-		return (invertSwitch ^ leftSwitch.get() ) || ( invertSwitch ^ rightSwitch.get() );
 	}
 	
 	public void initDefaultCommand() {

@@ -93,10 +93,10 @@ public class OI {
 	public static LogicalButton btnAlignLock;
 	public static LogicalButton btnDriveLock;	
 	public static LogicalButton btnAlignAssist;
-	public static LogicalButton btnResumeClimb;
+	
+
 	
 	
-	public static LogicalButton btnClimbControl;
 	
 	// Gear/ball-loading functions
 	public static LogicalButton btnWaitForGear;
@@ -121,6 +121,7 @@ public class OI {
 	//****************************
 	public static LogicalAxis axisForward;
 	public static LogicalAxis axisTurn;
+	public static LogicalAxis axisClimb;
 
 	
 	//****************************
@@ -176,7 +177,7 @@ public class OI {
 		btnAlignAssist = new SoftButton();
 		
 		
-		btnClimbControl = new SoftButton();
+		
 		
 		btnWaitForGear = new SoftButton();
 		btnWaitForBalls = new SoftButton();
@@ -220,7 +221,7 @@ public class OI {
 		// ****************
 		// OPERATOR CONTROLS Logical <- Physical
 		// ****************		
-		btnClimbControl = operatorController.bShare;
+		
 		
 		btnWaitForGear = operatorController.bCross;
 		btnWaitForBalls = operatorController.bCircle;
@@ -233,13 +234,14 @@ public class OI {
 		btnShooterStart = operatorController.bR1;
 		btnShoot = operatorController.bR2;		
 		btnUnjam = operatorController.bSquare;
-		btnResumeClimb = operatorController.bOptions;
+		
 		
 		btnIdle = operatorController.bTrackpad;		// Big easy button to make selected operator subs idle
 				
 		
 		axisForward = driverController.aLeftY;
-		axisTurn = driverController.aRightX;		
+		axisTurn = driverController.aRightX;	
+		axisClimb = operatorController.aRightY;
 	}
 
 	// Represents the physical buttons & axis on one controller

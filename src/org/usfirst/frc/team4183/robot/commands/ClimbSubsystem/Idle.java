@@ -22,7 +22,6 @@ public class Idle extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.climbSubsystem.initialize(); // Reset some states when starting over (Makes it testable)
     	Robot.climbSubsystem.disable();
     	Robot.lightingControl.setSleeping(LightingObjects.CLIMB_SUBSYSTEM);
     }
@@ -34,9 +33,10 @@ public class Idle extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if( OI.btnClimbControl.get() )
+    	if( Robot.runMode == Robot.RunMode.TELEOP) 
     	{
-    		return CommandUtils.stateChange(this, new WaitForBounce());
+    		Robot.climbSubsystem.startLogger();
+    		return CommandUtils.stateChange(this, new TestDirection());
     	}
         return false;
     }
