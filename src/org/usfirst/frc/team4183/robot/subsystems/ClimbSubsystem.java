@@ -2,43 +2,35 @@ package org.usfirst.frc.team4183.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.CANTalon;
+
+import java.io.PrintWriter;
+
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.ClimbSubsystem.Idle;
-
-import org.usfirst.frc.team4183.utils.TalonCurrentLogger;
+import org.usfirst.frc.team4183.utils.ThreadLogger;
 
 public class ClimbSubsystem extends Subsystem {
 
 	private static final double CLIMB_MOTOR_CURRENT_LIMIT_AMPS = 40.0;
 	private CANTalon climbMotorA;
 	private CANTalon climbMotorB; 
-	private TalonCurrentLogger loggerA;
-	private TalonCurrentLogger loggerB;
-	
-	
-	private boolean loggerRun = true;  //Set this to turn on or off the loggers
+	private ThreadLogger logger;	
 	private double direction = -1.0; 
+	
+	private boolean wantLogging = true;
 	
 
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 	public ClimbSubsystem(){
+		
 		climbMotorA = new CANTalon(RobotMap.CLIMB_MOTOR_A_ID);
 		climbMotorB = new CANTalon(RobotMap.CLIMB_MOTOR_B_ID);
 		
-		loggerA = new TalonCurrentLogger(climbMotorA, "climbA");
-		loggerB = new TalonCurrentLogger(climbMotorB, "climbB");
+		logger = new ThreadLogger( new LoggerClient(), "climb");
 	}
 	
 
-	public void startLogger()
-	{
-		if (loggerRun) {
-			loggerA.start();
-			loggerB.start(); 
-		}
-	}
-	
 	public void enable() {
 	}
 	
@@ -90,6 +82,20 @@ public class ClimbSubsystem extends Subsystem {
 		setDefaultCommand(new Idle());
 	}
 
+	public void startLogger()
+	{
+		if (wantLogging) {
+			logger.start();
+		}
+	}
+	
+	private class LoggerClient implements ThreadLogger.Client {
+		@Override
+		public void writeLine( PrintWriter writer, long millis) {
+			writer.format("%6d %9.1f %9.1f\n", millis, 
+					climbMotorA.getOutputCurrent(), climbMotorB.getOutputCurrent());
+		}
+	}
 }
 
 
