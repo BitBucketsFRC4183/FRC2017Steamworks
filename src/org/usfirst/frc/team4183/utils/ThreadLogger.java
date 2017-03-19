@@ -16,11 +16,11 @@ public class ThreadLogger {
 	private static final long DEFAULT_INTERVAL = 10;     // Logging interval msec
 	private static final double DEFAULT_DURATION = 10.0; // Seconds
 
-	private Client client;
-	private long interval;    // Millis
-	private double duration;  // Seconds			
+	private final Client client;
+	private final long interval;    // Millis
+	private final double duration;  // Seconds			
+	private final File file;
 
-	private File file;
 	private PrintWriter writer;
 	private WriterThread writerThread = null;
 	

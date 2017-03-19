@@ -27,7 +27,7 @@ public class ClimbSubsystem extends Subsystem {
 		climbMotorA = new CANTalon(RobotMap.CLIMB_MOTOR_A_ID);
 		climbMotorB = new CANTalon(RobotMap.CLIMB_MOTOR_B_ID);
 		
-		logger = new ThreadLogger( new LoggerClient(), "climb");
+		logger = new ThreadLogger( new LoggerClient(), "climb.txt");
 	}
 	
 
