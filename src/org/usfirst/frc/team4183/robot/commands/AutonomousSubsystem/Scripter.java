@@ -8,8 +8,7 @@ import edu.wpi.first.wpilibj.command.Command;
  *
  */
 public class Scripter extends Command {
-	
-		
+			
 	// These values written by "MeasureGear"
 	static double measuredDistance_inch;    // inch
 	static double measuredYaw_deg;          // gives Robot pose in target C.S.; +val means Robot sitting CCW (viewed from top)
@@ -24,10 +23,8 @@ public class Scripter extends Command {
 	// Dead reckoning numbers are assuming: 
 	// positions 1 & 3 start points are 7' left & right of center line respectively,
 	// position 2 start point is on center line (directly facing gear peg)
-	// 
-
-
-	private String[][] script = {
+	
+	private String[][] theRealScript = {
 			{"", 		"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
 			{"Left", 	"DriveStraight 82.2" },  // Inch
 			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
@@ -59,21 +56,40 @@ public class Scripter extends Command {
 			{"",		"Delay 4000"},  // Have to Delay to allow shoot to happen!!
 			{"End", 	"End" }			// MUST finish in End state
 	};
-
+	
 	
 	// Test small moves to make sure MIN_DRIVEs big enough.
 	// e.g. TurnBy 5, DriveStraight 3.
 	// Test big moves to make sure it behaves & settles.
 	// e.g. TurnBy 60, DriveStraight 48.
-	/*
-	private String[][] script = {
-		{"", "DriveStraight 60"},
-		{"", "TurnBy -60" },
-		{"", "End" }    // MUST finish with End!
+	// Uncomment this test script to get those moves selected by Team/Position
+	private String[][] tuneScript = {
+		{"",        "BranchOnColorAndPosition BlueLeft BlueCntr Noop RedLeft RedCntr Noop"},
+		{"BlueLeft",	"DriveStraight 3"},
+		{"",		"DriveStraight -3"},
+		{"",		"End"},
+		{"BlueCntr",	"DriveStraight 48"},
+		{"",		"DriveStraight -48"},
+		{"",		"End"},
+		{"RedLeft",	"TurnBy 5"},
+		{"",		"TurnBy -5"},
+		{"",		"End"},
+		{"RedCntr",	"TurnBy 90"},
+		{"",		"TurnBy -90"},
+		{"",		"End"},
+		{"Noop", 	"End" }    // MUST finish with End!
 	};
-	*/
 	
-
+	
+	/*****************************************************************
+	 * 
+	 * Set this variable to the script you actually want to execute!!!
+	 * 
+	 *****************************************************************/
+	private String[][] script = theRealScript;
+	
+	
+	// position 1,2,3 are Left, Center, Right respectively
     public Scripter( int position) {
     	// No "requires" - this one stands apart - it's a Meta-State.
     	// This is start()-ed from Robot.autonomousInit().
@@ -126,7 +142,7 @@ public class Scripter extends Command {
     		branchOnPosition( tokens[1], tokens[2], tokens[3]);
     		break;
     		
-    	case "BranchOnColorAndPosition": // lblB1, lblB2, lblB3, lblR1, ...
+    	case "BranchOnColorAndPosition": // blueLeft, blueCntr, blueRight, redleft, ...
     		branchOnColorAndPosition(tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[6]);
     		break;
     		
