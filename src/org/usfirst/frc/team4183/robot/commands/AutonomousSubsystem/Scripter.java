@@ -67,10 +67,12 @@ public class Scripter extends Command {
 	// e.g. TurnBy 60, DriveStraight 48.
 	/*
 	private String[][] script = {
-		{"", "TurnBy 60" },
+		{"", "DriveStraight 60"},
+		{"", "TurnBy -60" },
 		{"", "End" }    // MUST finish with End!
 	};
 	*/
+	
 
     public Scripter( int position) {
     	// No "requires" - this one stands apart - it's a Meta-State.

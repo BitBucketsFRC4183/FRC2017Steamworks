@@ -2,52 +2,39 @@ package org.usfirst.frc.team4183.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.CANTalon;
+
+import java.io.PrintWriter;
+
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.ClimbSubsystem.Idle;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-/**
- *
- */
+import org.usfirst.frc.team4183.utils.ThreadLogger;
+
 public class ClimbSubsystem extends Subsystem {
 
-	private static final double CLIMB_MOTOR_SPEED_PVBUS = 1.0;
-	private static final double CLIMB_MOTOR_CURRENT_LIMIT_AMPS = 35.0;
+	private static final double CLIMB_MOTOR_CURRENT_LIMIT_AMPS = 40.0;
 	private CANTalon climbMotorA;
 	private CANTalon climbMotorB; 
-	private DigitalInput leftSwitch; 
-	private DigitalInput rightSwitch;
+	private ThreadLogger logger;	
+	private double direction = -1.0; 
 	
-	private boolean lastDirectionForward = true;
-	private boolean paused = false; 	// Used to keep track of a pause condition within external commands
+	private boolean wantLogging = true;
 	
-	private DoubleSolenoid climbSolenoid = new DoubleSolenoid(RobotMap.CLIMB_PNEUMA_RELEASE_CHANNEL, RobotMap.CLIMB_PNEUMA_HOLD_CHANNEL);
 
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 	public ClimbSubsystem(){
+		
 		climbMotorA = new CANTalon(RobotMap.CLIMB_MOTOR_A_ID);
-		leftSwitch = new DigitalInput(RobotMap.LEFT_SWITCH_PORT);
-		rightSwitch = new DigitalInput(RobotMap.RIGHT_SWITCH_PORT);
 		climbMotorB = new CANTalon(RobotMap.CLIMB_MOTOR_B_ID);
+		
+		logger = new ThreadLogger( new LoggerClient(), "climb.txt");
 	}
 	
-	// Only call this from an Idle state
-	// It is not fool proof.. like rebooting while on the rope
-	// Seriously, think about it.
-	public void initialize()
-	{
-		lastDirectionForward = true;
-		paused = false;
-	}
-	
+
 	public void enable() {
-		// Deploy
-		climbSolenoid.set(DoubleSolenoid.Value.kReverse);
 	}
 	
 	public void disable() {
-		climbSolenoid.set(DoubleSolenoid.Value.kForward);
 		climbMotorA.set(0.0);
 		climbMotorB.set(0.0);
 	}
@@ -57,32 +44,20 @@ public class ClimbSubsystem extends Subsystem {
 		climbMotorA.set(0.0);
 		climbMotorB.set(0.0);
 	}
-	public void onForward()
+	
+	public void on(double speed)
 	{
-		lastDirectionForward = true;
-		climbMotorA.set(-CLIMB_MOTOR_SPEED_PVBUS);
-		climbMotorB.set(-CLIMB_MOTOR_SPEED_PVBUS);
-	}
-	public void onReverse()
-	{	
-		lastDirectionForward = false;
-		climbMotorA.set(CLIMB_MOTOR_SPEED_PVBUS);
-		climbMotorB.set(CLIMB_MOTOR_SPEED_PVBUS);
+		if (speed < 0.0) {
+			speed = 0.0;
+		}
+		climbMotorA.set(direction*speed);
+		climbMotorB.set(direction*speed);
 	}
 	
-	public boolean isForward()
-	{
-		return lastDirectionForward;
+	public void reverse() {			
+		direction *= -1.0;
 	}
 	
-	public boolean wasPaused()
-	{
-		return paused;
-	}
-	public void setPaused()
-	{
-		paused = true;
-	}
 	
 	public double getCurrent()
 	{
@@ -102,15 +77,25 @@ public class ClimbSubsystem extends Subsystem {
 	{
 		return (getCurrent() >= CLIMB_MOTOR_CURRENT_LIMIT_AMPS);
 	}
-	public boolean bumperSwitch() {	
-		boolean invertSwitch = RobotMap.INVERT_BUMPER_SWITCH;
-		return (invertSwitch ^ leftSwitch.get() ) || ( invertSwitch ^ rightSwitch.get() );
-	}
 	
 	public void initDefaultCommand() {
 		setDefaultCommand(new Idle());
 	}
 
+	public void startLogger()
+	{
+		if (wantLogging) {
+			logger.start();
+		}
+	}
+	
+	private class LoggerClient implements ThreadLogger.Client {
+		@Override
+		public void writeLine( PrintWriter writer, long millis) {
+			writer.format("%6d %9.1f %9.1f\n", millis, 
+					climbMotorA.getOutputCurrent(), climbMotorB.getOutputCurrent());
+		}
+	}
 }
 
 

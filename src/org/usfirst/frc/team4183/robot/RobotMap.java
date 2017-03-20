@@ -20,7 +20,7 @@ public class RobotMap {
 	
 	// Similar to above but for DriveStraight.
 	// Doesn't seem to be as finicky though.
-	public static final double DRIVESTRAIGHT_MIN_DRIVE = 0.2;
+	public static final double DRIVESTRAIGHT_MIN_DRIVE = 0.1;
 		
 	// Nominal value assuming 4" wheel:
 	// (4" * pi) in/rot = 12.57
@@ -36,7 +36,7 @@ public class RobotMap {
 		
 	
 	// Climb Subsystem
-	public static final int CLIMB_MOTOR_A_ID = 6;	
+	public static final int CLIMB_MOTOR_A_ID = 9;
 	public static final int LEFT_SWITCH_PORT = 0; 
 	public static final int RIGHT_SWITCH_PORT = 1; 
 	public static final boolean INVERT_BUMPER_SWITCH = false;
@@ -46,7 +46,7 @@ public class RobotMap {
 	// Ball Manipulator
 	public static final int BALL_SUBSYSTEM_TOP_ROLLER_MOTOR_ID = 7;
 	public static final int BALL_SUBSYSTEM_CONVEYER_MOTOR_ID = 5;
-	public static final int BALL_SUBSYSTEM_SWEEPER_MOTOR_ID = 9;
+	public static final int BALL_SUBSYSTEM_SWEEPER_MOTOR_ID = 6;
 				
 	// Gear Handler
 	public static final int GEAR_HANDLER_MOTOR_ID = 10;

@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class DriveStraight extends Command implements ControlLoop.ControlLoopUser {
 		
 	// Proportional gain
-	private final static double Kp = 0.03;
+	private final static double Kp = 0.02;
 
 	// Largest drive that will be applied
 	private final double MAX_DRIVE = 1.0;
@@ -157,8 +157,12 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		double x2 = rateLimit.f(x1);
 		double x3 = deadZone.f(x2, error);
 		
-		// Debug
-		//System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
+		// Dither signal
+		double ditherFreq = 8.0;  // Maybe try something higher freq?
+		//double ditherAmpl = 0.07;
+		double ditherAmpl = 0.07;
+		double s = Math.sin(2.0*Math.PI*ditherFreq*System.currentTimeMillis()/1000.0);
+		x3 += ditherAmpl*s;
 		
 		// Set the output
 		OI.axisForward.set( x3);

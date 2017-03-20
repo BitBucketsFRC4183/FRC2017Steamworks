@@ -6,64 +6,29 @@ import java.io.PrintWriter;
 import java.lang.Thread;
 
 
-public abstract class LoggerBase {
+public class ThreadLogger {
 
+	// User must implement this interface
+	public interface Client {
+		public void writeLine( PrintWriter writer, long millis);
+	}
+	
 	private static final long DEFAULT_INTERVAL = 10;     // Logging interval msec
 	private static final double DEFAULT_DURATION = 10.0; // Seconds
 
-	private long interval;    // Millis
-	private double duration;  // Seconds			
+	private final Client client;
+	private final long interval;    // Millis
+	private final double duration;  // Seconds			
+	private final File file;
 
-	private File file;
 	private PrintWriter writer;
 	private WriterThread writerThread = null;
-
-	private class WriterThread extends Thread {
-
-		private PrintWriter writer;
-		private long interval;
-		private double duration;
-		private long startMillis;
-
-		WriterThread( PrintWriter _writer, long _interval, double _duration) {			
-			writer = _writer;
-			interval = _interval;
-			duration = _duration;
-			startMillis = System.currentTimeMillis();
-		}
-
-		public void quit() {
-			interrupt();
-		}
-		
-		public void run() {
-			
-			while(!isInterrupted()) {
-				long millis = System.currentTimeMillis() - startMillis;
-				if( millis > 1000.0 * duration) 
-					break;
-				
-				writeLine( writer, millis);
-				
-				try {
-					sleep(interval);
-				} catch (InterruptedException e) {
-					interrupt();
-				}
-			}
-			
-			writer.close();
-		}
-	}
-
-	// Subclasses override this to print one log line
-	// Note this will run in TimerTask thread...
-	protected abstract void writeLine( PrintWriter writer, long millis);
-
+	
 	// Create Logger
 	// _interval: milliseconds
 	// _duration: seconds
-	public LoggerBase( String fileName, long _interval, double _duration) {		
+	public ThreadLogger( Client _client, String fileName, long _interval, double _duration) {		
+		client = _client;
 		interval = _interval;
 		duration = _duration;
 
@@ -72,8 +37,8 @@ public abstract class LoggerBase {
 	}
 
 	// Create logger w/ default interval & duration
-	public LoggerBase( String _fileName) {
-		this( _fileName, DEFAULT_INTERVAL, DEFAULT_DURATION);
+	public ThreadLogger( Client _client, String _fileName) {
+		this( _client, _fileName, DEFAULT_INTERVAL, DEFAULT_DURATION);
 	}
 
 	public void start() {
@@ -100,7 +65,6 @@ public abstract class LoggerBase {
 		writerThread.quit();
 		writerThread = null;
 	}
-
 
 
 	private File getLogFile( String fileName) {		
@@ -133,4 +97,43 @@ public abstract class LoggerBase {
 
 		return null;
 	}
+	
+	private class WriterThread extends Thread {
+
+		private PrintWriter writer;
+		private long interval;
+		private double duration;
+		private long startMillis;
+
+		WriterThread( PrintWriter _writer, long _interval, double _duration) {			
+			writer = _writer;
+			interval = _interval;
+			duration = _duration;
+			startMillis = System.currentTimeMillis();
+		}
+
+		public void quit() {
+			interrupt();
+		}
+		
+		public void run() {
+			
+			while(!isInterrupted()) {
+				long millis = System.currentTimeMillis() - startMillis;
+				if( millis > 1000.0 * duration) 
+					break;
+				
+				client.writeLine( writer, millis);
+				
+				try {
+					sleep(interval);
+				} catch (InterruptedException e) {
+					interrupt();
+				}
+			}
+			
+			writer.close();
+		}
+	}
+
 }

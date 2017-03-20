@@ -6,6 +6,10 @@ import edu.wpi.first.wpilibj.SPI;
 public class NavxIMU {
 	
 	private final AHRS ahrs;
+	
+	// 60 Hz is the default, we're just giving it the default,
+	// but we need to know this number to compute yawRate.
+	private final int AHRS_UPDATE_RATE = 60;  
 	private final boolean DEBUG_THREAD = false;
 	
 	private double pose_x = 0.0;
@@ -15,7 +19,7 @@ public class NavxIMU {
 	NavxIMU() {
 		
 		System.out.println( "Starting NavX AHRS");				
-		ahrs = new AHRS(SPI.Port.kMXP);
+		ahrs = new AHRS(SPI.Port.kMXP, (byte)AHRS_UPDATE_RATE);
 
 		// Wait a bit in background, then:
 		//   print connected & firmware info
@@ -103,12 +107,6 @@ public class NavxIMU {
 		return -ahrs.getAngle() + yawOffset;
 	}
 
-	// Note: this number is not accurate - it is reading maybe 9x too high?
-	// I should be able to use ahrs.getRate(), but THAT doesn't work either
-	// (it seems to be reading along the wrong axis? Who knows).
-	// So this is only good enough to use to determine when the yaw rate is
-	// becomes small (not moving).
-	// When stopped, it's reliably below 1.0.
 	public synchronized double getYawRateDps() {
 		
 		if( !isConnected()) {
@@ -120,8 +118,13 @@ public class NavxIMU {
 			System.err.println( "Warning, Rate requested but NavX is calibrating");
 		}
 		
-		// Need the - sign to get the Navx to agree with the yaw definition		
-		return -ahrs.getRawGyroZ();
+		// The NavX getRate() does NOT return degrees per second (as claimed);
+		// it actually returns just the difference between two successive yaw values in degrees
+		// (so it actually returns degrees per delta-T).
+		// They forgot to multiply by their own internal update rate
+		// (60 HZ by default). So we do it here.
+		// Need the - sign to get the Navx to agree with the yaw definition.		
+		return -AHRS_UPDATE_RATE*ahrs.getRate();
 	}
 	
 	public synchronized double getFwdAccel_G() {

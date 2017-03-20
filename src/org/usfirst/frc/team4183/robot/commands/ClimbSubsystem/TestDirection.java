@@ -1,48 +1,55 @@
 package org.usfirst.frc.team4183.robot.commands.ClimbSubsystem;
 
-import org.usfirst.frc.team4183.robot.LightingControl;
-import org.usfirst.frc.team4183.robot.OI;
+
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.LightingControl.LightingObjects;
-import org.usfirst.frc.team4183.robot.commands.GearHandlerSubsystem.Idle;
 import org.usfirst.frc.team4183.utils.CommandUtils;
+import org.usfirst.frc.team4183.robot.LightingControl;
+
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class ClimbReverse extends Command {
+public class TestDirection extends Command {
 
-    public ClimbReverse() {
+	
+    public TestDirection() {
     	requires(Robot.climbSubsystem);
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
+    protected void initialize() 
+    {
     	Robot.lightingControl.set(LightingObjects.CLIMB_SUBSYSTEM, 
 					              LightingControl.FUNCTION_BLINK, 
-					              LightingControl.COLOR_ORANGE,
+					              LightingControl.COLOR_GREEN,
 					              0,		// nspace - don't care
 					              300);		// period_ms
-    }
+    	}
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.climbSubsystem.onReverse();
+    	// Use relatively low drive to avoid stress on climber
+    	Robot.climbSubsystem.on( 0.2);
     }
+    
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	// Always pause when exiting so a resume is possible
-    	if ( OI.btnIdle.get() ||
-    		((timeSinceInitialized() > 0.200) && 
-    		 ((Robot.climbSubsystem.isPastCurrentLimit()) || Robot.climbSubsystem.bumperSwitch() )
-    		)
-    	) {
-    		return CommandUtils.stateChange( this, new ClimbPaused() ); 
+    	// After .5 sec, inrush & transients are done
+    	if (timeSinceInitialized() > 0.5) {
+    		
+    		// Measured 1-1.3A if free running, 4.4A if blocked;
+    		// thus 2.5A as the threshold
+    		if( Robot.climbSubsystem.getCurrent() > 2.5)
+    			Robot.climbSubsystem.reverse();
+    		
+    		return CommandUtils.stateChange(this, new OpControl());	
     	}
+
     	return false;
     }
 

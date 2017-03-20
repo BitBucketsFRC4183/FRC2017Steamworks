@@ -147,17 +147,12 @@ nada = Nada()
 # port does not seem to play well with the exposure settings (produces either no answer or causes errors depending
 # on the camera used)
 FRONT_CAM_GEAR_EXPOSURE = 0
-FRONT_CAM_RED_EXPOSURE = -1
-FRONT_CAM_BLUE_EXPOSURE = -1
-
 FRONT_CAM_NORMAL_EXPOSURE = -1   # Camera default
 
 frontCam = BucketCapture(name="FrontCam",src=0,width=320,height=240,exposure=FRONT_CAM_GEAR_EXPOSURE).start()    # start low for gears
-rearCam = BucketCapture(name="RearCam",src=1,width=320,height=240,exposure=-1).start()      # default for driver
-
 
 print("Waiting for BucketCapture to start...")
-while ((frontCam.isStopped() == True) | (rearCam.isStopped() == True)):
+while ((frontCam.isStopped() == True)):
     time.sleep(0.001)
 
 print("BucketCapture appears online!")
@@ -177,13 +172,9 @@ frontPipes = {'redBoiler' : nada, #boiler, #redBoiler,
 
 frontProcessor = BucketProcessor(frontCam,frontPipes,'gearLift').start()
 
-rearPipes = {'rope' : rope}
-
-rearProcessor = BucketProcessor(rearCam,rearPipes, 'rope').start()
 
 print("Waiting for BucketProcessors to start...")
-while ((frontProcessor.isStopped() == True)     |
-       (rearProcessor.isStopped() == True)):
+while ((frontProcessor.isStopped() == True)):
     time.sleep(0.001)
 
 print("BucketProcessors appear online!")
@@ -205,10 +196,8 @@ print("BucketProcessors appear online!")
 # LATER we will create display threads that stream the images as requested at their separate rates.
 #
 
-camera = {'frontCam' : frontCam,
-          'rearCam' : rearCam}
-processor = {'frontCam' : frontProcessor,
-             'rearCam' : rearProcessor}
+camera = {'frontCam' : frontCam}
+processor = {'frontCam' : frontProcessor}
 
 class CamHTTPHandler(BaseHTTPRequestHandler):
     _stop = False
@@ -320,15 +309,12 @@ while (True):
         frontCam.updateExposure(FRONT_CAM_GEAR_EXPOSURE)
     elif (frontCamMode.value == 'Boiler'):
         frontProcessor.updateSelection(alliance.value + "Boiler")
-        if (alliance.value == 'red'):
-            frontCam.updateExposure(FRONT_CAM_RED_EXPOSURE)
-        else:
-            frontCam.updateExposure(FRONT_CAM_BLUE_EXPOSURE)
+        frontCam.updateExposure(FRONT_CAM_NORMAL_EXPOSURE)
 
     # Monitor network tables for commands to relay to processors and servers
     key = cv2.waitKey(100)
 
-    if (rearCam.processUserCommand(key) == True):
+    if (frontCam.processUserCommand(key) == True):
         break
         
 # NOTE: NOTE: NOTE:
@@ -337,12 +323,10 @@ while (True):
 #stop the bucket server and processors
 
 frontProcessor.stop()      # stop this first to make the server exit
-rearProcessor.stop()
 
 
 print("Waiting for BucketProcessors to stop...")
-while ((frontProcessor.isStopped() == False) &
-       (rearProcessor.isStopped() == False)):
+while ((frontProcessor.isStopped() == False)):
     time.sleep(0.001)
 print("BucketProcessors appear to have stopped.")
 
@@ -355,11 +339,9 @@ print("CamServer appears to have stopped.")
 
 #stop the camera capture
 frontCam.stop()
-rearCam.stop()
 
 print("Waiting for BucketCaptures to stop...")
-while ((frontCam.isStopped() == False) &
-       (rearCam.isStopped() == False)):
+while ((frontCam.isStopped() == False)):
     time.sleep(0.001)
 print("BucketCaptures appears to have stopped.")
  

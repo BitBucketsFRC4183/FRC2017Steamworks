@@ -4,17 +4,26 @@ import java.io.PrintWriter;
 
 import com.ctre.CANTalon;
 
-public class TalonLogger extends LoggerBase {
+public class TalonLogger implements ThreadLogger.Client {
 	
 	private CANTalon motor;
+	private ThreadLogger logger;
 	
 	TalonLogger( CANTalon _motor) {
-		super( "talon.txt");
 		motor = _motor;		
+		logger = new ThreadLogger( this, "talon.txt");
 	}
 
+	public void start() {
+		logger.start();
+	}
+	
+	public void stop() {
+		logger.stop();
+	}
+	
 	@Override
-	protected void writeLine( PrintWriter writer, long millis) {
+	public void writeLine( PrintWriter writer, long millis) {
 
 		double sp = motor.getSetpoint();       // Setpoint (input)
 		double fb = motor.get();               // Feedback value
