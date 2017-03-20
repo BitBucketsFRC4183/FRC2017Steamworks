@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class TestDirection extends Command {
 
+	
     public TestDirection() {
     	requires(Robot.climbSubsystem);
     }
@@ -30,18 +31,20 @@ public class TestDirection extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.climbSubsystem.on( 1.0);
+    	// Use relatively low drive to avoid stress on climber
+    	Robot.climbSubsystem.on( 0.2);
     }
     
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	// Don't mess with this timeout value! Was tested, it's right.
-    	// If it's too short, you'll false on the inrush current. 
-    	if (timeSinceInitialized() > .25) {
+    	// After .5 sec, inrush & transients are done
+    	if (timeSinceInitialized() > 0.5) {
     		
-    		if( Robot.climbSubsystem.isPastCurrentLimit())
+    		// Measured 1-1.3A if free running, 4.4A if blocked;
+    		// thus 2.5A as the threshold
+    		if( Robot.climbSubsystem.getCurrent() > 2.5)
     			Robot.climbSubsystem.reverse();
     		
     		return CommandUtils.stateChange(this, new OpControl());	
