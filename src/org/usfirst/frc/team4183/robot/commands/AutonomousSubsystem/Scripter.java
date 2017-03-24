@@ -64,20 +64,66 @@ public class Scripter extends Command {
 	// e.g. TurnBy 60, DriveStraight 48.
 	// Uncomment this test script to get those moves selected by Team/Position
 	private String[][] tuneScript = {
-		{"",        "BranchOnColorAndPosition BlueLeft BlueCntr Noop RedLeft RedCntr Noop"},
-		{"BlueLeft",	"DriveStraight 24 12"},
-		{"",		"DriveStraight -24 12"},
-		{"",		"End"},
-		{"BlueCntr",	"DriveStraight 82.2 26"},
-		{"",		"DriveStraight -82.2 26"},
-		{"",		"End"},
-		{"RedLeft",	"TurnBy 5"},
-		{"",		"TurnBy -5"},
-		{"",		"End"},
-		{"RedCntr",	"TurnBy 60"},
-		{"",		"TurnBy -60"},
-		{"",		"End"},
-		{"Noop", 	"End" }    // MUST finish with End!
+		{"",        "BranchOnColorAndPosition BlueLeft BlueCntr BlueRight RedLeft RedCntr Noop"},
+		{"BlueRight",	"DriveStraight 82.2 26" },
+		{"",			"TurnBy 60.0" },
+		{"",			"Goto Vis"},
+		{"BlueLeft",	"DriveStraight 82.2 26"},
+		{"",			"TurnBy -60.0"},
+		{"", 			"GotoVis"},
+		{"BlueCntr", 	"DriveStraight 52 20"},
+		{"", 			"Goto Vis"},
+		{"RedLeft",		"TurnBy 5"},
+		{"",			"TurnBy -5"},
+		{"",			"End"},
+		{"RedCntr",		"TurnBy 60"},
+		{"",			"TurnBy -60"},
+		{"",			"End"},
+		{"Vis", 		"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
+		{"", 			"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
+		{"", 			"YawCorrect" },     		// TurnBy -measuredYaw
+		{"", 			"DistanceCorrect 15.0 0" },	// Stop short by this much	
+		{"", 			"DeliverGear" },// Spit the gear
+		{"", 			"End"},
+		{"Noop", 		"End" }    // MUST finish with End!
+	};
+	
+	private String[][] tuneScriptTest = {
+			{"", 			"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
+			{"Left", 		"DriveStraight 82.2 26" },  // Inch
+			{"", 			"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
+			{"",			"Goto Vis" },
+			{"Center",		"DriveStraight 52.0 20" },
+			{"",			"Goto VisCenter" },
+			{"Right",		"DriveStraight 82.2 26" },
+			{"",			"TurnBy 60.0" },
+			{"Vis", 		"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
+			{"", 			"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
+			{"", 			"YawCorrect" },     		// TurnBy -measuredYaw
+			{"", 			"DistanceCorrect 15.0 0" },	
+			{"", 			"DeliverGear" },			// Spit the gear
+			{"",        	"BranchOnColorAndPosition BlueBoiler NoBoiler BackUpBlue BackUpRed NoBoiler RedBoiler"},
+			{"NoBoiler",    "DriveStraight -12.0 0"},
+			{"",        	"Goto End"},
+			{"BackUpBlue",  "DriveStraight -24.0 0"},
+			{"", 			"TurnBy -60.0"},
+			{"",       		"DriveStraight 214.0 0"},
+			{"", 			"Goto End"},
+			{"BackUpRed",   "DriveStraight -24.0 0"},
+			{"", 			"TurnBy 60.0"},
+			{"",            "DriveStraight 214.0 0"},
+			{"",			"Goto End"},
+			{"BlueBoiler",  "StartShooter"},
+			{"",   			"DriveStraight -70.2 24"},
+			{"",        	"TurnBy -149.3"},
+			{"",        	"Goto Shoot"},
+			{"RedBoiler",   "StartShooter"},
+			{"",    		"DriveStraight -70.2 24"},
+			{"",        	"TurnBy 149.3"},
+			{"",        	"Goto Shoot"},
+			{"Shoot",   	"Shoot"},
+			{"",			"Delay 4000"},  // Have to Delay to allow shoot to happen!!
+			{"End", 		"End" }			// MUST finish in End state
 	};
 	
 	
@@ -86,7 +132,7 @@ public class Scripter extends Command {
 	 * Set this variable to the script you actually want to execute!!!
 	 * 
 	 *****************************************************************/
-	private String[][] script = theRealScript;
+	private String[][] script = tuneScriptTest;
 	
 	
 	// position 1,2,3 are Left, Center, Right respectively
