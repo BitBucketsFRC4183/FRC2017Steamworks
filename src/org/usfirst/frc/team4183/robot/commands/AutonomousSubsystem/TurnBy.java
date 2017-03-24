@@ -19,7 +19,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	private final static double Kp = 0.01;
 
 	// Largest drive that will be applied
-	private final double MAX_DRIVE = 0.7;
+	private final double MAX_DRIVE = 0.9;
 	
 	// Smallest drive that will be applied
 	// (unless error falls within dead zone, then drive goes to 0)
@@ -145,7 +145,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 
 		// Dither signal
 		double ditherFreq = 4.0;  // Maybe try something higher freq?
-		double ditherAmpl = 0.07;
+		double ditherAmpl = 0.12;
 		double s = Math.sin(2.0*Math.PI*ditherFreq*System.currentTimeMillis()/1000.0);
 		x3 += ditherAmpl*s;
 

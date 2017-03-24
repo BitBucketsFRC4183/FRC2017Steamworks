@@ -26,30 +26,30 @@ public class Scripter extends Command {
 	
 	private String[][] theRealScript = {
 			{"", 		"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
-			{"Left", 	"DriveStraight 82.2" },  // Inch
+			{"Left", 	"DriveStraight 82.2 26" },  // Inch
 			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
 			{"",		"Goto Vis" },
-			{"Center",	"DriveStraight 26.0" },
+			{"Center",	"DriveStraight 26.0 12" },
 			{"",		"Goto Vis" },
-			{"Right",	"DriveStraight 82.2" },
+			{"Right",	"DriveStraight 82.2 26" },
 			{"",		"TurnBy 60.0" },
 			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
 			{"", 		"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
 			{"", 		"YawCorrect" },     		// TurnBy -measuredYaw
-			{"", 		"DistanceCorrect 21.0" },	// Stop short by this much
+			{"", 		"DistanceCorrect 21.0 12" },	// Stop short by this much
 			{"", 		"MeasureGear" },
 			{"", 		"YawCorrect" },
-			{"", 		"DistanceCorrect 15.0" },	
+			{"", 		"DistanceCorrect 15.0 0" },	
 			{"", 		"DeliverGear" },			// Spit the gear
 			{"",        "BranchOnColorAndPosition BlueBoiler NoBoiler NoBoiler NoBoiler NoBoiler RedBoiler"},
-			{"NoBoiler",    "DriveStraight -12.0"},
+			{"NoBoiler",    "DriveStraight -12.0 0"},
 			{"",        "Goto End"},
 			{"BlueBoiler",   "StartShooter"},
-			{"",   		"DriveStraight -70.2"},
+			{"",   		"DriveStraight -70.2 24"},
 			{"",        "TurnBy -149.3"},
 			{"",        "Goto Shoot"},
 			{"RedBoiler",    "StartShooter"},
-			{"",    	"DriveStraight -70.2"},
+			{"",    	"DriveStraight -70.2 24"},
 			{"",        "TurnBy 149.3"},
 			{"",        "Goto Shoot"},
 			{"Shoot",   "Shoot"},
@@ -65,17 +65,17 @@ public class Scripter extends Command {
 	// Uncomment this test script to get those moves selected by Team/Position
 	private String[][] tuneScript = {
 		{"",        "BranchOnColorAndPosition BlueLeft BlueCntr Noop RedLeft RedCntr Noop"},
-		{"BlueLeft",	"DriveStraight 3"},
-		{"",		"DriveStraight -3"},
+		{"BlueLeft",	"DriveStraight 24 12"},
+		{"",		"DriveStraight -24 12"},
 		{"",		"End"},
-		{"BlueCntr",	"DriveStraight 48"},
-		{"",		"DriveStraight -48"},
+		{"BlueCntr",	"DriveStraight 82.2 26"},
+		{"",		"DriveStraight -82.2 26"},
 		{"",		"End"},
 		{"RedLeft",	"TurnBy 5"},
 		{"",		"TurnBy -5"},
 		{"",		"End"},
-		{"RedCntr",	"TurnBy 90"},
-		{"",		"TurnBy -90"},
+		{"RedCntr",	"TurnBy 60"},
+		{"",		"TurnBy -60"},
 		{"",		"End"},
 		{"Noop", 	"End" }    // MUST finish with End!
 	};
@@ -151,7 +151,7 @@ public class Scripter extends Command {
     		break;
     		
     	case "DriveStraight":  // distance (inches)
-    		driveStraight( Double.parseDouble(tokens[1]));
+    		driveStraight( Double.parseDouble(tokens[1]), Double.parseDouble((tokens[2])));
     		break;
     	
     	case "EnableVisionGear":
@@ -167,7 +167,7 @@ public class Scripter extends Command {
     		break;
     		
     	case "DistanceCorrect":  // drives forward measuredDistance - param)
-    		distanceCorrect( Double.parseDouble(tokens[1]));
+    		distanceCorrect( Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]));
     		break;
     			
     	case "DeliverGear":  // (Spits the gear)
@@ -265,10 +265,10 @@ public class Scripter extends Command {
     	(new TurnBy( yaw)).start();
     }
     
-    private void driveStraight( double dist) {
+    private void driveStraight( double dist, double hardstop) {
     	if(debug)
     		System.out.format( "Scripter.driveStraight %f\n", dist);
-    	(new DriveStraight( dist)).start();
+    	(new DriveStraight( dist, hardstop)).start();
     }
 
     private void enableVisionGear() {
@@ -289,10 +289,10 @@ public class Scripter extends Command {
     	(new TurnBy( -measuredYaw_deg)).start();
     }
     
-    private void distanceCorrect( double dRemain) {
+    private void distanceCorrect( double dRemain,double hardstop) {
     	if(debug)
     		System.out.format( "Scripter.distanceCorrect %f\n", measuredDistance_inch - dRemain);
-    	(new DriveStraight( measuredDistance_inch - dRemain)).start();
+    	(new DriveStraight( measuredDistance_inch - dRemain,hardstop)).start();
     }
     
     private void deliverGear() {

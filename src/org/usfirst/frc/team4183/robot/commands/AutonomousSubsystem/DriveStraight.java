@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class DriveStraight extends Command implements ControlLoop.ControlLoopUser {
 		
 	// Proportional gain
-	private final static double Kp = 0.02;
+	private final static double Kp = 0.03;
 
 	// Largest drive that will be applied
 	private final double MAX_DRIVE = 1.0;
@@ -47,6 +47,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	private final double RATE_LIM_PER_SEC = 3.0;
 			
 	private final double distanceInch;
+	private final double hardStopInch;
 	
 	private ControlLoop cloop;
 	private RateLimit rateLimit;
@@ -59,10 +60,11 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	private LogWriterFactory.Writer logWriter;
 
 	
-	public DriveStraight( double distanceInch) {		
+	public DriveStraight( double distanceInch, double hardStopInch) {		
 		requires( Robot.autonomousSubsystem);
 		
 		this.distanceInch = distanceInch;
+		this.hardStopInch = hardStopInch;
 	}
 
 	@Override
@@ -155,6 +157,11 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 			
 		// Apply drive non-linearities
 		double x2 = rateLimit.f(x1);
+		
+		if (Math.abs(error) < hardStopInch)
+		{
+			x2 = Math.signum(error)*MIN_DRIVE;
+		}
 		double x3 = deadZone.f(x2, error);
 		
 		// Dither signal
