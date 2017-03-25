@@ -122,7 +122,7 @@ public class Scripter extends Command {
 			{"",        	"TurnBy 149.3"},
 			{"",        	"Goto Shoot"},
 			{"Shoot",   	"Shoot"},
-			{"",			"Delay 4000"},  // Have to Delay to allow shoot to happen!!
+			{"",			"Delay 8000"},  // Have to Delay to allow shoot to happen!!
 			{"End", 		"End" }			// MUST finish in End state
 	};
 	
