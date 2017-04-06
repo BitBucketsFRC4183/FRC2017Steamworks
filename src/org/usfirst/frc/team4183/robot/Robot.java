@@ -121,16 +121,12 @@ public class Robot extends IterativeRobot {
 	public void disabledInit() {
 		runMode = RunMode.DISABLED;
 
-		// Set up OI for teleop mode - in case there are any buttons
-		// that should work while disabled (unlikely but possible).
-		// NOTE: Must do this BEFORE clearing out scheduler!
-		// Clearing out scheduler causes Default Commands (Idle-s)
-		// to start, and we want those to see the new OI mappings.
-		oi.teleopInit();
+		// Set up OI for disabled
+		oi.setDisabled();
 		
-		// Clear out the scheduler
-		// Will result in only Default Commands (Idle-s) running.
-		// Do this last to be sure that Idle-s see correct info when starting.
+		// Clear out the scheduler.
+		// Will result in only Default Commands (==Idle-s) running,
+		// effectively forcing all State Machines into Idle state.
 		Scheduler.getInstance().removeAll();
 	}
 
@@ -147,15 +143,8 @@ public class Robot extends IterativeRobot {
 		runMode = RunMode.AUTO;
 		
 		// Set up OI for autonomous mode
-		// NOTE: Must do this BEFORE clearing out scheduler!
-		// Clearing out scheduler causes Default Commands (Idle-s)
-		// to start, and we want those to see the new OI mappings.
-		oi.autonomousInit();
+		oi.setAuto();
 				
-		// Clear out the scheduler
-		// Will result in only Default Commands (Idle-s) running.
-		// Do this last to be sure that Idle-s see correct info when starting.
-		Scheduler.getInstance().removeAll();
 		
 		// Start the Autonomous-mode Scripter
 		int position = positionChooser.getSelected();
@@ -176,15 +165,7 @@ public class Robot extends IterativeRobot {
 		runMode = RunMode.TELEOP;
 
 		// Set up OI for teleop mode
-		// NOTE: Must do this BEFORE clearing out scheduler!
-		// Clearing out scheduler causes Default Commands (Idle-s)
-		// to start, and we want those to see the new OI mappings.
-		oi.teleopInit();
-
-		// Clear out the scheduler
-		// Will result in only Default Commands (Idle-s) running.
-		// Do this last to be sure that Idle-s see correct info when starting.
-		Scheduler.getInstance().removeAll();
+		oi.setTeleop();
 	}
 
 
