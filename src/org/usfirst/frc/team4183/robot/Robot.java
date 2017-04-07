@@ -122,7 +122,7 @@ public class Robot extends IterativeRobot {
 		runMode = RunMode.DISABLED;
 
 		// Set up OI for disabled
-		oi.setDisabled();
+		oi.setDisabledMode();
 		
 		// Clear out the scheduler.
 		// Will result in only Default Commands (==Idle-s) running,
@@ -143,7 +143,7 @@ public class Robot extends IterativeRobot {
 		runMode = RunMode.AUTO;
 		
 		// Set up OI for autonomous mode
-		oi.setAuto();
+		oi.setAutoMode();
 				
 		
 		// Start the Autonomous-mode Scripter
@@ -165,7 +165,7 @@ public class Robot extends IterativeRobot {
 		runMode = RunMode.TELEOP;
 
 		// Set up OI for teleop mode
-		oi.setTeleop();
+		oi.setTeleopMode();
 	}
 
 

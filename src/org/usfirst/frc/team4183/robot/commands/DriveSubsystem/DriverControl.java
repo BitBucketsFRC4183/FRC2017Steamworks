@@ -35,18 +35,18 @@ public class DriverControl extends Command
     // Called repeatedly when this Command is scheduled to run
     protected void execute() 
     {
-    	Robot.driveSubsystem.arcadeDrive(OI.axisForward.get(), OI.axisTurn.get());
+    	Robot.driveSubsystem.arcadeDrive(Robot.oi.axisForward.get(), Robot.oi.axisTurn.get());
 
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if (OI.btnDriveLock.get() || OI.sbtnShake.get())
+    	if (Robot.oi.btnDriveLock.get() || Robot.oi.sbtnShake.get())
     	{
     		return CommandUtils.stateChange(this, new DriveLock());
     	}
-    	else if(OI.btnAlignLock.get()) 
+    	else if(Robot.oi.btnAlignLock.get()) 
     	{
     		return CommandUtils.stateChange(this, new AlignLock());
     	}

@@ -344,8 +344,8 @@ public class Scripter extends Command {
     private void deliverGear() {
     	if(debug)
     		System.out.println("Scripter.deliverGear");
-    	OI.btnSpitGearA.hit();
-    	OI.btnSpitGearB.hit();
+    	Robot.oi.btnSpitGearA.hit();
+    	Robot.oi.btnSpitGearB.hit();
     }
     
     private void endState() {
@@ -355,10 +355,10 @@ public class Scripter extends Command {
     }  
     
     private void startShooter() {
-    	OI.btnShooterStart.hit();
+    	Robot.oi.btnShooterStart.hit();
     }
     
     private void shoot() {
-    	OI.btnShoot.hit(3000);
+    	Robot.oi.btnShoot.hit(3000);
     }
 }

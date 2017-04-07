@@ -38,7 +38,7 @@ public class ClimbPaused extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if (Deadzone.f(OI.axisClimb.get(), .05) == 0 ) {
+    	if (Deadzone.f(Robot.oi.axisClimb.get(), .05) == 0 ) {
     		return CommandUtils.stateChange(this, new OpControl());
     	}
     	return false;
