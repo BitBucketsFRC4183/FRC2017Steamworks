@@ -5,8 +5,6 @@ import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.utils.ControlLoop;
 import org.usfirst.frc.team4183.utils.LogWriterFactory;
-import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
-import org.usfirst.frc.team4183.utils.PWM;
 import org.usfirst.frc.team4183.utils.RateLimit;
 import org.usfirst.frc.team4183.utils.SettledDetector;
 
@@ -16,9 +14,6 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveStraight extends Command implements ControlLoop.ControlLoopUser {
 		
-	// Proportional gain
-	private final static double Kp = 0.03;
-
 	// Largest drive that will be applied
 	private final double MAX_DRIVE = 1.0;
 	
@@ -27,7 +22,10 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	// THIS MUST BE LARGE ENOUGH TO MOVE THE ROBOT from stopped position
 	// if it isn't, you can get stuck in this state.
 	// But if this is TOO BIG, you'll get limit cycling, and also get stuck.
-	private final double MIN_DRIVE = 0.0; // RobotMap.DRIVESTRAIGHT_MIN_DRIVE;
+	private final double MIN_DRIVE = RobotMap.DRIVESTRAIGHT_MIN_DRIVE;
+	
+	// Distance at which we reduce drive from MAX to MIN
+	private final double MIN_DRIVE_DISTANCE_INCH = 26.0;
 	
 	// Size of dead zone in inches - also used to determine when done.
 	private final double DEAD_ZONE_INCH = 0.5;
@@ -46,16 +44,11 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 3.0;
-	
-	private final double PWM_FREQ_HZ = 8.0;
-			
+				
 	private final double distanceInch;
-	private final double hardStopInch;
 	
 	private ControlLoop cloop;
 	private RateLimit rateLimit;
-	private MinMaxDeadzone deadZone;
-	private PWM pwm;
 	private SettledDetector settledDetector; 
 	private SettledDetector hangupDetector;
 	
@@ -64,11 +57,10 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	private LogWriterFactory.Writer logWriter;
 
 	
-	public DriveStraight( double distanceInch, double hardStopInch) {		
+	public DriveStraight( double distanceInch) {		
 		requires( Robot.autonomousSubsystem);
 		
 		this.distanceInch = distanceInch;
-		this.hardStopInch = hardStopInch;
 	}
 
 	@Override
@@ -78,8 +70,6 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		
 		// Make helpers
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
-		deadZone = new MinMaxDeadzone( DEAD_ZONE_INCH, MIN_DRIVE, MAX_DRIVE);
-		pwm = new PWM( PWM_FREQ_HZ);
 		settledDetector = new SettledDetector( SETTLED_MSECS, DEAD_ZONE_INCH);
 		hangupDetector = new SettledDetector( HANGUP_MSECS, STOPPED_RATE_IPS);
 		logWriter = logFactory.create( WRITE_LOG_FILE);	
@@ -156,36 +146,26 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 
 		settledDetector.set(error);
 		hangupDetector.set( Robot.driveSubsystem.getFwdVelocity_ips());
-
-
-		double x1 = Kp * error;
-			
-		// Apply drive non-linearities
-		double x2 = rateLimit.f(x1);
 		
-		/*
-		if (Math.abs(error) < hardStopInch)
-		{
-			x2 = Math.signum(error)*MIN_DRIVE;
-		}
-		*/
+		double x;
 		
+		if( Math.abs(error) < DEAD_ZONE_INCH)
+			x = 0.0;
+		else if( Math.abs(error) < MIN_DRIVE_DISTANCE_INCH)
+			x = Math.signum(error)*MIN_DRIVE;
+		else
+			x = Math.signum(error)*MAX_DRIVE;
+						
+		x = rateLimit.f(x);
 		
-		double x3 = deadZone.f(x2, error);
-		
-		// Tryin' this
-		x3 = pwm.get(x3);
-		
-		/*
-		// Dither signal
-		double ditherFreq = 8.0;  // Maybe try something higher freq?
-		//double ditherAmpl = 0.07;
-		double ditherAmpl = 0.07;
-		double s = Math.sin(2.0*Math.PI*ditherFreq*System.currentTimeMillis()/1000.0);
-		x3 += ditherAmpl*s;
-		*/
+		if( Math.abs(error) > DEAD_ZONE_INCH)
+			x += 0.07*ditherSignal();
 		
 		// Set the output
-		OI.axisForward.set( x3);
+		OI.axisForward.set( x);
+	}
+
+	double ditherSignal() {
+		return 2.0*(Math.random() - 0.5);
 	}
 }
