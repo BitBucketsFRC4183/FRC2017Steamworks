@@ -1,6 +1,5 @@
 package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 
-import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -26,35 +25,35 @@ public class Scripter extends Command {
 	
 	private String[][] theRealScript = {
 			{"", 			"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
-			{"Left", 		"DriveStraight 82.2 26" },  // Inch
+			{"Left", 		"DriveStraight 82.2" },  // Inch
 			{"", 			"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
 			{"",			"Goto Vis" },
-			{"Center",		"DriveStraight 52.0 20" },
+			{"Center",		"DriveStraight 52.0" },
 			{"",			"Goto Vis" },
-			{"Right",		"DriveStraight 82.2 26" },
+			{"Right",		"DriveStraight 82.2" },
 			{"",			"TurnBy 60.0" },
 			{"Vis", 		"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
 			{"", 			"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
 			{"", 			"YawCorrect" },     		// TurnBy -measuredYaw
-			{"", 			"DistanceCorrect 15.0 0" },	
+			{"", 			"DistanceCorrect 15.0" },	
 			{"", 			"DeliverGear" },			// Spit the gear
 			{"",        	"BranchOnColorAndPosition BlueBoiler NoBoiler BackUpBlue BackUpRed NoBoiler RedBoiler"},
-			{"NoBoiler",    "DriveStraight -12.0 0"},
+			{"NoBoiler",    "DriveStraight -12.0"},
 			{"",        	"Goto End"},
-			{"BackUpBlue",  "DriveStraight -24.0 0"},
+			{"BackUpBlue",  "DriveStraight -24.0"},
 			{"", 			"TurnBy -60.0"},
-			{"",       		"DriveStraight 214.0 0"},
+			{"",       		"DriveStraight 214.0"},
 			{"", 			"Goto End"},
-			{"BackUpRed",   "DriveStraight -24.0 0"},
+			{"BackUpRed",   "DriveStraight -24.0"},
 			{"", 			"TurnBy 60.0"},
-			{"",            "DriveStraight 214.0 0"},
+			{"",            "DriveStraight 214.0"},
 			{"",			"Goto End"},
 			{"BlueBoiler",  "StartShooter"},
-			{"",   			"DriveStraight -70.2 24"},
+			{"",   			"DriveStraight -70.2"},
 			{"",        	"TurnBy -149.3"},
 			{"",        	"Goto Shoot"},
 			{"RedBoiler",   "StartShooter"},
-			{"",    		"DriveStraight -70.2 24"},
+			{"",    		"DriveStraight -70.2"},
 			{"",        	"TurnBy 149.3"},
 			{"",        	"Goto Shoot"},
 			{"Shoot",   	"Shoot"},
@@ -69,30 +68,32 @@ public class Scripter extends Command {
 	// e.g. TurnBy 60, DriveStraight 48.
 	// Uncomment this test script to get those moves selected by Team/Position
 	private String[][] tuneScript = {
-		{"",        "BranchOnColorAndPosition BlueLeft BlueCntr Noop RedLeft RedCntr Noop"},
-		{"BlueLeft",	"TurnBy 5.0" },
-		{"",			"TurnBy -5.0"},
-		{"",			"End"},
-		{"BlueCntr",	"TurnBy 60.0"},
-		{"",			"TurnBy -60.0"},
-		{"", 			"End"},
-		{"RedLeft",		"DriveStraight 5.0 26"},
-		{"",			"DriveStraight -5.0 26"},
-		{"",			"End"},
-		{"RedCntr",		"DriveStraight 60 26"},
-		{"",			"DriveStraight -60 26"},
-		{"",			"End"},
-		{"Noop", 		"End" }    // MUST finish with End!
-	};
+			{"",        "BranchOnColorAndPosition BlueLeft BlueCntr Noop RedLeft RedCntr Noop"},
+			{"BlueLeft",	"TurnBy 5.0" },
+			{"",			"TurnBy -5.0"},
+			{"",			"End"},
+			{"BlueCntr",	"TurnBy 60.0"},
+			{"",			"TurnBy -60.0"},
+			{"", 			"End"},
+			{"RedLeft",		"DriveStraight 5.0"},
+			{"",			"DriveStraight -5.0"},
+			{"",			"End"},
+			{"RedCntr",		"DriveStraight 60"},
+			{"",			"DriveStraight -60"},
+			{"",			"End"},
+			{"Noop", 		"End" }    // MUST finish with End!
+		};
+	
 	
 
+	
 	
 	/*****************************************************************
 	 * 
 	 * Set this variable to the script you actually want to execute!!!
 	 * 
 	 *****************************************************************/
-	private String[][] script = theRealScript;
+	private String[][] script = tuneScript;
 	
 	
 	// position 1,2,3 are Left, Center, Right respectively
@@ -157,7 +158,7 @@ public class Scripter extends Command {
     		break;
     		
     	case "DriveStraight":  // distance (inches)
-    		driveStraight( Double.parseDouble(tokens[1]), Double.parseDouble((tokens[2])));
+    		driveStraight( Double.parseDouble(tokens[1]));
     		break;
     	
     	case "EnableVisionGear":
@@ -173,7 +174,7 @@ public class Scripter extends Command {
     		break;
     		
     	case "DistanceCorrect":  // drives forward measuredDistance - param)
-    		distanceCorrect( Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]));
+    		distanceCorrect( Double.parseDouble(tokens[1]));
     		break;
     			
     	case "DeliverGear":  // (Spits the gear)
@@ -271,10 +272,10 @@ public class Scripter extends Command {
     	(new TurnBy( yaw)).start();
     }
     
-    private void driveStraight( double dist, double hardstop) {
+    private void driveStraight( double dist) {
     	if(debug)
     		System.out.format( "Scripter.driveStraight %f\n", dist);
-    	(new DriveStraight( dist, hardstop)).start();
+    	(new DriveStraight( dist)).start();
     }
 
     private void enableVisionGear() {
@@ -295,10 +296,10 @@ public class Scripter extends Command {
     	(new TurnBy( -measuredYaw_deg)).start();
     }
     
-    private void distanceCorrect( double dRemain,double hardstop) {
+    private void distanceCorrect( double dRemain) {
     	if(debug)
     		System.out.format( "Scripter.distanceCorrect %f\n", measuredDistance_inch - dRemain);
-    	(new DriveStraight( measuredDistance_inch - dRemain,hardstop)).start();
+    	(new DriveStraight( measuredDistance_inch - dRemain)).start();
     }
     
     private void deliverGear() {
