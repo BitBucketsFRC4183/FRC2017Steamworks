@@ -25,76 +25,12 @@ public class Scripter extends Command {
 	// position 2 start point is on center line (directly facing gear peg)
 	
 	private String[][] theRealScript = {
-			{"", 		"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
-			{"Left", 	"DriveStraight 82.2 26" },  // Inch
-			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
-			{"",		"Goto Vis" },
-			{"Center",	"DriveStraight 26.0 12" },
-			{"",		"Goto Vis" },
-			{"Right",	"DriveStraight 82.2 26" },
-			{"",		"TurnBy 60.0" },
-			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
-			{"", 		"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
-			{"", 		"YawCorrect" },     		// TurnBy -measuredYaw
-			{"", 		"DistanceCorrect 21.0 12" },	// Stop short by this much
-			{"", 		"MeasureGear" },
-			{"", 		"YawCorrect" },
-			{"", 		"DistanceCorrect 15.0 0" },	
-			{"", 		"DeliverGear" },			// Spit the gear
-			{"",        "BranchOnColorAndPosition BlueBoiler NoBoiler NoBoiler NoBoiler NoBoiler RedBoiler"},
-			{"NoBoiler",    "DriveStraight -12.0 0"},
-			{"",        "Goto End"},
-			{"BlueBoiler",   "StartShooter"},
-			{"",   		"DriveStraight -70.2 24"},
-			{"",        "TurnBy -149.3"},
-			{"",        "Goto Shoot"},
-			{"RedBoiler",    "StartShooter"},
-			{"",    	"DriveStraight -70.2 24"},
-			{"",        "TurnBy 149.3"},
-			{"",        "Goto Shoot"},
-			{"Shoot",   "Shoot"},
-			{"",		"Delay 4000"},  // Have to Delay to allow shoot to happen!!
-			{"End", 	"End" }			// MUST finish in End state
-	};
-	
-	
-	// Test small moves to make sure MIN_DRIVEs big enough.
-	// e.g. TurnBy 5, DriveStraight 3.
-	// Test big moves to make sure it behaves & settles.
-	// e.g. TurnBy 60, DriveStraight 48.
-	// Uncomment this test script to get those moves selected by Team/Position
-	private String[][] tuneScript = {
-		{"",        "BranchOnColorAndPosition BlueLeft BlueCntr BlueRight RedLeft RedCntr Noop"},
-		{"BlueRight",	"DriveStraight 82.2 26" },
-		{"",			"TurnBy 60.0" },
-		{"",			"Goto Vis"},
-		{"BlueLeft",	"DriveStraight 82.2 26"},
-		{"",			"TurnBy -60.0"},
-		{"", 			"GotoVis"},
-		{"BlueCntr", 	"DriveStraight 52 20"},
-		{"", 			"Goto Vis"},
-		{"RedLeft",		"TurnBy 5"},
-		{"",			"TurnBy -5"},
-		{"",			"End"},
-		{"RedCntr",		"TurnBy 60"},
-		{"",			"TurnBy -60"},
-		{"",			"End"},
-		{"Vis", 		"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
-		{"", 			"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
-		{"", 			"YawCorrect" },     		// TurnBy -measuredYaw
-		{"", 			"DistanceCorrect 15.0 0" },	// Stop short by this much	
-		{"", 			"DeliverGear" },// Spit the gear
-		{"", 			"End"},
-		{"Noop", 		"End" }    // MUST finish with End!
-	};
-	
-	private String[][] tuneScriptTest = {
 			{"", 			"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
 			{"Left", 		"DriveStraight 82.2 26" },  // Inch
 			{"", 			"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
 			{"",			"Goto Vis" },
 			{"Center",		"DriveStraight 52.0 20" },
-			{"",			"Goto VisCenter" },
+			{"",			"Goto Vis" },
 			{"Right",		"DriveStraight 82.2 26" },
 			{"",			"TurnBy 60.0" },
 			{"Vis", 		"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
@@ -127,12 +63,36 @@ public class Scripter extends Command {
 	};
 	
 	
+	// Test small moves to make sure MIN_DRIVEs big enough.
+	// e.g. TurnBy 5, DriveStraight 3.
+	// Test big moves to make sure it behaves & settles.
+	// e.g. TurnBy 60, DriveStraight 48.
+	// Uncomment this test script to get those moves selected by Team/Position
+	private String[][] tuneScript = {
+		{"",        "BranchOnColorAndPosition BlueLeft BlueCntr Noop RedLeft RedCntr Noop"},
+		{"BlueLeft",	"TurnBy 5.0" },
+		{"",			"TurnBy -5.0"},
+		{"",			"End"},
+		{"BlueCntr",	"TurnBy 60.0"},
+		{"",			"TurnBy -60.0"},
+		{"", 			"End"},
+		{"RedLeft",		"DriveStraight 5.0 26"},
+		{"",			"DriveStraight -5.0 26"},
+		{"",			"End"},
+		{"RedCntr",		"DriveStraight 60 26"},
+		{"",			"DriveStraight -60 26"},
+		{"",			"End"},
+		{"Noop", 		"End" }    // MUST finish with End!
+	};
+	
+
+	
 	/*****************************************************************
 	 * 
 	 * Set this variable to the script you actually want to execute!!!
 	 * 
 	 *****************************************************************/
-	private String[][] script = tuneScriptTest;
+	private String[][] script = theRealScript;
 	
 	
 	// position 1,2,3 are Left, Center, Right respectively

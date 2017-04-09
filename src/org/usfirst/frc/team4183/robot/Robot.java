@@ -121,7 +121,7 @@ public class Robot extends IterativeRobot {
 	public void disabledInit() {
 		runMode = RunMode.DISABLED;
 
-		// Set up OI for disabled
+		// Set up OI for disabled mode
 		oi.setDisabledMode();
 		
 		// Clear out the scheduler.
