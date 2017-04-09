@@ -112,11 +112,11 @@ public class DriveSubsystem extends Subsystem {
 		// +turnStick produces right turn (CW from above, -yaw angle)
 		public void arcadeDrive(double fwdStick, double turnStick) {
 			
-			if(OI.btnLowSensitiveDrive.get()) {
+			if(Robot.oi.btnLowSensitiveDrive.get()) {
 				fwdStick *= LOW_SENS_GAIN;
 				turnStick *= LOW_SENS_GAIN;
 			}
-			if(OI.btnInvertAxis.get()) {
+			if(Robot.oi.btnInvertAxis.get()) {
 				fwdStick *= -1.0;
 			}
 			
@@ -145,10 +145,10 @@ public class DriveSubsystem extends Subsystem {
 		
 		public void doAlignDrive(double fwdStick, double turnStick) {
 						
-			if(OI.btnLowSensitiveDrive.get())
+			if(Robot.oi.btnLowSensitiveDrive.get())
 				fwdStick *= LOW_SENS_GAIN;
 			
-			if(OI.btnInvertAxis.get()) {
+			if(Robot.oi.btnInvertAxis.get()) {
 				fwdStick *= -1.0;
 			}
 			

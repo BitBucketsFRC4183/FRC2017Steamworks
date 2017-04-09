@@ -1,6 +1,5 @@
 package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 
-import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.utils.ControlLoop;
@@ -75,7 +74,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		Robot.driveSubsystem.setAutonomousControl(true);
 		
 		// Make sure forward stick is 0 (it should be, but...)
-		OI.axisForward.set(0.0);
+		Robot.oi.axisForward.set(0.0);
 
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
@@ -110,8 +109,8 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		Robot.driveSubsystem.setAutonomousControl(false);
 
 		// Set output to zero before leaving
-		OI.axisTurn.set(0.0);
-		OI.axisForward.set(0.0);		
+		Robot.oi.axisTurn.set(0.0);
+		Robot.oi.axisForward.set(0.0);		
 	}
 	
 	@Override
@@ -153,7 +152,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		// - sign required because + stick produces right turn,
 		// but right turn is actually a negative yaw angle
 		// (using our yaw angle convention: right-hand-rule w/z-axis up)		
-		OI.axisTurn.set( -x3);
+		Robot.oi.axisTurn.set( -x3);
 		
 	}
 }

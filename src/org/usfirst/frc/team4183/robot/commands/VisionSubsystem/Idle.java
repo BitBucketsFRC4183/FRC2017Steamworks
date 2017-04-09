@@ -25,9 +25,9 @@ public class Idle extends Command {
     // Called just before this Command runs the first time
     protected void initialize() 
     {
-    	btnToggleCamMode = OI.getBtnEvt(OI.btnToggleFrontCameraView);
-    	btnFrontCamMode = OI.getBtnEvt(OI.btnSelectFrontCam);
-    	btnRearCamMode = OI.getBtnEvt(OI.btnSelectRearCam);
+    	btnToggleCamMode = Robot.oi.getBtnEvt(Robot.oi.btnToggleFrontCameraView);
+    	btnFrontCamMode = Robot.oi.getBtnEvt(Robot.oi.btnSelectFrontCam);
+    	btnRearCamMode = Robot.oi.getBtnEvt(Robot.oi.btnSelectRearCam);
     }
 
     // Called repeatedly when this Command is scheduled to run

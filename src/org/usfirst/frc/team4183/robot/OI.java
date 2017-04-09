@@ -1,251 +1,117 @@
 package org.usfirst.frc.team4183.robot;
 
+
+import java.util.HashSet;
+import java.util.Set;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
-/**
- * This class is the glue that binds the controls on the physical operator
- * interface to the commands and command groups that allow control of the robot.
- */
 public class OI {
 
+	// Each Modal must add itself to this Set so we can notify them appropriately
+	private Set<Modal> modals = new HashSet<>();
+	
+	private final PhysicalController driverController = new PhysicalController( new Joystick(0));
+	private final PhysicalController operatorController = new PhysicalController( new Joystick(1));
+	
+	
+	//****************************
+	// BUTTON DEFINITIONS
+	//****************************
+	
+	public final LogicalButton btnToggleFrontCameraView = new ModalButton(driverController.bCross);
+	public final LogicalButton btnSelectFrontCam = new ModalButton(driverController.bPovUp);
+	public final LogicalButton btnSelectRearCam = new ModalButton(driverController.bPovDown);
+  
+	// Drive
+	public final LogicalButton btnLowSensitiveDrive = new ModalButton(driverController.bR1);  
+	public final LogicalButton btnInvertAxis = new ModalButton(driverController.bR2);
+	public final LogicalButton btnAlignLock = new ModalButton(driverController.bL1);
+	public final LogicalButton btnDriveLock = new ModalButton(driverController.bL2);	
+		
+	// Gear Handler 
+	public final LogicalButton btnWaitForGear = new ModalButton(operatorController.bCross);
+	public final LogicalButton btnWaitForBalls = new ModalButton(operatorController.bCircle);
+	public final LogicalButton btnSpitGearA = new ModalButton(operatorController.bL2);
+	public final LogicalButton btnSpitGearB = new ModalButton(operatorController.bTriangle);
+	
+	// Ball Manip 
+	public final LogicalButton btnOpenHopper = new ModalButton(operatorController.bPovLeft);
+	public final LogicalButton btnCloseHopper = new ModalButton(operatorController.bPovRight);
+	public final LogicalButton btnIntakeOn = new ModalButton(operatorController.bL1);
+	public final LogicalButton btnShooterStart = new ModalButton(operatorController.bR1);
+	public final LogicalButton btnShoot = new ModalButton(operatorController.bR2);
+	public final LogicalButton btnUnjam = new ModalButton(operatorController.bSquare);
+	
+	// Multi-subsystem (Gear & Ball)
+	public final LogicalButton btnIdle = new ModalButton(operatorController.bTrackpad);
+
+	
+	//****************************
+	// AXIS DEFINITIONS
+	//****************************
+	public final LogicalAxis axisForward = new ModalAxis(driverController.aLeftY);
+	public final LogicalAxis axisTurn = new ModalAxis(driverController.aRightX);
+	public final LogicalAxis axisClimb = new ModalAxis(operatorController.aRightY);
+
+	
+	//****************************
+	// Permanent SoftButtons (used for inter-State-Machine communications)
+	//****************************
+	public final LogicalButton sbtnShake = new SoftButton();
+
+	
+	/*
+	 * I removed the driver/operator specific remappings because we didn't use them 
+	 * and they clutter up this already too-big class.
+	 * But if you need to remap a button or axis, here's the right way to do it.
+	 * Take axisTurn as example; above, axisTurn is mapped to driverController.aRightX:
+	 *   public final LogicalAxis axisTurn = new ModalAxis(driverController.aRightX)
+	 * 
+	 * If you wanted to change this so axisTurn was mapped to aRightX for driver A
+	 * and aLeftX for driver B, change the above so that axisTurn is by default mapped to nothing:
+	 *   public final LogicalAxis axisTurn = new ModalAxis(null)
+	 *   
+	 * Then add appropriate re-mapping methods to be called from Robot.teleopInit(), in those methods assign
+	 * the appropriate Physical value to the ModalButton's teleopAxis member, e.g:
+	 * In method map_driver_A() do
+	 *   ((ModalAxis)axisTurn).teleopAxis = driverController.aRightX;
+	 * and in method map_driver_B() do
+	 *   ((ModalAxis)axisTurn).teleopAxis = driverController.aLeftX;
+	 *   
+	 * Don't remap by overwriting axisTurn, ie. don't (in a re-mapping method) do something like
+	 *   axisTurn = new ModalAxis(driverController.aLeftX);
+	 *   
+	 * Note: axisTurn (and all the other Buttons/Axis) are declared "final" to keep you from doing this.
+	 */
+	
+	/**
+	 * If your Command needs rising or falling edge detect on a button,
+	 * use this method to get a ButtonEvent for that purpose.
+	 * In initialize(), get your ButtonEvent: Robot.oi.ButtonEvent btnShoot = Robot.oi.getBtnEvt( Robot.oi.btnShoot).
+	 * In isFinished(), test the ButtonEvent: btnShoot.onPressed() or btnShoot.onReleased().
+	 * 
+	 * @param btn The Logical button 
+	 * @return The ButtonEvent that wraps the button
+	 */
+	public ButtonEvent getBtnEvt( LogicalButton btn) { return new ButtonEvent(btn); }
+
+		
 	// Singleton method; use OI.instance() to get the OI instance.
-	// Should do this in Robot.robotInit().
-	private static OI inst;
 	public static OI instance() {
 		if(inst == null)
 			inst = new OI();
 		return inst;		
 	}
-	
-	// Call on entry to Autonomous Mode to set up the Soft Buttons
-	public void autonomousInit() {
-		doAutonomousMapping();
-	}
-	
-	public enum Driver {
-		DEFAULT, JOE, SAM;  // TODO Put in actual names, add more as needed
-	}
-	
-	public enum Operator {
-		DEFAULT, BILL, MIKE;  // TODO Put in actual names, add more as needed
-	}
-	
-	public void teleopInit( Driver driver, Operator operator) {
-		
-		// Begin by setting defaults
-		doDefaultMapping();
-		
-		// Override default mappings for particular driver.
-		// Make sure to pass driverController!
-		switch(driver) {
-		case JOE:
-			mapDriver_Joe( driverController);
-			break;
-		case SAM:
-			// Currently no remapping for Sam
-			break;
-		case DEFAULT:
-			break;
-		}
-		
-		// Override default mappings for particular operator
-		// Make sure to pass operatorController!
-		switch(operator) {
-		case BILL:
-			mapOperator_Bill( operatorController);
-			break;
-		case MIKE:
-			// Currently no remapping for Mike
-			break;
-		case DEFAULT:
-			break;
-		}		
-	}
-
-	public void teleopInit() {
-		teleopInit(Driver.DEFAULT, Operator.DEFAULT);
-	}
-	
-	/**
-	 * If your Command needs rising or falling edge detect on a button,
-	 * use this method to get a ButtonEvent for that purpose.
-	 * In initialize(), get your ButtonEvent: OI.ButtonEvent btnShoot = OI.getBtnEvt( OI.btnShoot).
-	 * In isFinished(), test the ButtonEven: btnShoot.onPressed() or btnShoot.onReleased().
-	 * 
-	 * @param btn The Logical button 
-	 * @return The ButtonEvent that wraps the button
-	 */
-	public static ButtonEvent getBtnEvt( LogicalButton btn) { return new ButtonEvent(btn); }
-
-	
-	//****************************
-	// LOGICAL BUTTON DEFINITIONS
-	//****************************
-
-	public static LogicalButton btnToggleFrontCameraView;
-	public static LogicalButton btnSelectFrontCam;
-	public static LogicalButton btnSelectRearCam;
-  
-	public static LogicalButton btnLowSensitiveDrive;  
-	public static LogicalButton btnInvertAxis;
-	public static LogicalButton btnAlignLock;
-	public static LogicalButton btnDriveLock;	
-	public static LogicalButton btnAlignAssist;
-	
-
+	private static OI inst;	
+	private OI() {}
 	
 	
-	
-	// Gear/ball-loading functions
-	public static LogicalButton btnWaitForGear;
-	public static LogicalButton btnWaitForBalls;
-	public static LogicalButton btnSpitGearA;
-	public static LogicalButton btnSpitGearB;
-	
-	// Ball handling functions
-	public static LogicalButton btnOpenHopper;
-	public static LogicalButton btnCloseHopper;
-	public static LogicalButton btnIntakeOn;
-	public static LogicalButton btnShooterStart;
-	public static LogicalButton btnShoot;
-	
-	public static LogicalButton btnIdle;
-	
-	public static LogicalButton btnUnjam;
-	
-	
-	//****************************
-	// LOGICAL AXIS DEFINITIONS
-	//****************************
-	public static LogicalAxis axisForward;
-	public static LogicalAxis axisTurn;
-	public static LogicalAxis axisClimb;
-
-	
-	//****************************
-	// Permanent SoftButtons (used for inter-SM communications)
-	//****************************
-	public static LogicalButton sbtnShake = new SoftButton();
-
-	
-	// End of public interface
-
-	
-
-	private PhysicalController driverController, operatorController;
-
-	// Private so nobody can instantiate class OI directly - 
-	// forced to use instance().
-	private OI() {
-		driverController = new PhysicalController( new Joystick(0));
-		operatorController = new PhysicalController( new Joystick(1));
-		
-		// Set default mapping
-		doDefaultMapping();		
-	}
-	
-	// Person-specific mapping functions.
-	// Override Defaults here.
-	
-	// Example: remap driver controller for Joe as driver
-	// TODO: change name of method for real driver name,
-	// and of course put in actual desired mapping
-	private void mapDriver_Joe( PhysicalController controller) {
-	}
-	
-	// Example: remap operator controller for Mike as operator
-	// TODO: change name of method for real operator name,
-	// and of course put in actual desired mapping
-	private void mapOperator_Bill( PhysicalController controller) {
-	}
-	
-	
-	// Mapping of Soft(ware) button/axis to Logical buttons & axis
-	private void doAutonomousMapping() {
-		
-		// Assign to EVERY logical button a soft button
-		btnToggleFrontCameraView = new SoftButton();
-		btnSelectFrontCam = new SoftButton();
-		btnSelectRearCam = new SoftButton();
-
-		btnLowSensitiveDrive = new SoftButton();
-		btnInvertAxis = new SoftButton();
-		btnAlignLock = new SoftButton();
-		btnDriveLock = new SoftButton();
-		btnAlignAssist = new SoftButton();
-		
-		
-		
-		
-		btnWaitForGear = new SoftButton();
-		btnWaitForBalls = new SoftButton();
-		btnSpitGearA = new SoftButton();
-		btnSpitGearB = new SoftButton();
-		
-		btnOpenHopper = new SoftButton();
-		btnCloseHopper = new SoftButton();
-		btnIntakeOn = new SoftButton();
-		btnShooterStart = new SoftButton();
-		btnShoot = new SoftButton();
-		
-		btnIdle = new SoftButton();		
-		 		
-		
-		// Assign to EVERY logical axis a soft axis
-		axisForward = new SoftAxis();
-		axisTurn = new SoftAxis();
-	}
-	
-	// Default mapping of Physical to Logical button, axis
-	private void doDefaultMapping() {
-		
-		// Assign to EVERY logical button a physical button
-		// Assign to EVERY logical axis a physical axis
-
-		// ****************
-		// DRIVER CONTROLS Logical <- Physical
-		// ****************
-		btnToggleFrontCameraView = driverController.bCross;
-		btnSelectFrontCam = driverController.bPovUp;
-		btnSelectRearCam = driverController.bPovDown;
-		
-		btnLowSensitiveDrive = driverController.bR1;
-		btnInvertAxis = driverController.bR2;	
-		btnAlignLock = driverController.bL1;
-		btnDriveLock = driverController.bL2;		
-		btnAlignAssist = driverController.bTriangle;
-
-		
-		// ****************
-		// OPERATOR CONTROLS Logical <- Physical
-		// ****************		
-		
-		
-		btnWaitForGear = operatorController.bCross;
-		btnWaitForBalls = operatorController.bCircle;
-		btnSpitGearA = operatorController.bL2;
-		btnSpitGearB = operatorController.bTriangle;
-		
-		btnOpenHopper = operatorController.bPovLeft;
-		btnCloseHopper = operatorController.bPovRight;
-		btnIntakeOn = operatorController.bL1;
-		btnShooterStart = operatorController.bR1;
-		btnShoot = operatorController.bR2;		
-		btnUnjam = operatorController.bSquare;
-		
-		
-		btnIdle = operatorController.bTrackpad;		// Big easy button to make selected operator subs idle
-				
-		
-		axisForward = driverController.aLeftY;
-		axisTurn = driverController.aRightX;	
-		axisClimb = operatorController.aRightY;
-	}
-
-	// Represents the physical buttons & axis on one controller
-	private static class PhysicalController {
+	// Represents all the physical buttons & axis on one controller.
+	// Lotta ugly typing in here but fortunately no need to change anything. 
+	private class PhysicalController {
 
 		@SuppressWarnings("unused")
 		private final PhysicalButton 
@@ -254,17 +120,16 @@ public class OI {
 			bShare, bOptions, bLstick, bRstick,
 			bPS4, bTrackpad;
 		
-		@SuppressWarnings("unused")
 		private final PhysicalPovButton
 			bPovUp, bPovRight, bPovDown, bPovLeft;
-
+				
 		@SuppressWarnings("unused")
 		private final PhysicalAxis 
 			aLeftX, aLeftY, aRightX, aRightY, aL2, aR2;
 		
 		private PhysicalController( Joystick controller) {
 			bSquare = new PhysicalButton(controller, PS4Constants.SQUARE.getValue());
-			bCross = new PhysicalButton(controller, PS4Constants.CROSS.getValue());
+			bCross =  new PhysicalButton(controller, PS4Constants.CROSS.getValue());
 			bCircle = new PhysicalButton(controller, PS4Constants.CIRCLE.getValue());
 			bTriangle = new PhysicalButton(controller, PS4Constants.TRIANGLE.getValue());
 			bL1 = new PhysicalButton(controller, PS4Constants.L1.getValue());
@@ -277,10 +142,10 @@ public class OI {
 			bRstick = new PhysicalButton(controller, PS4Constants.R_STICK.getValue());
 			bPS4 = new PhysicalButton(controller, PS4Constants.PS4.getValue());
 			bTrackpad = new PhysicalButton(controller, PS4Constants.TRACKPAD.getValue());
-			bPovUp = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.UP);
-			bPovRight = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.RIGHT);
-			bPovDown = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.DOWN);
-			bPovLeft = new PhysicalPovButton(controller, PhysicalPovButton.POV_BUTTON.LEFT);
+			bPovUp = new PhysicalPovButton(controller, POV_BUTTON.UP);
+			bPovRight = new PhysicalPovButton(controller, POV_BUTTON.RIGHT);
+			bPovDown = new PhysicalPovButton(controller, POV_BUTTON.DOWN);
+			bPovLeft = new PhysicalPovButton(controller, POV_BUTTON.LEFT);
 
 			aLeftX = new PhysicalAxis( controller, PS4Constants.LEFT_STICK_X.getValue(), false);
 			aLeftY = new PhysicalAxis( controller, PS4Constants.LEFT_STICK_Y.getValue(), true);
@@ -290,19 +155,91 @@ public class OI {
 			aR2 = new PhysicalAxis( controller, PS4Constants.R2_AXIS.getValue(), false);
 		}
 	}
+	
+	
+	// Modal is a thing that needs to be informed of Robot mode changes.
+	private interface Modal {
+		default void setDisabledMode() {}
+		default void setTeleopMode() {}
+		default void setAutoMode() {}
+	}
+	
+	
+	// Following 3 functions called from Robot on mode changes
+	public void setDisabledMode() {
+		for( Modal f : modals)
+			f.setDisabledMode();
+	}
+	
+	public void setTeleopMode() {
+		for( Modal f : modals)
+			f.setTeleopMode();		
+	}
+	
+	public void setAutoMode() {
+		for( Modal f : modals)
+			f.setAutoMode();		
+	}
 
-	// Represents a generic button
-	public static interface LogicalButton {
+	
+	// Represents a generic button.
+	// get() is meaningful for all buttons;
+	// the other methods are only meaningful for Soft buttons.
+	public interface LogicalButton {
 		public boolean get();
 		public default void push() {}
 		public default void release() {}
 		public default void hit() { hit(300); }
-		public default void hit( long msecs) {}
+		public default void hit( long msecs) {}  // "hit" means push, then release later
 	}
 	
-	// A button that can be operated by software
-	private static class SoftButton implements LogicalButton {
-		volatile boolean state = false;
+	
+	// ModalButton delegates to NadaButton, PhysicalButton, or SoftButton
+	// depending on mode Disabled, Teleop, Autonomous, respectively.
+	private class ModalButton implements LogicalButton, Modal {
+		private LogicalButton nadaButton = new NadaButton();
+		private LogicalButton teleopButton;
+		private LogicalButton softButton = new SoftButton();
+		private LogicalButton activeButton = nadaButton;
+		
+		private ModalButton( LogicalButton teleopButton) {
+			this.teleopButton = teleopButton;
+			modals.add(this);
+		}
+		
+		@Override
+		public void setDisabledMode() { activeButton = nadaButton; }
+		@Override
+		public void setTeleopMode() { activeButton = teleopButton; }
+		@Override
+		public void setAutoMode() { activeButton = softButton; }
+		
+		@Override
+		public boolean get() { return activeButton.get(); }
+		@Override
+		public void push() { activeButton.push(); }
+		@Override
+		public void release() { activeButton.release(); }
+		@Override
+		public void hit( long msecs) { activeButton.hit( msecs); }
+	}
+	
+	// NadaButton does nothing
+	private class NadaButton implements LogicalButton {
+		@Override
+		public boolean get() { return false; }
+	}
+	
+	// A LogicalButton operated by software (for Autonomous)
+	private class SoftButton implements LogicalButton, Modal {
+		volatile boolean state = false;		
+
+		private SoftButton() { modals.add(this); }		
+		
+		// Put into initial state on Disabled
+		@Override
+		public void setDisabledMode() { release(); }
+		
 		@Override
 		public boolean get() { return state; }
 		@Override
@@ -326,23 +263,20 @@ public class OI {
 	}
 	
 	// A button on a controller
-	private static class PhysicalButton implements LogicalButton {
+	private class PhysicalButton implements LogicalButton {
 		Button btn;
 		private PhysicalButton( Joystick controller, int btnNum) { 
 			btn = new JoystickButton( controller, btnNum); 
-		}		
-		private PhysicalButton( Button btn) {
-			this.btn = btn;
 		}
-		@Override
-		public boolean get() { return btn.get(); }
 		
+		@Override
+		public boolean get() { return btn.get(); }		
 	}
 	
-	// Allows you to use a controller axis as a button
-	// Not used yet
+	// Allows you to use a controller axis as a button.
+	// Not used yet but could come in handy someday I guess.
 	@SuppressWarnings("unused")
-	private static class PhysicalAxisButton implements LogicalButton {
+	private class PhysicalAxisButton implements LogicalButton {
 		private PhysicalAxis physAxis;
 		private PhysicalAxisButton( Joystick controller, int axisNum, boolean invert) {
 			physAxis = new PhysicalAxis( controller, axisNum, invert);
@@ -350,20 +284,20 @@ public class OI {
 		@Override
 		public boolean get() { return physAxis.get() > 0.5; }
 	}
+
+	private enum POV_BUTTON { 
+		UP(0), RIGHT(90), DOWN(180), LEFT(270);
+		private int value;
+		private POV_BUTTON(int value) {
+			this.value = value;
+		}
+		private int getValue() { return value; }
+	}
 	
 	// Allows you to use a POV button as a button
-	private static class PhysicalPovButton implements LogicalButton {		
+	private class PhysicalPovButton implements LogicalButton {		
 		private Joystick controller;
 		private POV_BUTTON whichPov;
-		
-		private enum POV_BUTTON { 
-			UP(0), RIGHT(90), DOWN(180), LEFT(270);
-			private int value;
-			private POV_BUTTON(int value) {
-				this.value = value;
-			}
-			private int getValue() { return value; }
-		}
 		
 		private PhysicalPovButton( Joystick controller, POV_BUTTON whichPov) {
 			this.controller = controller;
@@ -375,7 +309,7 @@ public class OI {
 	}
 	
 	// Wraps a LogicalButton & makes it easy to catch rising/falling edges
-	public static class ButtonEvent {
+	public class ButtonEvent {
 
 		private final LogicalButton m_button;
 		private boolean m_wasPressed;
@@ -385,52 +319,83 @@ public class OI {
 			m_wasPressed = isPressed();
 		}
 
-		/**
-		 * Returns true if the button is currently pressed
-		 */
+		 // Returns true if the button is currently pressed
 		public boolean isPressed() { return m_button.get(); }
 
-		/**
-		 * Returns true only once when the button is pressed
-		 * (rising edge detect)
-		 */
+		 // Returns true only once when the button is pressed
+		 // (rising edge detect)
 		public boolean onPressed() {	
 			boolean rtn = false;
-
 			boolean isPressedNow = isPressed();
 			if( isPressedNow && !m_wasPressed)
 				rtn = true;
-
 			m_wasPressed = isPressedNow;
 			return rtn;
 		}
 
-		/**
-		 * Returns true only once when the button is released
-		 * (falling edge detect)
-		 */
+		 // Returns true only once when the button is released
+		 // (falling edge detect)
 		public boolean onReleased() {
 			boolean rtn = false;
-
 			boolean isPressedNow = isPressed();
 			if( !isPressedNow && m_wasPressed)
 				rtn = true;
-
 			m_wasPressed = isPressedNow;
 			return rtn;		
 		}
 	}
 	
 	
-	// Represents a generic Axis
-	public static interface LogicalAxis {
+	// Represents a generic Axis.
+	// get() is meaningful for all axis;
+	// set() is meaningful only for soft axis.
+	public interface LogicalAxis {
 		public double get();
 		public default void set( double value) {}
 	}
+
+	// ModalAxis delegates to NadaAxis, PhysicalAxis, or SoftAxis
+	// according to mode Disabled, Teleop, Autonomous respectively.
+	private class ModalAxis implements LogicalAxis, Modal {
+		private LogicalAxis nadaAxis = new NadaAxis();
+		private LogicalAxis teleopAxis;
+		private LogicalAxis softAxis = new SoftAxis();
+		private LogicalAxis activeAxis = nadaAxis;
+
+		private ModalAxis( LogicalAxis teleopAxis) {
+			this.teleopAxis = teleopAxis;
+			modals.add(this);
+		}
+		
+		@Override
+		public void setDisabledMode() { activeAxis = nadaAxis; }
+		@Override
+		public void setTeleopMode() { activeAxis = teleopAxis; }
+		@Override
+		public void setAutoMode() { activeAxis = softAxis; }
+		
+		@Override
+		public double get() { return activeAxis.get(); }
+		@Override
+		public void set( double value) { activeAxis.set(value); }		
+	}
 	
-	// An Axis that can be operated by software
-	private static class SoftAxis implements LogicalAxis {
-		volatile double value = 0;
+	// NadaAxis does nothing
+	private class NadaAxis implements LogicalAxis {
+		@Override
+		public double get() { return 0.0; }
+	}
+	
+	// An Axis operated by software (for Autonomous)
+	private class SoftAxis implements LogicalAxis, Modal {
+		volatile double value = 0.0;
+		
+		private SoftAxis() { modals.add(this);	}
+		
+		// Put in initial state when Disabled
+		@Override
+		public void setDisabledMode() { set(0.0); }
+		
 		@Override
 		public double get() { return value; }
 		@Override
@@ -439,11 +404,11 @@ public class OI {
 	
 	
 	// An Axis on a controller
-	private static class PhysicalAxis implements LogicalAxis {
+	private class PhysicalAxis implements LogicalAxis {
 		Joystick controller;
 		int axisNum;
 		boolean invert;
-		protected PhysicalAxis( Joystick controller, int axisNum, boolean invert) {
+		private PhysicalAxis( Joystick controller, int axisNum, boolean invert) {
 			this.controller = controller;
 			this.axisNum = axisNum;
 			this.invert = invert;

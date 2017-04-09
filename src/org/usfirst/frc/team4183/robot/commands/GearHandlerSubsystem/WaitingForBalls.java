@@ -38,10 +38,10 @@ public class WaitingForBalls extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(OI.btnIdle.get()) {
+    	if(Robot.oi.btnIdle.get()) {
     		return CommandUtils.stateChange(this, new Idle());
     	}
-    	if( OI.btnWaitForGear.get()) {
+    	if( Robot.oi.btnWaitForGear.get()) {
     		return CommandUtils.stateChange(this, new WaitingForGear());
     	}
         return false;

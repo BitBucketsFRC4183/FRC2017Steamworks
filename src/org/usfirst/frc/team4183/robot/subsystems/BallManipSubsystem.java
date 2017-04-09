@@ -24,11 +24,6 @@ public class BallManipSubsystem extends Subsystem {
 	private final double CONVEYOR_UNJAM_DRIVE = -0.8;
 	private final double SWEEPER_DRIVE = 0.1;	//open loop control of sweeper in fraction vbus
 	
-	/* Used to limit range of real-time shooter RPM adjustment
-	 * not used for now (see "animate()" below) - tjw	
-	private final double MAX_SHOOTER_RPM = 4500.0;
-	private final double MIN_SHOOTER_RPM = 3800.0;
-	*/
 	
 	// The *.001, *1000 are there because Talon doesn't scale by 
 	// their own deltaT (=1msec) in their loop implementation, 
@@ -153,31 +148,6 @@ public class BallManipSubsystem extends Subsystem {
     	conveyerMotor.set(CONVEYOR_UNJAM_DRIVE);
     }
     
-    
-	/* Allows the operator to adjust the shooter RPM setpoint --
-	 * disabled for now. tjw.
-	 * To re-enable:
-	 * 1) uncomment this fcn
-	 * 2) call this fcn from Robot.disabledPeriodic, .autonomousPeriodic, and .teleopPeriodic
-	 * 3) make a Logical Axis in OI (called axisShootRpm below)
-	 * 4) define the MAX_SHOOTER_RPM and MIN_SHOOTER_RPM constants
-    public void animate() {
-    	
 
-    	 
-    	// Change the Shooter RPM setpoint
-    	double value = OI.axisShootRpm.get();
-    	if( (value > -0.1) && (value < 0.1) )
-    		value = 0.0;
-    	    	 
-    	shooterRpm += 15.0*value;
-    	if( shooterRpm > MAX_SHOOTER_RPM) shooterRpm = MAX_SHOOTER_RPM;
-    	if( shooterRpm < MIN_SHOOTER_RPM) shooterRpm = MIN_SHOOTER_RPM;
-    	
-    	SmartDashboard.putNumber("ShooterRpm(SetPt)", shooterRpm);
-    	SmartDashboard.putNumber("ShooterRpm(Actual)", topRollerMotor.get());    	
-    	
-    }
-    */
 }
 

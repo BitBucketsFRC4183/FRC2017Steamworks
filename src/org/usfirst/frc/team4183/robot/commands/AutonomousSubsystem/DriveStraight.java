@@ -83,10 +83,10 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		Robot.driveSubsystem.setAutonomousControl(true);
 		
 		// Make sure turn stick is zero (it should be, but...)
-		OI.axisTurn.set(0.0);
+		Robot.oi.axisTurn.set(0.0);
 		
 		// Put DriveSubsystem into "Align Lock" (drive straight)
-		OI.btnAlignLock.push();
+		Robot.oi.btnAlignLock.push();
 		
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
@@ -120,14 +120,14 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		logWriter.close();
 		
 		// Put DriveSubsystem out of "Align Lock"
-		OI.btnAlignLock.release();
+		Robot.oi.btnAlignLock.release();
 		
 		// Restore DriveSubsystem to normal control
 		Robot.driveSubsystem.setAutonomousControl(false);
 				
 		// Set output to zero before leaving
-		OI.axisForward.set(0.0);
-		OI.axisTurn.set(0.0);
+		Robot.oi.axisForward.set(0.0);
+		Robot.oi.axisTurn.set(0.0);
 	}
 	
 	@Override
@@ -172,6 +172,6 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		x3 += ditherAmpl*s;
 		
 		// Set the output
-		OI.axisForward.set( x3);
+		Robot.oi.axisForward.set( x3);
 	}
 }

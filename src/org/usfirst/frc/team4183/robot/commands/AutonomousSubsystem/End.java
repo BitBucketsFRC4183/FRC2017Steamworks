@@ -16,9 +16,9 @@ public class End extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	OI.axisForward.set(0.0);
-    	OI.axisTurn.set(0.0);
-    	OI.btnIdle.hit();
+    	Robot.oi.axisForward.set(0.0);
+    	Robot.oi.axisTurn.set(0.0);
+    	Robot.oi.btnIdle.hit();
     }
 
     // Called repeatedly when this Command is scheduled to run
