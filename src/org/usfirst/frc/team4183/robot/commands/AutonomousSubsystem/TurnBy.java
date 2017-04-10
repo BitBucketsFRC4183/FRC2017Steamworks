@@ -4,7 +4,6 @@ import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.utils.ControlLoop;
 import org.usfirst.frc.team4183.utils.LogWriterFactory;
-import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
 import org.usfirst.frc.team4183.utils.RateLimit;
 import org.usfirst.frc.team4183.utils.SettledDetector;
 
@@ -14,9 +13,6 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		
-	// Proportional gain
-	private final static double Kp = 0.01;
-
 	// Largest drive that will be applied
 	private final double MAX_DRIVE = 0.9;
 	
@@ -27,9 +23,16 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	// But if this is TOO BIG, you'll get limit cycling, and also get stuck.
 	private final double MIN_DRIVE = RobotMap.TURNBY_MIN_DRIVE; 
 	
+	// Angle at which we reduce drive from MAX to MIN	
+	private final double MIN_DRIVE_ANGLE_DEG = 40.0;
+	
 	// Size of dead zone in degrees - also used to determine when done.
 	private final double DEAD_ZONE_DEG = 1.0;
 
+	// Dither signal
+	private final double DITHER_AMPL = 0.12;
+	private final double DITHER_FREQ = 4.0;
+	
 	// Settled detector lookback for dead zone
 	// I would NOT go lower than 150 because of Java thread jitter
 	private final long SETTLED_MSECS = 150;
@@ -44,7 +47,6 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 	
 	private ControlLoop cloop;
 	private RateLimit rateLimit;
-	private MinMaxDeadzone deadZone;
 	private SettledDetector settledDetector;
 		
 
@@ -66,7 +68,6 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		
 		// Make helpers
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
-		deadZone = new MinMaxDeadzone( DEAD_ZONE_DEG, MIN_DRIVE, MAX_DRIVE);
 		settledDetector = new SettledDetector( SETTLED_MSECS, DEAD_ZONE_DEG);
 		logWriter = logFactory.create( WRITE_LOG_FILE);	
 	
@@ -132,27 +133,32 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 			
 		settledDetector.set(error);
 							
-		double x1 = Kp * error;
 			
-		// Apply drive non-linearities
-		double x2 = rateLimit.f(x1);
-		double x3 = deadZone.f(x2, error);		
+		double x;		
+		if( Math.abs(error) < DEAD_ZONE_DEG)
+			x = 0.0;
+		else if( Math.abs(error) < MIN_DRIVE_ANGLE_DEG)
+			x = Math.signum(error)*MIN_DRIVE;
+		else 
+			x = Math.signum(error)*MAX_DRIVE;		
 		
-		// Debug
-		//System.out.format("error=%f x1=%f x2=%f x3=%f\n", error, x1, x2, x3);
-		
+		x = rateLimit.f(x);
+				
 
 		// Dither signal
-		double ditherFreq = 4.0;  // Maybe try something higher freq?
-		double ditherAmpl = 0.12;
-		double s = Math.sin(2.0*Math.PI*ditherFreq*System.currentTimeMillis()/1000.0);
-		x3 += ditherAmpl*s;
+		if( Math.abs(error) > DEAD_ZONE_DEG)
+			x += DITHER_AMPL*ditherSignal();
 
 		// Set the output
 		// - sign required because + stick produces right turn,
 		// but right turn is actually a negative yaw angle
 		// (using our yaw angle convention: right-hand-rule w/z-axis up)		
-		Robot.oi.axisTurn.set( -x3);
+		Robot.oi.axisTurn.set( -x);
 		
 	}
+	
+	double ditherSignal() {
+		return Math.sin( DITHER_FREQ*(2.0*Math.PI)*System.currentTimeMillis()/1000.0);
+	}
+
 }

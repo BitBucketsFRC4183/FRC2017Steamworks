@@ -21,8 +21,9 @@ public class RateLimit {
 		double sgnx = Math.signum(x); 
 
 		double delta = maxChangePerMsec * (System.currentTimeMillis() - prevMsec);     
-		if( absx > prev + delta ) absx = prev + delta; 
-
+		if( absx > prev + delta ) 
+			absx = prev + delta; 
+		
 		prev = absx; 
 		prevMsec = System.currentTimeMillis(); 
 

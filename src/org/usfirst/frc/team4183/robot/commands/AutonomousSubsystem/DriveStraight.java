@@ -1,6 +1,5 @@
 package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 
-import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.utils.ControlLoop;
@@ -29,7 +28,11 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	
 	// Size of dead zone in inches - also used to determine when done.
 	private final double DEAD_ZONE_INCH = 0.5;
-	
+
+	// Dither signal
+	private final double DITHER_AMPL = 0.07;
+	private final double DITHER_FREQ = 8.0;
+
 	// Settled detector lookback for dead zone
 	// I would NOT go lower than 150 because of Java thread jitter
 	private final long SETTLED_MSECS = 150;
@@ -147,25 +150,24 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		settledDetector.set(error);
 		hangupDetector.set( Robot.driveSubsystem.getFwdVelocity_ips());
 		
-		double x;
-		
+		double x;		
 		if( Math.abs(error) < DEAD_ZONE_INCH)
 			x = 0.0;
 		else if( Math.abs(error) < MIN_DRIVE_DISTANCE_INCH)
 			x = Math.signum(error)*MIN_DRIVE;
 		else
 			x = Math.signum(error)*MAX_DRIVE;
-						
+		
 		x = rateLimit.f(x);
 		
 		if( Math.abs(error) > DEAD_ZONE_INCH)
-			x += 0.07*ditherSignal();
+			x += DITHER_AMPL*ditherSignal();
 		
 		// Set the output
 		Robot.oi.axisForward.set( x);
 	}
 
 	double ditherSignal() {
-		return 2.0*(Math.random() - 0.5);
+		return Math.sin( DITHER_FREQ*(2.0*Math.PI)*System.currentTimeMillis()/1000.0);
 	}
 }
