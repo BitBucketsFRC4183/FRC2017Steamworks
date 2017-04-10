@@ -43,6 +43,7 @@ public class Unjam extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+    	Robot.ballManipSubsystem.setConveyerOff();
     	Robot.oi.sbtnShake.release();
     }
 
