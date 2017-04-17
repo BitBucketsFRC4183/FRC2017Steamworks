@@ -23,7 +23,8 @@ public class Scripter extends Command {
 	// positions 1 & 3 start points are 7' left & right of center line respectively,
 	// position 2 start point is on center line (directly facing gear peg)
 	
-	private String[][] theRealScript = {
+	// Script used in Denver - only one Vision measurement
+	private String[][] oneVisionScript = {
 			{"", 			"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
 			{"Left", 		"DriveStraight 82.2" },  // Inch
 			{"", 			"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
@@ -61,12 +62,44 @@ public class Scripter extends Command {
 			{"End", 		"End" }			// MUST finish in End state
 	};
 	
+	// Original script w/ 2 Vision measurements
+	private String[][] twoVisionScript = {
+			{"", 		"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
+			{"Left", 	"DriveStraight 82.2 26" },  // Inch
+			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
+			{"",		"Goto Vis" },
+			{"Center",	"DriveStraight 26.0 12" },
+			{"",		"Goto Vis" },
+			{"Right",	"DriveStraight 82.2 26" },
+			{"",		"TurnBy 60.0" },
+			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
+			{"", 		"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
+			{"", 		"YawCorrect" },     		// TurnBy -measuredYaw
+			{"", 		"DistanceCorrect 21.0 12" },	// Stop short by this much
+			{"", 		"MeasureGear" },
+			{"", 		"YawCorrect" },
+			{"", 		"DistanceCorrect 15.0 0" },	
+			{"", 		"DeliverGear" },			// Spit the gear
+			{"",        "BranchOnColorAndPosition BlueBoiler NoBoiler NoBoiler NoBoiler NoBoiler RedBoiler"},
+			{"NoBoiler",    "DriveStraight -12.0 0"},
+			{"",        "Goto End"},
+			{"BlueBoiler",   "StartShooter"},
+			{"",   		"DriveStraight -70.2 24"},
+			{"",        "TurnBy -149.3"},
+			{"",        "Goto Shoot"},
+			{"RedBoiler",    "StartShooter"},
+			{"",    	"DriveStraight -70.2 24"},
+			{"",        "TurnBy 149.3"},
+			{"",        "Goto Shoot"},
+			{"Shoot",   "Shoot"},
+			{"",		"Delay 4000"},  // Have to Delay to allow shoot to happen!!
+			{"End", 	"End" }			// MUST finish in End state
+	};
 	
 	// Test small moves to make sure MIN_DRIVEs big enough.
 	// e.g. TurnBy 5, DriveStraight 3.
 	// Test big moves to make sure it behaves & settles.
 	// e.g. TurnBy 60, DriveStraight 48.
-	// Uncomment this test script to get those moves selected by Team/Position
 	private String[][] tuneScript = {
 			{"",        "BranchOnColorAndPosition BlueLeft BlueCntr Noop RedLeft RedCntr Noop"},
 			{"BlueLeft",	"TurnBy 5.0" },
@@ -93,7 +126,7 @@ public class Scripter extends Command {
 	 * Set this variable to the script you actually want to execute!!!
 	 * 
 	 *****************************************************************/
-	private String[][] script = tuneScript;
+	private String[][] script = oneVisionScript;
 	
 	
 	// position 1,2,3 are Left, Center, Right respectively
