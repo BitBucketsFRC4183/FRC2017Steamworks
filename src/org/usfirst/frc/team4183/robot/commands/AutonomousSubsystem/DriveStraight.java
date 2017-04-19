@@ -151,14 +151,15 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		hangupDetector.set( Robot.driveSubsystem.getFwdVelocity_ips());
 		
 		double x;		
-		if( Math.abs(error) < DEAD_ZONE_INCH)
-			x = 0.0;
-		else if( Math.abs(error) < MIN_DRIVE_DISTANCE_INCH)
+		if( Math.abs(error) < MIN_DRIVE_DISTANCE_INCH)
 			x = Math.signum(error)*MIN_DRIVE;
 		else
 			x = Math.signum(error)*MAX_DRIVE;
 		
 		x = rateLimit.f(x);
+		
+		if( Math.abs(error) < DEAD_ZONE_INCH)
+			x = 0.0;
 		
 		if( Math.abs(error) > DEAD_ZONE_INCH)
 			x += DITHER_AMPL*ditherSignal();

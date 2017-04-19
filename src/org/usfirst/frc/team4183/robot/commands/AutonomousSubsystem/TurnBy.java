@@ -135,15 +135,15 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 							
 			
 		double x;		
-		if( Math.abs(error) < DEAD_ZONE_DEG)
-			x = 0.0;
-		else if( Math.abs(error) < MIN_DRIVE_ANGLE_DEG)
+		if( Math.abs(error) < MIN_DRIVE_ANGLE_DEG)
 			x = Math.signum(error)*MIN_DRIVE;
 		else 
 			x = Math.signum(error)*MAX_DRIVE;		
 		
 		x = rateLimit.f(x);
-				
+		
+		if( Math.abs(error) < DEAD_ZONE_DEG)
+			x = 0.0;				
 
 		// Dither signal
 		if( Math.abs(error) > DEAD_ZONE_DEG)

@@ -65,35 +65,52 @@ public class Scripter extends Command {
 	// Original script w/ 2 Vision measurements
 	private String[][] twoVisionScript = {
 			{"", 		"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
-			{"Left", 	"DriveStraight 82.2 26" },  // Inch
+			{"Left", 	"DriveStraight 82.2" },  // Inch
 			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
 			{"",		"Goto Vis" },
-			{"Center",	"DriveStraight 26.0 12" },
+			{"Center",	"DriveStraight 26.0" },
 			{"",		"Goto Vis" },
-			{"Right",	"DriveStraight 82.2 26" },
+			{"Right",	"DriveStraight 82.2" },
 			{"",		"TurnBy 60.0" },
 			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
 			{"", 		"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
 			{"", 		"YawCorrect" },     		// TurnBy -measuredYaw
-			{"", 		"DistanceCorrect 21.0 12" },	// Stop short by this much
+			{"", 		"DistanceCorrect 21.0" },	// Stop short by this much
 			{"", 		"MeasureGear" },
 			{"", 		"YawCorrect" },
-			{"", 		"DistanceCorrect 15.0 0" },	
+			{"", 		"DistanceCorrect 15.0" },	
 			{"", 		"DeliverGear" },			// Spit the gear
 			{"",        "BranchOnColorAndPosition BlueBoiler NoBoiler NoBoiler NoBoiler NoBoiler RedBoiler"},
-			{"NoBoiler",    "DriveStraight -12.0 0"},
+			{"NoBoiler",    "DriveStraight -12.0"},
 			{"",        "Goto End"},
 			{"BlueBoiler",   "StartShooter"},
-			{"",   		"DriveStraight -70.2 24"},
+			{"",   		"DriveStraight -70.2"},
 			{"",        "TurnBy -149.3"},
 			{"",        "Goto Shoot"},
 			{"RedBoiler",    "StartShooter"},
-			{"",    	"DriveStraight -70.2 24"},
+			{"",    	"DriveStraight -70.2"},
 			{"",        "TurnBy 149.3"},
 			{"",        "Goto Shoot"},
 			{"Shoot",   "Shoot"},
 			{"",		"Delay 4000"},  // Have to Delay to allow shoot to happen!!
 			{"End", 	"End" }			// MUST finish in End state
+	};
+	
+	// Demo script
+	// Start out 3-4' from peg, rotated 90 degrees (peg should be on Robot's right shoulder)
+	private String[][] demoScript = {
+
+			{"",		"TurnBy -90.0" },
+			{"", 		"EnableVisionGear" },   
+			{"", 		"MeasureGear" },		
+			{"", 		"YawCorrect" }, 
+			{"", 		"DistanceCorrect 21.0" },
+			{"", 		"MeasureGear" },
+			{"", 		"YawCorrect" },
+			{"", 		"DistanceCorrect 15.0" },	
+			{"", 		"DeliverGear" },
+			{"",    	"DriveStraight -12.0"},
+			{"",		"End"}
 	};
 	
 	// Test small moves to make sure MIN_DRIVEs big enough.
@@ -118,7 +135,6 @@ public class Scripter extends Command {
 		};
 	
 	
-
 	
 	
 	/*****************************************************************
@@ -126,7 +142,7 @@ public class Scripter extends Command {
 	 * Set this variable to the script you actually want to execute!!!
 	 * 
 	 *****************************************************************/
-	private String[][] script = oneVisionScript;
+	private String[][] script = demoScript;
 	
 	
 	// position 1,2,3 are Left, Center, Right respectively
