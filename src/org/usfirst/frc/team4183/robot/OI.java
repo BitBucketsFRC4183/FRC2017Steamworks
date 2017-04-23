@@ -167,18 +167,18 @@ public class OI {
 	
 	// Following 3 functions called from Robot on mode changes
 	public void setDisabledMode() {
-		for( Modal f : modals)
-			f.setDisabledMode();
+		for( Modal m : modals)
+			m.setDisabledMode();
 	}
 	
 	public void setTeleopMode() {
-		for( Modal f : modals)
-			f.setTeleopMode();		
+		for( Modal m : modals)
+			m.setTeleopMode();		
 	}
 	
 	public void setAutoMode() {
-		for( Modal f : modals)
-			f.setAutoMode();		
+		for( Modal m : modals)
+			m.setAutoMode();		
 	}
 
 	

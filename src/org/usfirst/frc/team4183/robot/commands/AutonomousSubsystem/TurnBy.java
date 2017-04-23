@@ -70,13 +70,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
 		settledDetector = new SettledDetector( SETTLED_MSECS, DEAD_ZONE_DEG);
 		logWriter = logFactory.create( WRITE_LOG_FILE);	
-	
-		// Setup DriveSubsystem for autonomous control
-		Robot.driveSubsystem.setAutonomousControl(true);
-		
-		// Make sure forward stick is 0 (it should be, but...)
-		Robot.oi.axisForward.set(0.0);
-
+			
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
 		cloop.enableLogging("TurnBy");
@@ -106,12 +100,8 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		
 		logWriter.close();
 
-		// Restore DriveSubsystem to normal control
-		Robot.driveSubsystem.setAutonomousControl(false);
-
 		// Set output to zero before leaving
-		Robot.oi.axisTurn.set(0.0);
-		Robot.oi.axisForward.set(0.0);		
+    	Robot.driveSubsystem.doAutoTurn(0.0);
 	}
 	
 	@Override
@@ -132,8 +122,7 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 				String.format("%f %f", error, Robot.imu.getYawRateDps())); 
 			
 		settledDetector.set(error);
-							
-			
+										
 		double x;		
 		if( Math.abs(error) < MIN_DRIVE_ANGLE_DEG)
 			x = Math.signum(error)*MIN_DRIVE;
@@ -145,16 +134,11 @@ public class TurnBy extends Command implements ControlLoop.ControlLoopUser {
 		if( Math.abs(error) < DEAD_ZONE_DEG)
 			x = 0.0;				
 
-		// Dither signal
 		if( Math.abs(error) > DEAD_ZONE_DEG)
 			x += DITHER_AMPL*ditherSignal();
 
 		// Set the output
-		// - sign required because + stick produces right turn,
-		// but right turn is actually a negative yaw angle
-		// (using our yaw angle convention: right-hand-rule w/z-axis up)		
-		Robot.oi.axisTurn.set( -x);
-		
+    	Robot.driveSubsystem.doAutoTurn(x);		
 	}
 	
 	double ditherSignal() {
