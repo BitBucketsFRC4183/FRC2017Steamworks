@@ -142,7 +142,7 @@ public class Scripter extends Command {
 	 * Set this variable to the script you actually want to execute!!!
 	 * 
 	 *****************************************************************/
-	private String[][] script = demoScript;
+	private String[][] script = tuneScript;
 	
 	
 	// position 1,2,3 are Left, Center, Right respectively

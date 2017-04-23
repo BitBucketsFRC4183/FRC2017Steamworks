@@ -76,15 +76,9 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		settledDetector = new SettledDetector( SETTLED_MSECS, DEAD_ZONE_INCH);
 		hangupDetector = new SettledDetector( HANGUP_MSECS, STOPPED_RATE_IPS);
 		logWriter = logFactory.create( WRITE_LOG_FILE);	
-		
-		// Setup DriveSubsystem for autonomous control
-		Robot.driveSubsystem.setAutonomousControl(true);
-		
-		// Make sure turn stick is zero (it should be, but...)
-		Robot.oi.axisTurn.set(0.0);
-		
+						
 		// Put DriveSubsystem into "Align Lock" (drive straight)
-		Robot.oi.btnAlignLock.push();
+        Robot.driveSubsystem.setAlignDrive(true);
 		
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
@@ -118,14 +112,10 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		logWriter.close();
 		
 		// Put DriveSubsystem out of "Align Lock"
-		Robot.oi.btnAlignLock.release();
-		
-		// Restore DriveSubsystem to normal control
-		Robot.driveSubsystem.setAutonomousControl(false);
-				
+        Robot.driveSubsystem.setAlignDrive(false);
+						
 		// Set output to zero before leaving
-		Robot.oi.axisForward.set(0.0);
-		Robot.oi.axisTurn.set(0.0);
+    	Robot.driveSubsystem.doAutoStraight(0.0);
 	}
 	
 	@Override
@@ -165,7 +155,7 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 			x += DITHER_AMPL*ditherSignal();
 		
 		// Set the output
-		Robot.oi.axisForward.set( x);
+    	Robot.driveSubsystem.doAutoStraight(x);
 	}
 
 	double ditherSignal() {
