@@ -96,6 +96,50 @@ public class Scripter extends Command {
 			{"End", 	"End" }			// MUST finish in End state
 	};
 	
+	
+	private String[][] visionScriptState = {
+			{"", 		"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
+			{"Left", 	"DriveStraight 82.2" },  // Inch
+			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
+			{"",		"Goto Vis" },
+			{"Center",	"DriveStraight 26.0" },
+			{"",		"Goto Vis" },
+			{"Right",	"DriveStraight 82.2" },
+			{"",		"TurnBy 60.0" },
+			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
+			{"", 		"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
+			{"", 		"YawCorrect" },     		// TurnBy -measuredYaw
+			{"", 		"DistanceCorrect 21.0" },	// Stop short by this much
+			{"", 		"MeasureGear" },
+			{"", 		"YawCorrect" },
+			{"", 		"DistanceCorrect 15.0" },	
+			{"", 		"DeliverGear" },			// Spit the gear
+			{"",        "BranchOnColorAndPosition BlueLeft NoBoiler BlueRight RedLeft NoBoiler RedRight"},
+			{"NoBoiler",    "DriveStraight -12.0"},
+			{"",        "Goto End"},
+			{"BlueLeft",   "DriveStraight -33.75"},
+			{"",   		"TurnBy 60.0"},
+			{"",        "DriveStraight 100.0"},
+			{"",		"TurnBy -35.79"},
+			{"",		"DriveStraight 287.25"},
+			{"",        "Goto End"},
+			{"BlueRight", "DriveStraight -33.75"},
+			{"", 		"TurnBy -60.0"},
+			{"",		"DriveStraight 333.0"},
+			{"",		"Goto End"},
+			{"RedLeft", "DriveStraight -33.75"},
+			{"", 		"TurnBy 60.0"},
+			{"",		"DriveStraight 333.0"},
+			{"",		"Goto End"},
+			{"RedRight",   "DriveStraight -33.75"},
+			{"",   		"TurnBy -60.0"},
+			{"",        "DriveStraight 100.0"},
+			{"",		"TurnBy 35.79"},
+			{"",		"DriveStraight 287.25"},
+			{"",        "Goto End"},
+			{"End", 	"End" }			// MUST finish in End state
+	};
+	
 	// Demo script
 	// Start out 3-4' from peg, rotated 90 degrees (peg should be on Robot's right shoulder)
 	private String[][] demoScript = {
@@ -142,7 +186,7 @@ public class Scripter extends Command {
 	 * Set this variable to the script you actually want to execute!!!
 	 * 
 	 *****************************************************************/
-	private String[][] script = tuneScript;
+	private String[][] script = visionScriptState;
 	
 	
 	// position 1,2,3 are Left, Center, Right respectively
