@@ -8,6 +8,8 @@ package org.usfirst.frc.team4183.robot;
  * to a variable name. This provides flexibility changing wiring, makes checking
  * the wiring easier and significantly reduces the number of magic numbers
  * floating around.
+ * 
+ * Learning how to use GitHub - Sam
  */
 public class RobotMap {
 	
