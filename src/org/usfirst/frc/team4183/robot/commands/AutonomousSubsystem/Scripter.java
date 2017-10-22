@@ -102,7 +102,7 @@ public class Scripter extends Command {
 			{"Left", 	"DriveStraight 82.2" },  // Inch
 			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
 			{"",		"Goto Vis" },
-			{"Center",	"DriveStraight 26.0" },
+			{"Center",	"DriveStraight 36.0" },
 			{"",		"Goto Vis" },
 			{"Right",	"DriveStraight 82.2" },
 			{"",		"TurnBy 60.0" },
