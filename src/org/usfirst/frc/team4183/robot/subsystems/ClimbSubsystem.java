@@ -11,7 +11,7 @@ import org.usfirst.frc.team4183.utils.ThreadLogger;
 
 public class ClimbSubsystem extends Subsystem {
 
-	private static final double CLIMB_MOTOR_CURRENT_LIMIT_AMPS = 40.0;
+	private static final double CLIMB_MOTOR_CURRENT_LIMIT_AMPS = 10000.0;
 	private CANTalon climbMotorA;
 	private CANTalon climbMotorB; 
 	private ThreadLogger logger;	
