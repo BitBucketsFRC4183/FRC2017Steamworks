@@ -22,7 +22,7 @@ public class OpControl extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	 Robot.climbSubsystem.on(Deadzone.f(OI.axisClimb.get(), .05));
+    	 Robot.climbSubsystem.on(Deadzone.f(Robot.oi.axisClimb.get(), .05));
     }
     
     // Make this return true when this Command no longer needs to run execute()

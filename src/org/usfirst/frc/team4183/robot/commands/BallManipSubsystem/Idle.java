@@ -29,10 +29,10 @@ public class Idle extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        if (OI.btnIntakeOn.get()){
+        if (Robot.oi.btnIntakeOn.get()){
         	return CommandUtils.stateChange(this, new IntakeOn());
         }
-        if (OI.btnShooterStart.get()){
+        if (Robot.oi.btnShooterStart.get()){
         	return CommandUtils.stateChange(this, new WaitingForShooterSpeed());
         }
     	return false;

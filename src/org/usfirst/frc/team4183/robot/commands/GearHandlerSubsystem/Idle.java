@@ -35,15 +35,15 @@ public class Idle extends Command
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-    	if(OI.btnSpitGearA.get() && OI.btnSpitGearB.get()) 
+    	if(Robot.oi.btnSpitGearA.get() && Robot.oi.btnSpitGearB.get()) 
     	{
     		return CommandUtils.stateChange(this, new GateOpen());
     	}
-    	if(OI.btnWaitForGear.get()) 
+    	if(Robot.oi.btnWaitForGear.get()) 
     	{
     		return CommandUtils.stateChange(this, new WaitingForGear());
     	}
-    	if(OI.btnWaitForBalls.get()) 
+    	if(Robot.oi.btnWaitForBalls.get()) 
     	{
     		return CommandUtils.stateChange(this, new WaitingForBalls());
     	}

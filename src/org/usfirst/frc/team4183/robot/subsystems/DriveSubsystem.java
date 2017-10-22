@@ -5,7 +5,6 @@ import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.RobotDrive;
 
-import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.robot.commands.DriveSubsystem.Idle;
@@ -20,8 +19,7 @@ public class DriveSubsystem extends Subsystem {
 		// 12.57 in/rot = (4" * pi) in/rot
 		private final double INCH_PER_WHEEL_ROT = RobotMap.INCH_PER_WHEEL_ROT;
 
-		// Can adjust these to make the robot drive straight with 
-		// zero turn stick in DriverControl.
+		// Can adjust these to help the robot drive straight with zero turn stick.
 		// +Values will add +yaw correct (CCW viewed from top) when going forward.
 		private final double YAW_CORRECT_VELOCITY = 0.0;  // Multiplied by inch/sec so value will be small!
 		private final double YAW_CORRECT_ACCEL = 0.0;
@@ -43,12 +41,7 @@ public class DriveSubsystem extends Subsystem {
 		private final RobotDrive robotDrive;
 		
 		private double yawSetPoint;		
-		private boolean linearAxis;
-		private double leftPosition, rightPosition;
 
-		
-		private final boolean HUMAN_WANTS_BRAKING = true;
-		
 		public DriveSubsystem() {
 
 			leftFrontMotor = new CANTalon(RobotMap.LEFT_FRONT_MOTOR_ID);
@@ -57,7 +50,7 @@ public class DriveSubsystem extends Subsystem {
 			rightRearMotor = new CANTalon(RobotMap.RIGHT_REAR_MOTOR_ID);			
 	
 			robotDrive = new RobotDrive(leftFrontMotor, leftRearMotor, rightFrontMotor, rightRearMotor);
-			robotDrive.setSafetyEnabled(false);
+			robotDrive.setSafetyEnabled(false);  // No motor safety needed or wanted!
 
 			// Set up the position encoders, can be used external to this class.
 			// The position values are used by dead-reckoning in the IMU class,
@@ -73,29 +66,14 @@ public class DriveSubsystem extends Subsystem {
 			rightFrontMotor.reverseSensor(REVERSE_SENSOR);
 			rightFrontMotor.setPosition(0.0);
 			
-			// Human control by default
-			setAutonomousControl(false);
+			setBraking(true);
 		}	
 
 		
 		public void disable() {
-			robotDrive.arcadeDrive(0.0, 0.0);			
+			setAllMotorsZero();
 		}
 		
-		// Human driver: 
-		//  -likes "squared controls" (easier to drive)
-		//  -wants braking set according to HUMAN_WANTS_BRAKING
-		// Autonomous "driver":
-		//  -hates squared controls (messes up the control loops)
-		//  -Always wants braking, to settle quicker
-		public void setAutonomousControl( boolean auto) {			
-			linearAxis = auto;
-			
-			if( auto)
-				setBraking(true);
-			else
-				setBraking(HUMAN_WANTS_BRAKING);
-		}
 	
 		private void setBraking( boolean setting) {
 			leftFrontMotor.enableBrakeMode(setting);
@@ -104,26 +82,25 @@ public class DriveSubsystem extends Subsystem {
 			rightRearMotor.enableBrakeMode(setting);
 		}
 		
+		// Square & deadzone the axis value - 
+		// Gives smoother control for human driver
 		private double shapeAxis( double x) {
-			if( linearAxis) 
-				return x;
-			else {
-				x = Deadzone.f( x, .05);
-				return Math.signum(x) * (x*x);
-			}
+			x = Deadzone.f( x, .05);
+			return Math.signum(x) * (x*x);
 		}
 		
 		// +turnStick produces right turn (CW from above, -yaw angle)
 		public void arcadeDrive(double fwdStick, double turnStick) {
 			
-			if(OI.btnLowSensitiveDrive.get()) {
+			if(Robot.oi.btnLowSensitiveDrive.get()) {
 				fwdStick *= LOW_SENS_GAIN;
 				turnStick *= LOW_SENS_GAIN;
 			}
-			if(OI.btnInvertAxis.get()) {
+			if(Robot.oi.btnInvertAxis.get()) {
 				fwdStick *= -1.0;
 			}
 			
+			// Shape axis for human control
 			fwdStick = shapeAxis(fwdStick);
 			turnStick = shapeAxis(turnStick);
 						
@@ -140,6 +117,11 @@ public class DriveSubsystem extends Subsystem {
 			}
 		}
 		
+		// Autonomous: rotate robot (pure yaw)
+		// +turn -> +yaw (left turn, CCW viewed from top)
+		public void doAutoTurn( double turn) {
+			robotDrive.arcadeDrive( 0.0, turn, false);				
+		}
 		
 		public void setAlignDrive(boolean start) {
 			if(start) {
@@ -151,10 +133,10 @@ public class DriveSubsystem extends Subsystem {
 		// (where +yaw is as usual CCW viewed from top, R.H.R. z-axis up)
 		public void doAlignDrive(double fwdStick, double turnStick) {
 						
-			if(OI.btnLowSensitiveDrive.get())
+			if(Robot.oi.btnLowSensitiveDrive.get())
 				fwdStick *= LOW_SENS_GAIN;
 			
-			if(OI.btnInvertAxis.get()) {
+			if(Robot.oi.btnInvertAxis.get()) {
 				fwdStick *= -1.0;
 			}
 			
@@ -175,7 +157,17 @@ public class DriveSubsystem extends Subsystem {
 				robotDrive.arcadeDrive( fwdStick, error + yawCorrect(), false);
 			}
 		}
-				
+		
+		// Autonomous: drive in straight line
+		public void doAutoStraight( double fwd) {
+			if( fwd == 0.0)
+				setAllMotorsZero();
+			else {
+				double error = ALIGN_LOOP_GAIN * (yawSetPoint - Robot.imu.getYawDeg());				
+				robotDrive.arcadeDrive( fwd, error + yawCorrect(), false);				
+			}			
+		}
+		
 		public void setLockDrive( boolean start) {
 
 			if( start) {

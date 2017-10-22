@@ -44,11 +44,12 @@ MIN_MATCH_COUNT = 10
 
 # load the image, convert it to grayscale, and detect edges
 img1 = cv2.imread("redBoilerTrainWhole.jpg",cv2.IMREAD_GRAYSCALE)
+#img1 = cv2.imread("BoilerBottom.jpg",cv2.IMREAD_GRAYSCALE)
 #img1 = cv2.resize(img1,(320,240))
 #img1 = cv2.resize(img1,(int(img1.shape[1]/2),int(img1.shape[0]/2)))
 print(img1.shape)
 
-img2c = cv2.imread('redBoiler8ftLeft.jpg')
+img2c = cv2.imread('blueBoiler5ftRight.jpg')
 img2c = cv2.resize(img2c,(320,240))
 #img2c = cv2.resize(img2c,(int(img2c.shape[1]/3),int(img2c.shape[0]/3)))
 img2 = cv2.cvtColor(img2c, cv2.COLOR_BGR2GRAY)
@@ -66,7 +67,7 @@ norm = cv2.NORM_L2
 
 # Create SURF object. You can specify params here or later.
 # Here I set Hessian Threshold to 400
-surf = cv2.xfeatures2d.SURF_create(400)
+surf = cv2.xfeatures2d.SURF_create()
 kp1, des1 = surf.detectAndCompute(img1,None)
 kp2, des2 = surf.detectAndCompute(img2,None)
 
@@ -127,6 +128,23 @@ if (crossCheck == False):
         g = int(math.sin(angle)*255)
         
         cv2.polylines(img2c,[np.int32(dst)],True,(0,g,r),2, cv2.LINE_AA)
+        
+        # Find the approximate center line
+        topLeft = dst[0][0]
+        bottomLeft = dst[1][0]
+        bottomRight = dst[2][0]
+        topRight = dst[3][0]
+        
+        midTop = (int((topLeft[0]+topRight[0])/2), int((topLeft[1]+topRight[1])/2))
+        midBottom = (int((bottomLeft[0]+bottomRight[0])/2), int((bottomLeft[1]+bottomRight[1])/2))
+
+        h,w = img1.shape
+        top = (int(w/2),0)
+        bot = (int(w/2),h)
+        pts = np.float32([ [top],[bot] ]).reshape(-1,1,2)
+        mid = cv2.perspectiveTransform(pts,M)
+        cv2.line(img1,(int(w/2),0),(int(w/2),h),255,2)
+        cv2.line(img2c,(mid[0][0][0],mid[0][0][1]),(mid[1][0][0],mid[1][0][1]),(255,0,0),2)
     else:
         print("Not enough matches are found - %d/%d" % (len(good),MIN_MATCH_COUNT))
         matchesMask = None
@@ -137,16 +155,16 @@ if (crossCheck == False):
                        matchesMask = matchesMask, # draw only inliers
                        flags = 2)
     
-    img3 = cv2.drawMatches(img1,kp1,img2,kp2,good,None,**draw_params)
+    img3 = cv2.drawMatches(img1,kp1,img2c,kp2,good,None,**draw_params)
         
 else:
     ## Draw first 10 matches.
-    img3 = cv2.drawMatches(img1,kp1,img2,kp2,matches[:10], None, flags=2)
+    img3 = cv2.drawMatches(img1,kp1,img2c,kp2,matches[:10], None, flags=2)
 
 endtime = time.time()
 
 print(endtime - starttime)
-cv2.imshow("Image", img2c)
+cv2.imshow("Image", img3)
 cv2.waitKey(0)
 
 #plt.imshow(img3, 'gray'),plt.show()

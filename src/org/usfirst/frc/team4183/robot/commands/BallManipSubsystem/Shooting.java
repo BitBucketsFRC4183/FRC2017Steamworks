@@ -38,12 +38,12 @@ public class Shooting extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if( !OI.btnShoot.get()) {
+    	if( !Robot.oi.btnShoot.get()) {
     		Robot.ballManipSubsystem.setConveyerOff();
     		return CommandUtils.stateChange(this, new WaitingForTrigger());
     	}
 
-    	if(OI.btnIdle.get()) {
+    	if(Robot.oi.btnIdle.get()) {
     		return CommandUtils.stateChange(this, new Idle());
     	}
         return false;

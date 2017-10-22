@@ -1,11 +1,9 @@
 package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 
-import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import org.usfirst.frc.team4183.robot.RobotMap;
 import org.usfirst.frc.team4183.utils.ControlLoop;
 import org.usfirst.frc.team4183.utils.LogWriterFactory;
-import org.usfirst.frc.team4183.utils.MinMaxDeadzone;
 import org.usfirst.frc.team4183.utils.RateLimit;
 import org.usfirst.frc.team4183.utils.SettledDetector;
 
@@ -15,9 +13,6 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveStraight extends Command implements ControlLoop.ControlLoopUser {
 		
-	// Proportional gain
-	private final static double Kp = 0.02;
-
 	// Largest drive that will be applied
 	private final double MAX_DRIVE = 1.0;
 	
@@ -28,9 +23,16 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	// But if this is TOO BIG, you'll get limit cycling, and also get stuck.
 	private final double MIN_DRIVE = RobotMap.DRIVESTRAIGHT_MIN_DRIVE;
 	
+	// Distance at which we reduce drive from MAX to MIN
+	private final double MIN_DRIVE_DISTANCE_INCH = 26.0;
+	
 	// Size of dead zone in inches - also used to determine when done.
 	private final double DEAD_ZONE_INCH = 0.5;
-	
+
+	// Dither signal
+	private final double DITHER_AMPL = 0.07;
+	private final double DITHER_FREQ = 8.0;
+
 	// Settled detector lookback for dead zone
 	// I would NOT go lower than 150 because of Java thread jitter
 	private final long SETTLED_MSECS = 150;
@@ -45,12 +47,11 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 	
 	// Limits ramp rate of drive signal
 	private final double RATE_LIM_PER_SEC = 3.0;
-			
+				
 	private final double distanceInch;
 	
 	private ControlLoop cloop;
 	private RateLimit rateLimit;
-	private MinMaxDeadzone deadZone;
 	private SettledDetector settledDetector; 
 	private SettledDetector hangupDetector;
 	
@@ -72,19 +73,12 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		
 		// Make helpers
 		rateLimit = new RateLimit( RATE_LIM_PER_SEC);
-		deadZone = new MinMaxDeadzone( DEAD_ZONE_INCH, MIN_DRIVE, MAX_DRIVE);
 		settledDetector = new SettledDetector( SETTLED_MSECS, DEAD_ZONE_INCH);
 		hangupDetector = new SettledDetector( HANGUP_MSECS, STOPPED_RATE_IPS);
 		logWriter = logFactory.create( WRITE_LOG_FILE);	
-		
-		// Setup DriveSubsystem for autonomous control
-		Robot.driveSubsystem.setAutonomousControl(true);
-		
-		// Make sure turn stick is zero (it should be, but...)
-		OI.axisTurn.set(0.0);
-		
+						
 		// Put DriveSubsystem into "Align Lock" (drive straight)
-		OI.btnAlignLock.push();
+        Robot.driveSubsystem.setAlignDrive(true);
 		
 		// Fire up the loop
 		cloop = new ControlLoop( this, setPoint);
@@ -118,14 +112,10 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 		logWriter.close();
 		
 		// Put DriveSubsystem out of "Align Lock"
-		OI.btnAlignLock.release();
-		
-		// Restore DriveSubsystem to normal control
-		Robot.driveSubsystem.setAutonomousControl(false);
-				
+        Robot.driveSubsystem.setAlignDrive(false);
+						
 		// Set output to zero before leaving
-		OI.axisForward.set(0.0);
-		OI.axisTurn.set(0.0);
+    	Robot.driveSubsystem.doAutoStraight(0.0);
 	}
 	
 	@Override
@@ -149,22 +139,26 @@ public class DriveStraight extends Command implements ControlLoop.ControlLoopUse
 
 		settledDetector.set(error);
 		hangupDetector.set( Robot.driveSubsystem.getFwdVelocity_ips());
-
-
-		double x1 = Kp * error;
-			
-		// Apply drive non-linearities
-		double x2 = rateLimit.f(x1);
-		double x3 = deadZone.f(x2, error);
 		
-		// Dither signal
-		double ditherFreq = 8.0;  // Maybe try something higher freq?
-		//double ditherAmpl = 0.07;
-		double ditherAmpl = 0.07;
-		double s = Math.sin(2.0*Math.PI*ditherFreq*System.currentTimeMillis()/1000.0);
-		x3 += ditherAmpl*s;
+		double x;		
+		if( Math.abs(error) < MIN_DRIVE_DISTANCE_INCH)
+			x = Math.signum(error)*MIN_DRIVE;
+		else
+			x = Math.signum(error)*MAX_DRIVE;
+		
+		x = rateLimit.f(x);
+		
+		if( Math.abs(error) < DEAD_ZONE_INCH)
+			x = 0.0;
+		
+		if( Math.abs(error) > DEAD_ZONE_INCH)
+			x += DITHER_AMPL*ditherSignal();
 		
 		// Set the output
-		OI.axisForward.set( x3);
+    	Robot.driveSubsystem.doAutoStraight(x);
+	}
+
+	double ditherSignal() {
+		return Math.sin( DITHER_FREQ*(2.0*Math.PI)*System.currentTimeMillis()/1000.0);
 	}
 }

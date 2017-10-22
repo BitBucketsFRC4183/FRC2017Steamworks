@@ -1,6 +1,5 @@
 package org.usfirst.frc.team4183.robot.commands.AutonomousSubsystem;
 
-import org.usfirst.frc.team4183.robot.OI;
 import org.usfirst.frc.team4183.robot.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -8,8 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
  *
  */
 public class Scripter extends Command {
-	
-		
+			
 	// These values written by "MeasureGear"
 	static double measuredDistance_inch;    // inch
 	static double measuredYaw_deg;          // gives Robot pose in target C.S.; +val means Robot sitting CCW (viewed from top)
@@ -24,10 +22,48 @@ public class Scripter extends Command {
 	// Dead reckoning numbers are assuming: 
 	// positions 1 & 3 start points are 7' left & right of center line respectively,
 	// position 2 start point is on center line (directly facing gear peg)
-	// 
-
-
-	private String[][] script = {
+	
+	// Script used in Denver - only one Vision measurement
+	private String[][] oneVisionScript = {
+			{"", 			"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
+			{"Left", 		"DriveStraight 82.2" },  // Inch
+			{"", 			"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
+			{"",			"Goto Vis" },
+			{"Center",		"DriveStraight 52.0" },
+			{"",			"Goto Vis" },
+			{"Right",		"DriveStraight 82.2" },
+			{"",			"TurnBy 60.0" },
+			{"Vis", 		"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
+			{"", 			"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
+			{"", 			"YawCorrect" },     		// TurnBy -measuredYaw
+			{"", 			"DistanceCorrect 15.0" },	
+			{"", 			"DeliverGear" },			// Spit the gear
+			{"",        	"BranchOnColorAndPosition BlueBoiler NoBoiler BackUpBlue BackUpRed NoBoiler RedBoiler"},
+			{"NoBoiler",    "DriveStraight -12.0"},
+			{"",        	"Goto End"},
+			{"BackUpBlue",  "DriveStraight -24.0"},
+			{"", 			"TurnBy -60.0"},
+			{"",       		"DriveStraight 214.0"},
+			{"", 			"Goto End"},
+			{"BackUpRed",   "DriveStraight -24.0"},
+			{"", 			"TurnBy 60.0"},
+			{"",            "DriveStraight 214.0"},
+			{"",			"Goto End"},
+			{"BlueBoiler",  "StartShooter"},
+			{"",   			"DriveStraight -70.2"},
+			{"",        	"TurnBy -149.3"},
+			{"",        	"Goto Shoot"},
+			{"RedBoiler",   "StartShooter"},
+			{"",    		"DriveStraight -70.2"},
+			{"",        	"TurnBy 149.3"},
+			{"",        	"Goto Shoot"},
+			{"Shoot",   	"Shoot"},
+			{"",			"Delay 8000"},  // Have to Delay to allow shoot to happen!!
+			{"End", 		"End" }			// MUST finish in End state
+	};
+	
+	// Original script w/ 2 Vision measurements
+	private String[][] twoVisionScript = {
 			{"", 		"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
 			{"Left", 	"DriveStraight 82.2" },  // Inch
 			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
@@ -59,21 +95,101 @@ public class Scripter extends Command {
 			{"",		"Delay 4000"},  // Have to Delay to allow shoot to happen!!
 			{"End", 	"End" }			// MUST finish in End state
 	};
+	
+	
+	private String[][] visionScriptState = {
+			{"", 		"BranchOnPosition Left Center Right" },  // Goto label 1,2,3 based on operator position
+			{"Left", 	"DriveStraight 82.2" },  // Inch
+			{"", 		"TurnBy -60.0" },        // Degrees, + is CCW from top (RHR Z-axis up)
+			{"",		"Goto Vis" },
+			{"Center",	"DriveStraight 26.0" },
+			{"",		"Goto Vis" },
+			{"Right",	"DriveStraight 82.2" },
+			{"",		"TurnBy 60.0" },
+			{"Vis", 	"EnableVisionGear" },   // S.B. ~4' from airship wall, looking straight at it
+			{"", 		"MeasureGear" },		// Collect distance & yaw measures, put estimates into measuredDistance, measuredYaw
+			{"", 		"YawCorrect" },     		// TurnBy -measuredYaw
+			{"", 		"DistanceCorrect 21.0" },	// Stop short by this much
+			{"", 		"MeasureGear" },
+			{"", 		"YawCorrect" },
+			{"", 		"DistanceCorrect 15.0" },	
+			{"", 		"DeliverGear" },			// Spit the gear
+			{"",        "BranchOnColorAndPosition BlueLeft NoBoiler BlueRight RedLeft NoBoiler RedRight"},
+			{"NoBoiler",    "DriveStraight -12.0"},
+			{"",        "Goto End"},
+			{"BlueLeft",   "DriveStraight -33.75"},
+			{"",   		"TurnBy 60.0"},
+			{"",        "DriveStraight 100.0"},
+			{"",		"TurnBy -35.79"},
+			{"",		"DriveStraight 287.25"},
+			{"",        "Goto End"},
+			{"BlueRight", "DriveStraight -33.75"},
+			{"", 		"TurnBy -60.0"},
+			{"",		"DriveStraight 333.0"},
+			{"",		"Goto End"},
+			{"RedLeft", "DriveStraight -33.75"},
+			{"", 		"TurnBy 60.0"},
+			{"",		"DriveStraight 333.0"},
+			{"",		"Goto End"},
+			{"RedRight",   "DriveStraight -33.75"},
+			{"",   		"TurnBy -60.0"},
+			{"",        "DriveStraight 100.0"},
+			{"",		"TurnBy 35.79"},
+			{"",		"DriveStraight 287.25"},
+			{"",        "Goto End"},
+			{"End", 	"End" }			// MUST finish in End state
+	};
+	
+	// Demo script
+	// Start out 3-4' from peg, rotated 90 degrees (peg should be on Robot's right shoulder)
+	private String[][] demoScript = {
 
+			{"",		"TurnBy -90.0" },
+			{"", 		"EnableVisionGear" },   
+			{"", 		"MeasureGear" },		
+			{"", 		"YawCorrect" }, 
+			{"", 		"DistanceCorrect 21.0" },
+			{"", 		"MeasureGear" },
+			{"", 		"YawCorrect" },
+			{"", 		"DistanceCorrect 15.0" },	
+			{"", 		"DeliverGear" },
+			{"",    	"DriveStraight -12.0"},
+			{"",		"End"}
+	};
 	
 	// Test small moves to make sure MIN_DRIVEs big enough.
 	// e.g. TurnBy 5, DriveStraight 3.
 	// Test big moves to make sure it behaves & settles.
 	// e.g. TurnBy 60, DriveStraight 48.
-	/*
-	private String[][] script = {
-		{"", "DriveStraight 60"},
-		{"", "TurnBy -60" },
-		{"", "End" }    // MUST finish with End!
-	};
-	*/
+	private String[][] tuneScript = {
+			{"",        "BranchOnColorAndPosition BlueLeft BlueCntr Noop RedLeft RedCntr Noop"},
+			{"BlueLeft",	"TurnBy 5.0" },
+			{"",			"TurnBy -5.0"},
+			{"",			"End"},
+			{"BlueCntr",	"TurnBy 60.0"},
+			{"",			"TurnBy -60.0"},
+			{"", 			"End"},
+			{"RedLeft",		"DriveStraight 5.0"},
+			{"",			"DriveStraight -5.0"},
+			{"",			"End"},
+			{"RedCntr",		"DriveStraight 60"},
+			{"",			"DriveStraight -60"},
+			{"",			"End"},
+			{"Noop", 		"End" }    // MUST finish with End!
+		};
 	
-
+	
+	
+	
+	/*****************************************************************
+	 * 
+	 * Set this variable to the script you actually want to execute!!!
+	 * 
+	 *****************************************************************/
+	private String[][] script = visionScriptState;
+	
+	
+	// position 1,2,3 are Left, Center, Right respectively
     public Scripter( int position) {
     	// No "requires" - this one stands apart - it's a Meta-State.
     	// This is start()-ed from Robot.autonomousInit().
@@ -126,7 +242,7 @@ public class Scripter extends Command {
     		branchOnPosition( tokens[1], tokens[2], tokens[3]);
     		break;
     		
-    	case "BranchOnColorAndPosition": // lblB1, lblB2, lblB3, lblR1, ...
+    	case "BranchOnColorAndPosition": // blueLeft, blueCntr, blueRight, redleft, ...
     		branchOnColorAndPosition(tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[6]);
     		break;
     		
@@ -282,8 +398,8 @@ public class Scripter extends Command {
     private void deliverGear() {
     	if(debug)
     		System.out.println("Scripter.deliverGear");
-    	OI.btnSpitGearA.hit();
-    	OI.btnSpitGearB.hit();
+    	Robot.oi.btnSpitGearA.hit();
+    	Robot.oi.btnSpitGearB.hit();
     }
     
     private void endState() {
@@ -293,10 +409,10 @@ public class Scripter extends Command {
     }  
     
     private void startShooter() {
-    	OI.btnShooterStart.hit();
+    	Robot.oi.btnShooterStart.hit();
     }
     
     private void shoot() {
-    	OI.btnShoot.hit(3000);
+    	Robot.oi.btnShoot.hit(3000);
     }
 }
