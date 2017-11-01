@@ -8,3 +8,5 @@ sysProps.xml
 /dist/
 
 *.pyc
+/target/
+/lib/dependency/
